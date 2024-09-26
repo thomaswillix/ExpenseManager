@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegistrationActivity"
+    android:gravity="center"
+    android:orientation="vertical">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Sign up"
+                android:textColor="@color/black"
+                android:textSize="32dp"></TextView>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:hint="example@email.com"
+                android:background="@drawable/edittext_background"
+                android:padding="15dp"
+                android:id="@+id/email_registration">
+            </EditText>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/edittext_background"
+                android:padding="15dp"
+                android:hint="*********"
+                android:id="@+id/password_registration">
+            </EditText>
+
+            <Button
+                android:id="@+id/btn_registration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:backgroundTint="#A3DF92"
+                android:text="Create account"
+                android:textSize="17dp"></Button>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:id="@+id/signin"
+                android:text="Already have an account? Sign in here."
+                android:padding="5dp">
+            </TextView>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
