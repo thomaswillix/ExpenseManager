@@ -11,18 +11,18 @@ import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
 
-    val mEmail = findViewById<EditText>(R.id.email_login)
-    val mPass = findViewById<EditText>(R.id.password_login)
-    val btnLogin = findViewById<Button>(R.id.btn_login)
-    val mForgetPass = findViewById<TextView>(R.id.forget_password)
-    val mSignUpHere = findViewById<TextView>(R.id.signup_reg)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         loginDetails()
     }
     fun loginDetails(){
+        val mEmail = findViewById<EditText>(R.id.email_login)
+        val mPass = findViewById<EditText>(R.id.password_login)
+        val btnLogin = findViewById<Button>(R.id.btn_login)
+        val mForgetPass = findViewById<TextView>(R.id.forget_password)
+        val mSignUpHere = findViewById<TextView>(R.id.signup_reg)
+
         btnLogin.setOnClickListener(View.OnClickListener {
             val email = mEmail.text.toString().trim()
             val password = mPass.text.toString().trim()
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
                 mEmail.setError("Email is required")
             }
             if (TextUtils.isEmpty(password)){
-                mEmail.setError("Password is required")
+                mPass.setError("Password is required")
             }
         })
 

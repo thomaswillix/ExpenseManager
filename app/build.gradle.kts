@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.example.expensemanager"
-    compileSdk = 33
+    compileSdk = 34
 
     buildFeatures{
         viewBinding = true;
@@ -52,8 +52,14 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     // Import the firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
-    // When using the BoM, don't specify versions in Firebase dependencies
     implementation("com.google.firebase:firebase-analytics")
+    // Dependency for the Firebase Authentication library
+    implementation("com.google.firebase:firebase-auth")
+    // Add the dependency for the Realtime Database library
+    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-core:10.0.1")
+    //implementation("com.firebaseui:firebase-ui-database")
+    implementation("com.firebase:firebase-client-android:2.5.2")
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
 }
