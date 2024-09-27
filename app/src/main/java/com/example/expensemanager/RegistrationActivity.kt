@@ -39,25 +39,38 @@ class RegistrationActivity : AppCompatActivity() {
                 mEmail.setError("Email is required")
             }
             if (TextUtils.isEmpty(password)){
-                mEmail.setError("Password is required")
+                mPass.setError("Password is required")
             }
+            if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+                val progressDialog = ProgressDialog(this)
+                progressDialog.setMessage("Please wait")
+                progressDialog.show()
+                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
+                    OnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            progressDialog.dismiss()
+                            Toast.makeText(
+                                applicationContext,
+                                "Registration was completed successfully",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            startActivity(Intent(applicationContext, HomeActivity::class.java))
+                        } else {
+                            progressDialog.dismiss()
+                            Toast.makeText(
+                                applicationContext,
+                                "Registration failed",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    })
+                }
+            })
+            //Login activity
+            mSignIn.setOnClickListener(View.OnClickListener {
+                startActivity(Intent(this, MainActivity::class.java))
+            })
 
-            val progressDialog = ProgressDialog(this)
-            progressDialog.setMessage("Please wait")
-            progressDialog.show()
-            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
-                OnCompleteListener { task -> if (task.isSuccessful){
-                    progressDialog.dismiss()
-                    Toast.makeText(applicationContext, "Registration was completed successfully", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(applicationContext, HomeActivity::class.java))
-                } else{
-                    progressDialog.dismiss()
-                    Toast.makeText(applicationContext, "Registration failed", Toast.LENGTH_SHORT).show()
-                }})
-        })
-        //Login activity
-        mSignIn.setOnClickListener(View.OnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
-        })
-    }
+        }
+
 }
