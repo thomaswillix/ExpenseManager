@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".RegistrationActivity"
     android:gravity="center"
+    android:background="@drawable/background_color"
     android:orientation="vertical">
     <ScrollView
         android:layout_width="match_parent"
@@ -22,25 +23,30 @@
                 android:gravity="center"
                 android:text="Sign up"
                 android:textColor="@color/black"
+                android:layout_marginBottom="60dp"
                 android:textSize="32dp"></TextView>
 
             <EditText
-                android:layout_width="match_parent"
+                android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:hint="example@email.com"
-                android:background="@drawable/edittext_background"
+                android:background="@drawable/background_color"
                 android:padding="15dp"
+                android:textColor="@color/black"
+                android:textColorHint="#717171"
                 android:id="@+id/email_registration">
             </EditText>
 
             <EditText
-                android:layout_width="match_parent"
+                android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:background="@drawable/edittext_background"
+                android:background="@drawable/background_color"
                 android:padding="15dp"
-                android:hint="*********"
+                android:hint="******"
+                android:textColor="@color/black"
+                android:textColorHint="#717171"
                 android:id="@+id/password_registration">
             </EditText>
 
@@ -57,7 +63,9 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:id="@+id/signin"
+                android:layout_marginTop="10dp"
                 android:text="Already have an account? Sign in here."
+                android:textColor="@color/black"
                 android:padding="5dp">
             </TextView>
 

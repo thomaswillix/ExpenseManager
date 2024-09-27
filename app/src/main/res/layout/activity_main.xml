@@ -24,25 +24,30 @@
                 android:gravity="center"
                 android:text="Sign in"
                 android:textColor="@color/black"
+                android:layout_marginBottom="60dp"
                 android:textSize="32dp"></TextView>
 
             <EditText
-                android:layout_width="match_parent"
+                android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:hint="example@email.com"
-                android:background="@drawable/edittext_background"
+                android:background="@drawable/background_color"
                 android:padding="15dp"
+                android:textColor="@color/black"
+                android:textColorHint="#717171"
                 android:id="@+id/email_login">
             </EditText>
 
             <EditText
-                android:layout_width="match_parent"
+                android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:background="@drawable/edittext_background"
+                android:background="@drawable/background_color"
                 android:padding="15dp"
-                android:hint="*********"
+                android:hint="******"
+                android:textColor="@color/black"
+                android:textColorHint="#717171"
                 android:id="@+id/password_login">
             </EditText>
 
@@ -52,6 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:backgroundTint="#82C3C3"
+                android:textColor="@color/white"
                 android:text="Login"
                 android:textSize="17dp">
             </Button>
@@ -61,6 +67,8 @@
                 android:gravity="center"
                 android:id="@+id/forget_password"
                 android:text="Forgot password."
+                android:layout_marginTop="5dp"
+                android:textColor="@color/black"
                 android:padding="5dp">
             </TextView>
 
@@ -69,7 +77,9 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:id="@+id/signup_reg"
+                android:layout_marginTop="10dp"
                 android:text="Don't have an account? Sign up here."
+                android:textColor="@color/black"
                 android:padding="5dp">
             </TextView>
         </LinearLayout>
