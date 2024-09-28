@@ -11,7 +11,7 @@
         android:layout_alignParentBottom="true"
         android:id="@+id/bottomNavigationBar"
         app:menu="@menu/bottom_menu"
-        app:itemIconSize="34dp">
+        app:itemIconSize="32dp">
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 
     <FrameLayout

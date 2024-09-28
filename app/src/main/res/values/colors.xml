@@ -2,5 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="toolbar_color">#F6F6F6</color>
+    <color name="toolbar_color">#FFFFFF</color>
+    <color name="nav_header">#CAF0F8</color>
 </resources>
