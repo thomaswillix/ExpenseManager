@@ -11,6 +11,6 @@
         android:id="@+id/imageView"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        app:srcCompat="@drawable/spendwise2" />
+        app:srcCompat="@drawable/wisewallet2" />
 
 </LinearLayout>
