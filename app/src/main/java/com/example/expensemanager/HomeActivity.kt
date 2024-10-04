@@ -1,5 +1,6 @@
 package com.example.expensemanager
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
@@ -66,7 +67,9 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     fun displaySelectedListener (itemId: Int){
         when(itemId){
-            R.id.profile -> {} // do nothing
+            R.id.profile -> {
+                startActivity(Intent(applicationContext, activity_profile::class.java))
+            } // do nothing
             R.id.home -> {}
             R.id.stats -> {}
         }
