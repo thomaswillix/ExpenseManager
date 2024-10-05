@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuth.getInstance
 import com.google.firebase.auth.FirebaseUser
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -68,8 +67,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     fun displaySelectedListener (itemId: Int){
         when(itemId){
             R.id.profile -> {
-                startActivity(Intent(applicationContext, activity_profile::class.java))
-            } // do nothing
+                startActivity(Intent(applicationContext, ProfileActivity::class.java))
+            }
             R.id.home -> {}
             R.id.stats -> {}
         }
