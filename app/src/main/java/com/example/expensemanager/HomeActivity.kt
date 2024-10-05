@@ -4,11 +4,13 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.FrameLayout
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -20,8 +22,15 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var naviView: NavigationView
     private lateinit var fragment: Fragment
     private lateinit var ft: FragmentTransaction
+    private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var frameLayout: FrameLayout
+
     // Firebase
     private lateinit var user: FirebaseUser
+
+    //Fragment
+    private lateinit var homeFragment: HomeFragment
+    private lateinit var statsFragment: StatsFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +38,9 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         toolbar = findViewById(R.id.my_toolbar)
         user = FirebaseAuth.getInstance().currentUser!!
+        homeFragment = HomeFragment()
+        statsFragment = StatsFragment()
+        setFragment(homeFragment)
 
         if (user != null)
         {
@@ -53,6 +65,34 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         naviView = findViewById(R.id.nav_view)
         naviView.setNavigationItemSelectedListener (this)
+
+        bottomNavigationView = findViewById(R.id.bottomNavigationBar)
+        frameLayout = findViewById(R.id.main_frame)
+        //Navigation from the bottomNavigationBar
+        bottomNavigationView.setOnNavigationItemSelectedListener {
+                when(it.itemId){
+                    R.id.home -> {
+                        setFragment(homeFragment)
+                        bottomNavigationView.itemBackgroundResource=R.color.dashboard
+                        true
+                    }
+                    R.id.stats -> {
+                        setFragment(statsFragment)
+                        bottomNavigationView.itemBackgroundResource=R.color.income
+                        true
+                    }
+                    else -> false
+                }
+
+        }
+
+
+    }
+
+    fun setFragment(fragment: Fragment){
+        val fragmentTransaction : FragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.main_frame, fragment)
+        fragmentTransaction.commit()
     }
 
     override fun onBackPressed() {
@@ -63,14 +103,20 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             super.onBackPressed()
         }
     }
-
+    //Navigation for the LeftNavigationMenu
     fun displaySelectedListener (itemId: Int){
+        fragment = Fragment()
         when(itemId){
             R.id.profile -> {
                 startActivity(Intent(applicationContext, ProfileActivity::class.java))
             }
-            R.id.home -> {}
-            R.id.stats -> {}
+            R.id.home -> {
+                fragment = HomeFragment()
+            }
+            R.id.stats -> {
+                fragment = StatsFragment()
+                setFragment(statsFragment)
+            }
         }
         if (fragment != null){
             ft = getSupportFragmentManager().beginTransaction()
@@ -81,6 +127,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout.closeDrawer(GravityCompat.START)
 
     }
+
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         displaySelectedListener(item.itemId)

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
@@ -26,6 +27,8 @@ class ProfileActivity : AppCompatActivity() {
         user = FirebaseAuth.getInstance().currentUser!!
         val userName = findViewById<TextView>(R.id.textView1)
         val emailTv = findViewById<TextView>(R.id.textView2)
+        val profilePic = findViewById<ImageView>(R.id.imageView1)
+
 
         var name = ""
         val email = user.email
