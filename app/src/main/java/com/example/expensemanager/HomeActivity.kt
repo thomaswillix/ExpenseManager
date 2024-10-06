@@ -51,9 +51,9 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val email = user.email
                 name = email?.substring(0, email.indexOf("@")).toString()
             }
-            toolbar.title = "Welcome $name"
+            toolbar.title = "Welcome,\n$name"
         } else{
-            toolbar.title = "Welcome user"
+            toolbar.title = "Welcome,\nuser"
         }
         setSupportActionBar(toolbar)
 
@@ -71,14 +71,16 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //Navigation from the bottomNavigationBar
         bottomNavigationView.setOnNavigationItemSelectedListener {
                 when(it.itemId){
+                    R.id.profile -> {
+                        setFragment(homeFragment)
+                        true
+                    }
                     R.id.home -> {
                         setFragment(homeFragment)
-                        bottomNavigationView.itemBackgroundResource=R.color.dashboard
                         true
                     }
                     R.id.stats -> {
                         setFragment(statsFragment)
-                        bottomNavigationView.itemBackgroundResource=R.color.income
                         true
                     }
                     else -> false
@@ -109,6 +111,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when(itemId){
             R.id.profile -> {
                 startActivity(Intent(applicationContext, ProfileActivity::class.java))
+                fragment = HomeFragment()
             }
             R.id.home -> {
                 fragment = HomeFragment()

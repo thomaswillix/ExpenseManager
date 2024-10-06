@@ -6,6 +6,6 @@
     <color name="nav_header">#03045E</color>
     <color name="dashboard">#0096C7</color>
     <color name="income"> #4fab9a </color>
-    <color name="expernse"> #a5270f </color>
+    <color name="expense"> #a5270f </color>
 
 </resources>
