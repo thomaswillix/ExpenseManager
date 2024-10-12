@@ -42,7 +42,7 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:id="@+id/imageView2" />
+                            android:id="@+id/imageView2"/>
                     </androidx.cardview.widget.CardView>
 
                     <EditText
@@ -84,8 +84,8 @@
                         android:text="Confirm"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:layout_marginTop="80dp"
-                        android:backgroundTint="@color/nav_header"
+                        android:layout_marginTop="120dp"
+                        android:backgroundTint="#0077B6"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -99,7 +99,7 @@
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:layout_marginTop="15dp"
-                        android:backgroundTint="#0077B6"
+                        android:backgroundTint="@color/nav_header"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

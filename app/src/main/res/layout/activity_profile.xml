@@ -43,7 +43,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:id="@+id/imageView1"
-                        android:src="@drawable/default_pfp"/> <!--Borrar la foto -->
+                        android:src="@drawable/pfp"/> <!--Borrar la foto -->
                 </androidx.cardview.widget.CardView>
 
                 <TextView
