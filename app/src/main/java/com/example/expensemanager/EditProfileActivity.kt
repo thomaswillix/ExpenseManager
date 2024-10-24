@@ -11,11 +11,8 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import com.example.expensemanager.databinding.ActivityMainBinding
-import com.firebase.client.Firebase
+import androidx.core.net.toFile
+import androidx.core.net.toUri
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -23,36 +20,33 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import kotlinx.coroutines.flow.callbackFlow
 
 class EditProfileActivity : AppCompatActivity() {
     // Firebase
     private lateinit var auth: FirebaseAuth
     private lateinit var user: FirebaseUser
-    private lateinit var binding: ActivityMainBinding
     private lateinit var databaseReference: DatabaseReference
     private lateinit var storageReference: StorageReference
+    private lateinit var uri: Uri
 
     // Profile Pic
     private lateinit var profilePic: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(R.layout.activity_edit_profile)
         auth = FirebaseAuth.getInstance()
-        val uid = auth.currentUser?.uid
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-
-        getUserData(uid)
+        databaseReference = FirebaseDatabase.getInstance().getReference("users")
+        storageReference = FirebaseStorage.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().uid.toString())
+        getUserData()
 
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        profilePic = findViewById<ImageView>(R.id.imageView2)
+        profilePic = findViewById(R.id.imageView2)
         if (resultCode == Activity.RESULT_OK) {
             //Image Uri will not be null for RESULT_OK
-            val uri: Uri = data?.data!!
+            uri = data?.data!!
             // Use Uri object instead of File to avoid storage permissions
             profilePic.setImageURI(uri)
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
@@ -61,19 +55,19 @@ class EditProfileActivity : AppCompatActivity() {
             Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
         }
     }
-    fun getUserData(uid: String?){
+    fun getUserData(){
         user = FirebaseAuth.getInstance().currentUser!!
         val mName = findViewById<EditText>(R.id.name_profile)
         val mEmail = findViewById<EditText>(R.id.email_profile)
-        profilePic = findViewById<ImageView>(R.id.imageView2)
-        getProfilePic(profilePic, uid)
+        profilePic = findViewById(R.id.imageView2)
+        getProfilePic(profilePic)
 
         var name = ""
         val email = user.email!!
         if (user.displayName != null) {
             name = user.displayName!!
         } else{
-            name = email?.substring(0, email.indexOf("@")).toString()
+            name = email.substring(0, email.indexOf("@"))
         }
         mName.setText(name, TextView.BufferType.EDITABLE)
         mEmail.setText(email, TextView.BufferType.EDITABLE)
@@ -81,10 +75,7 @@ class EditProfileActivity : AppCompatActivity() {
         // TODO: HACER QUE LA FOTO QUE SE MUESTRE SEA DE LA BASE DE DATOS Y SI NO EXISTE PONER LA DE POR DEFECTO
         val btnConfirm = findViewById<Button>(R.id.confirm_info_btn)
         btnConfirm.setOnClickListener {
-            val progressDialog = ProgressDialog(this)
-            progressDialog.setMessage("Please wait")
-            progressDialog.show()
-            changeDetails(progressDialog, uid, user, name, email, profilePic)
+            changeDetails(user, name, email, profilePic)
         }
         val btnBack = findViewById<Button>(R.id.back_profile_btn)
         btnBack.setOnClickListener {
@@ -95,20 +86,25 @@ class EditProfileActivity : AppCompatActivity() {
         }
 
     }
-    fun getProfilePic(imageView: ImageView, uid: String?){
+    fun getProfilePic(imageView: ImageView){
         // The storage reference to the firebase file
-        storageReference = FirebaseStorage.getInstance().getReference().child("profile_pic").child(uid!!)
         val uri = storageReference.downloadUrl
-        if (uri == null || !uri.isSuccessful){
-            imageView.setImageURI(Uri.parse("android.resource://$packageName${R.drawable.pfp}"))
+
+        /*if (uri != null){
+            imageView.setImageURI(uri.result.toFile().toUri())
         } else{
-            imageView.setImageURI(uri.result)
-        }
+            // imageView.setImageURI(uri.result.toFile().toUri()) DOESNT WORK PROPPERLY
+            */
+        imageView.setImageURI(Uri.parse("android.resource://$packageName${R.drawable.pfp}"))
+        //}
     }
-    fun changeDetails(progressDialog: ProgressDialog, uid: String?, firebaseUser:FirebaseUser,  name: String, email: String, picture: ImageView){
+    fun changeDetails(firebaseUser:FirebaseUser,  name: String, email: String, picture: ImageView){
         val user = User(name, email)
-        if(uid != null){
-            databaseReference.child(uid).setValue(user).addOnCompleteListener{
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Please wait")
+        progressDialog.show()
+        if(FirebaseAuth.getInstance().uid.toString() != null){
+            databaseReference.child(FirebaseAuth.getInstance().uid.toString()).setValue(user).addOnCompleteListener{
                 if(it.isSuccessful){
                     uploadProfilePic(progressDialog)
                 } else{
@@ -119,17 +115,13 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
     fun uploadProfilePic(progressDialog: ProgressDialog){
-        storageReference = FirebaseStorage.getInstance().getReference("Users/" + auth.currentUser?.uid)
-        profilePic = findViewById<ImageView>(R.id.imageView2)
-        val uri = storageReference.downloadUrl
+        profilePic = findViewById(R.id.imageView2)
 
-        // If the initial URI is not null, we
         if (uri == null){
-            profilePic.setImageURI(Uri.parse("android.resource://$packageName${R.drawable.pfp}"))
-        } else{
-            profilePic.setImageURI(uri.result)
+            uri = Uri.parse("android.resource://$packageName${R.drawable.pfp}")
+            profilePic.setImageURI(uri)
         }
-        storageReference.putFile(uri.result).addOnSuccessListener {
+        storageReference.putFile(uri).addOnSuccessListener {
             progressDialog.dismiss()
             Toast.makeText(this, "Profile updated succesfully", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener{
