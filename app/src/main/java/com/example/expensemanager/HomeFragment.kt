@@ -2,7 +2,8 @@ package com.example.expensemanager
 
 import android.app.AlertDialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.text.Editable
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,11 +13,14 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ListAdapter
 import android.widget.TextView
-import androidx.core.view.get
+import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 
 class HomeFragment : Fragment() {
@@ -37,11 +41,22 @@ class HomeFragment : Fragment() {
     private lateinit var fadeOpen: Animation
     private lateinit var fadeClose: Animation
 
+    //Firebase
+    private lateinit var auth : FirebaseAuth
+    private lateinit var incomeDatabase : DatabaseReference
+    private lateinit var expenseDatabase : DatabaseReference
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val myView : View = inflater.inflate(R.layout.fragment_home, container,false)
+        auth = FirebaseAuth.getInstance()
+        val user : FirebaseUser = auth.currentUser!!
+        val uid:String = user.uid
+        incomeDatabase =FirebaseDatabase.getInstance().getReference().child("IncomeData").child(uid)
+        expenseDatabase =FirebaseDatabase.getInstance().getReference().child("ExpenseData").child(uid)
+
         insertArrayIntoDropdown()
         //Connect floating button to layout
         fab_main_btn = myView.findViewById(R.id.fb_main_plus_btn)
@@ -101,15 +116,14 @@ class HomeFragment : Fragment() {
 
     private fun insertArrayIntoDropdown(){
         //Create Dialog
-        val myDialog =  (AlertDialog.Builder(activity))
         val inflater = LayoutInflater.from(activity)
         val myViewm = inflater.inflate(R.layout.custom_layout_for_insertdata,null)
-        myDialog.setView(myViewm)
 
         //Insert array of types in the dropdown
         val types = resources.getStringArray(R.array.types)
+        val stuff = myViewm.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
         val arrayAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, types)
-        val stuff = myViewm.findViewById<AutoCompleteTextView>(R.id.type_drpdwn)
+
         stuff.setAdapter(arrayAdapter)
     }
     private fun incomeDataInsert(){
@@ -123,12 +137,37 @@ class HomeFragment : Fragment() {
         //Get id's from view
         val editAmount = myViewm.findViewById<EditText>(R.id.amount_edt)
         val editNote = myViewm.findViewById<EditText>(R.id.note_edt)
-        val cancelBtn = myViewm.findViewById<Button>(R.id.btn_cancel)
+
+        val typeOfIncome = myViewm.findViewById<TextInputLayout>(R.id.textInputLayout)
+        val selectedValue: Editable? = (typeOfIncome.editText as AutoCompleteTextView).text
+
+        val btnCancel = myViewm.findViewById<Button>(R.id.btn_cancel)
+        val btnSave = myViewm.findViewById<Button>(R.id.btn_save)
+
         dialog.show()
-        cancelBtn.setOnClickListener {
+
+        btnSave.setOnClickListener {
+            val typeStr :String = selectedValue.toString()
+            val amountStr = editAmount.text.toString()
+            val noteStr = editNote.text.toString()
+            if (TextUtils.isEmpty(typeStr)){
+                typeOfIncome.setError("Required field...")
+                return@setOnClickListener
+            }
+            if (TextUtils.isEmpty(amountStr)){
+                editAmount.setError("Required field...")
+                return@setOnClickListener
+            }
+            val ourAmount : Int = Integer.parseInt(amountStr)
+
+            if (TextUtils.isEmpty(noteStr)){
+                editNote.setError("Required field...")
+                return@setOnClickListener
+            }
+        }
+        btnCancel.setOnClickListener {
             dialog.dismiss()
         }
-
 
     }
 }
