@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
 import java.io.File
 
@@ -42,7 +43,6 @@ class EditProfileActivity : AppCompatActivity() {
         databaseReference = FirebaseDatabase.getInstance().getReference("users")
         storageReference = FirebaseStorage.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().uid.toString())
         getUserData()
-
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -75,7 +75,6 @@ class EditProfileActivity : AppCompatActivity() {
         mName.setText(name, TextView.BufferType.EDITABLE)
         mEmail.setText(email, TextView.BufferType.EDITABLE)
 
-        // TODO: HACER QUE LA FOTO QUE SE MUESTRE SEA DE LA BASE DE DATOS Y SI NO EXISTE PONER LA DE POR DEFECTO
         val btnConfirm = findViewById<Button>(R.id.confirm_info_btn)
         btnConfirm.setOnClickListener {
             changeDetails(mName.text.toString(), email, profilePic)
@@ -87,19 +86,18 @@ class EditProfileActivity : AppCompatActivity() {
         profilePic.setOnClickListener {
             changeProfilePic()
         }
-
     }
     fun getProfilePic(imageView: ImageView){
         // First we create a temp file
         val localFile : File = File.createTempFile("pfp", "jpg")
         // Then we get the File from the storage reference
-        storageReference.getFile(localFile).addOnSuccessListener { // if it succeeds we set it to the imageView
-            val bitmap: Bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-            uri = localFile.toUri()
-            imageView.setImageBitmap(bitmap)
-        }.addOnFailureListener { // if it doesn't succeed, we set the default pfp
-            imageView.setImageURI(Uri.parse("android.resource://$packageName${R.drawable.pfp}"))
-        }
+        try {
+            storageReference.getFile(localFile).addOnSuccessListener { // if it succeeds we set it to the imageView
+                val bitmap: Bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+                uri = localFile.toUri()
+                imageView.setImageBitmap(bitmap)
+            }
+        }catch (e : StorageException){}
     }
     fun changeDetails(name: String, email: String, picture: ImageView){
         val user = User(name, email)

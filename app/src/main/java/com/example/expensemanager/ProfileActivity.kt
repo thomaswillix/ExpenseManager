@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.net.toUri
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -19,6 +20,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
 import java.io.File
 
@@ -48,7 +50,6 @@ class ProfileActivity : AppCompatActivity() {
         }
         userName.text = "$name"
         emailTv.text = "$email"
-        // TODO: HACER QUE LA FOTO QUE SE MUESTRE SEA DE LA BASE DE DATOS Y SI NO EXISTE PONER LA DE POR DEFECTO
         val btnProfile = findViewById<Button>(R.id.button)
         btnProfile.setOnClickListener {
             this.finish()
@@ -62,11 +63,11 @@ class ProfileActivity : AppCompatActivity() {
         // First we create a temp file
         val localFile : File = File.createTempFile("pfp", "jpg")
         // Then we get the File from the storage reference
-        storageReference.getFile(localFile).addOnSuccessListener { // if it succeeds we set it to the imageView
-            val bitmap: Bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-            imageView.setImageBitmap(bitmap)
-        }.addOnFailureListener { // if it doesn't succeed, we set the default pfp
-            imageView.setImageURI(Uri.parse("android.resource://$packageName${R.drawable.pfp}"))
-        }
+        try {
+            storageReference.getFile(localFile).addOnSuccessListener { // if it succeeds we set it to the imageView
+                val bitmap: Bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+                imageView.setImageBitmap(bitmap)
+            }
+        }catch (e : StorageException){}
     }
 }
