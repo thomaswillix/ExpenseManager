@@ -3,6 +3,8 @@ package com.example.expensemanager
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -20,6 +22,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import java.io.File
 
 class EditProfileActivity : AppCompatActivity() {
     // Firebase
@@ -75,7 +78,7 @@ class EditProfileActivity : AppCompatActivity() {
         // TODO: HACER QUE LA FOTO QUE SE MUESTRE SEA DE LA BASE DE DATOS Y SI NO EXISTE PONER LA DE POR DEFECTO
         val btnConfirm = findViewById<Button>(R.id.confirm_info_btn)
         btnConfirm.setOnClickListener {
-            changeDetails(user, name, email, profilePic)
+            changeDetails(mName.toString(), email, profilePic)
         }
         val btnBack = findViewById<Button>(R.id.back_profile_btn)
         btnBack.setOnClickListener {
@@ -87,18 +90,17 @@ class EditProfileActivity : AppCompatActivity() {
 
     }
     fun getProfilePic(imageView: ImageView){
-        // The storage reference to the firebase file
-        val uri = storageReference.downloadUrl
-
-        /*if (uri != null){
-            imageView.setImageURI(uri.result.toFile().toUri())
-        } else{
-            // imageView.setImageURI(uri.result.toFile().toUri()) DOESNT WORK PROPPERLY
-            */
-        imageView.setImageURI(Uri.parse("android.resource://$packageName${R.drawable.pfp}"))
-        //}
+        // First we create a temp file
+        val localFile : File = File.createTempFile("pfp", "jpg")
+        // Then we get the File from the storage reference
+        storageReference.getFile(localFile).addOnSuccessListener { // if it succeeds we set it to the imageView
+            val bitmap: Bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+            imageView.setImageBitmap(bitmap)
+        }.addOnFailureListener { // if it doesn't succeed, we set the default pfp
+            imageView.setImageURI(Uri.parse("android.resource://$packageName${R.drawable.pfp}"))
+        }
     }
-    fun changeDetails(firebaseUser:FirebaseUser,  name: String, email: String, picture: ImageView){
+    fun changeDetails(name: String, email: String, picture: ImageView){
         val user = User(name, email)
         val progressDialog = ProgressDialog(this)
         progressDialog.setMessage("Please wait")

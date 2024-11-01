@@ -14,13 +14,17 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.expensemanager.Model.Data
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import java.text.DateFormat
+import java.util.Date
 
 
 class HomeFragment : Fragment() {
@@ -122,7 +126,7 @@ class HomeFragment : Fragment() {
         //Insert array of types in the dropdown
         val types = resources.getStringArray(R.array.types)
         val stuff = myViewm.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
-        val arrayAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, types)
+        val arrayAdapter = ArrayAdapter(myViewm.context, R.layout.dropdown_item, types)
 
         stuff.setAdapter(arrayAdapter)
     }
@@ -164,6 +168,14 @@ class HomeFragment : Fragment() {
                 editNote.setError("Required field...")
                 return@setOnClickListener
             }
+            val id : String = incomeDatabase.push().key!!
+            val mDate : String = DateFormat.getDateInstance().format(Date())
+            val data : Data = Data(ourAmount, typeStr, noteStr, id, mDate)
+
+            incomeDatabase.child(id).setValue(data)
+            Toast.makeText(activity, "Data added", Toast.LENGTH_SHORT).show()
+
+            dialog.dismiss()
         }
         btnCancel.setOnClickListener {
             dialog.dismiss()

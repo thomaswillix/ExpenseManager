@@ -20,8 +20,9 @@
                 android:layout_width="55dp"
                 android:layout_height="55dp"
                 android:layout_marginLeft="5dp"
-
+                app:cardCornerRadius="30dp"
                 android:layout_weight="1">
+
                 <ImageView
                     android:layout_width="55dp"
                     android:layout_height="55dp"
