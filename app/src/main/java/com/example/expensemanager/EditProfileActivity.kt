@@ -78,7 +78,7 @@ class EditProfileActivity : AppCompatActivity() {
         // TODO: HACER QUE LA FOTO QUE SE MUESTRE SEA DE LA BASE DE DATOS Y SI NO EXISTE PONER LA DE POR DEFECTO
         val btnConfirm = findViewById<Button>(R.id.confirm_info_btn)
         btnConfirm.setOnClickListener {
-            changeDetails(mName.toString(), email, profilePic)
+            changeDetails(mName.text.toString(), email, profilePic)
         }
         val btnBack = findViewById<Button>(R.id.back_profile_btn)
         btnBack.setOnClickListener {
@@ -95,6 +95,7 @@ class EditProfileActivity : AppCompatActivity() {
         // Then we get the File from the storage reference
         storageReference.getFile(localFile).addOnSuccessListener { // if it succeeds we set it to the imageView
             val bitmap: Bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+            uri = localFile.toUri()
             imageView.setImageBitmap(bitmap)
         }.addOnFailureListener { // if it doesn't succeed, we set the default pfp
             imageView.setImageURI(Uri.parse("android.resource://$packageName${R.drawable.pfp}"))
