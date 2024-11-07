@@ -105,6 +105,31 @@ class HomeFragment : Fragment() {
         }
         return  myView
     }
+    private fun ftAnimation(){
+        if (isOpen){
+            fab_income_btn.startAnimation(fadeClose)
+            fab_expense_btn.startAnimation(fadeClose)
+            fab_income_btn.isClickable = false
+            fab_expense_btn.isClickable = false
+
+            fab_income_txt.startAnimation(fadeClose)
+            fab_expense_txt.startAnimation(fadeClose)
+            fab_income_txt.isClickable = false
+            fab_expense_txt.isClickable = false
+            isOpen = false
+        } else{
+            fab_income_btn.startAnimation(fadeOpen)
+            fab_expense_btn.startAnimation(fadeOpen)
+            fab_income_btn.isClickable = true
+            fab_expense_btn.isClickable = true
+
+            fab_income_txt.startAnimation(fadeOpen)
+            fab_expense_txt.startAnimation(fadeOpen)
+            fab_income_txt.isClickable = true
+            fab_expense_txt.isClickable = true
+            isOpen = true
+        }
+    }
 
     private fun addData(){
 /*        */
@@ -112,9 +137,11 @@ class HomeFragment : Fragment() {
 
         fab_income_btn.setOnClickListener {
             incomeDataInsert()
+            ftAnimation()
         }
         fab_expense_btn.setOnClickListener {
-
+            expenseDataInsert()
+            ftAnimation()
         }
     }
 
@@ -130,13 +157,14 @@ class HomeFragment : Fragment() {
 
         stuff.setAdapter(arrayAdapter)
     }
-    private fun incomeDataInsert(){
+    fun incomeDataInsert(){
         //Create Dialog
         val myDialog =  (AlertDialog.Builder(activity))
         val inflater = LayoutInflater.from(activity)
         val myViewm = inflater.inflate(R.layout.custom_layout_for_insertdata,null)
         myDialog.setView(myViewm)
         val dialog:AlertDialog = myDialog.create()
+        dialog.setCancelable(false)
 
         //Get id's from view
         val editAmount = myViewm.findViewById<EditText>(R.id.amount_edt)
@@ -152,8 +180,8 @@ class HomeFragment : Fragment() {
 
         btnSave.setOnClickListener {
             val typeStr :String = selectedValue.toString()
-            val amountStr = editAmount.text.toString()
-            val noteStr = editNote.text.toString()
+            val amountStr = editAmount.text.toString().trim()
+            val noteStr = editNote.text.toString().trim()
             if (TextUtils.isEmpty(typeStr)){
                 typeOfIncome.setError("Required field...")
                 return@setOnClickListener
@@ -170,7 +198,7 @@ class HomeFragment : Fragment() {
             }
             val id : String = incomeDatabase.push().key!!
             val mDate : String = DateFormat.getDateInstance().format(Date())
-            val data : Data = Data(ourAmount, typeStr, noteStr, id, mDate)
+            val data = Data(ourAmount, typeStr, noteStr, id, mDate)
 
             incomeDatabase.child(id).setValue(data)
             Toast.makeText(activity, "Data added", Toast.LENGTH_SHORT).show()
@@ -181,6 +209,57 @@ class HomeFragment : Fragment() {
             dialog.dismiss()
         }
 
+    }
+    fun expenseDataInsert(){
+        val myDialog =  (AlertDialog.Builder(activity))
+        val inflater = LayoutInflater.from(activity)
+        val myViewm = inflater.inflate(R.layout.custom_layout_for_insertdata,null)
+        myDialog.setView(myViewm)
+        val dialog:AlertDialog = myDialog.create()
+        dialog.setCancelable(false)
+
+        //Get id's from view
+        val editAmount = myViewm.findViewById<EditText>(R.id.amount_edt)
+        val editNote = myViewm.findViewById<EditText>(R.id.note_edt)
+
+        val typeOfIncome = myViewm.findViewById<TextInputLayout>(R.id.textInputLayout)
+        val selectedValue: Editable? = (typeOfIncome.editText as AutoCompleteTextView).text
+
+        val btnCancel = myViewm.findViewById<Button>(R.id.btn_cancel)
+        val btnSave = myViewm.findViewById<Button>(R.id.btn_save)
+
+        dialog.show()
+
+        btnSave.setOnClickListener {
+            val typeStr :String = selectedValue.toString()
+            val amountStr = editAmount.text.toString().trim()
+            val noteStr = editNote.text.toString().trim()
+            if (TextUtils.isEmpty(typeStr)){
+                typeOfIncome.setError("Required field...")
+                return@setOnClickListener
+            }
+            if (TextUtils.isEmpty(amountStr)){
+                editAmount.setError("Required field...")
+                return@setOnClickListener
+            }
+            val ourAmount : Int = Integer.parseInt(amountStr)
+
+            if (TextUtils.isEmpty(noteStr)){
+                editNote.setError("Required field...")
+                return@setOnClickListener
+            }
+            val id : String = expenseDatabase.push().key!!
+            val mDate : String = DateFormat.getDateInstance().format(Date())
+            val data = Data(ourAmount, typeStr, noteStr, id, mDate)
+
+            expenseDatabase.child(id).setValue(data)
+            Toast.makeText(activity, "Data added", Toast.LENGTH_SHORT).show()
+
+            dialog.dismiss()
+        }
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
     }
 }
 
