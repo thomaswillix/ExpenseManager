@@ -73,6 +73,7 @@ dependencies {
     implementation("com.google.firebase:firebase-core:10.0.1")
     //implementation("com.firebaseui:firebase-ui-database")
     implementation("com.firebase:firebase-client-android:2.5.2")
+    implementation("com.firebaseui:firebase-ui-database:8.0.1")
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
 }
