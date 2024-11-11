@@ -11,7 +11,8 @@ android {
     compileSdk = 34
 
     buildFeatures{
-        viewBinding = true;
+        viewBinding = true
+        dataBinding = true
     }
     defaultConfig {
         applicationId = "com.example.expensemanager"
@@ -74,6 +75,8 @@ dependencies {
     //implementation("com.firebaseui:firebase-ui-database")
     implementation("com.firebase:firebase-client-android:2.5.2")
     implementation("com.firebaseui:firebase-ui-database:8.0.1")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
 }
