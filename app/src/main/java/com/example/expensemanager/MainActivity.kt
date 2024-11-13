@@ -24,9 +24,9 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         // TODO DELETE THIS LATER: JUST FOR DEVELOPING SAKE
         // --------------------------------------------------------------------
-        if (auth.currentUser != null){
+        /*if (auth.currentUser != null){
             startActivity(Intent(applicationContext, HomeActivity::class.java))
-        }
+        }*/
         // --------------------------------------------------------------------
         loginDetails()
     }

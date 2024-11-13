@@ -36,10 +36,21 @@ class ProfileActivity : AppCompatActivity() {
         user = FirebaseAuth.getInstance().currentUser!!
         storageReference = FirebaseStorage.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().uid.toString())
 
+        getProfileData()
+
+        val btnProfile = findViewById<Button>(R.id.button)
+        btnProfile.setOnClickListener {
+            this.finish()
+        }
+        val info = findViewById<Button>(R.id.editBtn)
+        info.setOnClickListener {
+            startActivity(Intent(applicationContext, EditProfileActivity::class.java))
+        }
+    }
+    fun getProfileData(){
+        val profilePic = findViewById<ImageView>(R.id.imageView1)
         val userName = findViewById<TextView>(R.id.textView1)
         val emailTv = findViewById<TextView>(R.id.textView2)
-        val profilePic = findViewById<ImageView>(R.id.imageView1)
-        getProfilePic(profilePic)
 
         var name = ""
         val email = user.email
@@ -50,24 +61,20 @@ class ProfileActivity : AppCompatActivity() {
         }
         userName.text = "$name"
         emailTv.text = "$email"
-        val btnProfile = findViewById<Button>(R.id.button)
-        btnProfile.setOnClickListener {
-            this.finish()
-        }
-        val info = findViewById<Button>(R.id.editBtn)
-        info.setOnClickListener {
-            startActivity(Intent(applicationContext, EditProfileActivity::class.java))
-        }
-    }
-    fun getProfilePic(imageView: ImageView){
+
         // First we create a temp file
         val localFile : File = File.createTempFile("pfp", "jpg")
         // Then we get the File from the storage reference
         try {
             storageReference.getFile(localFile).addOnSuccessListener { // if it succeeds we set it to the imageView
                 val bitmap: Bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-                imageView.setImageBitmap(bitmap)
+                profilePic.setImageBitmap(bitmap)
             }
         }catch (e : StorageException){}
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getProfileData()
     }
 }

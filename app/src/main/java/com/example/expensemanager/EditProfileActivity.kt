@@ -18,6 +18,7 @@ import com.example.expensemanager.Model.User
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.userProfileChangeRequest
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -77,7 +78,7 @@ class EditProfileActivity : AppCompatActivity() {
 
         val btnConfirm = findViewById<Button>(R.id.confirm_info_btn)
         btnConfirm.setOnClickListener {
-            changeDetails(mName.text.toString(), email, profilePic)
+            changeDetails(mName.text.toString(), email)
         }
         val btnBack = findViewById<Button>(R.id.back_profile_btn)
         btnBack.setOnClickListener {
@@ -99,21 +100,23 @@ class EditProfileActivity : AppCompatActivity() {
             }
         }catch (e : StorageException){}
     }
-    fun changeDetails(name: String, email: String, picture: ImageView){
-        val user = User(name, email)
+    fun changeDetails(name: String, newEmail: String){
+        val profileUpdates = userProfileChangeRequest {
+            displayName = name
+        }
         val progressDialog = ProgressDialog(this)
         progressDialog.setMessage("Please wait")
         progressDialog.show()
-        if(FirebaseAuth.getInstance().uid.toString() != null){
-            databaseReference.child(FirebaseAuth.getInstance().uid.toString()).setValue(user).addOnCompleteListener{
-                if(it.isSuccessful){
+        user.updateProfile(profileUpdates)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
                     uploadProfilePic(progressDialog)
-                } else{
+                }
+                else{
                     progressDialog.dismiss()
                     Toast.makeText(this, "Failed to update your profile", Toast.LENGTH_SHORT).show()
                 }
             }
-        }
     }
     fun uploadProfilePic(progressDialog: ProgressDialog){
         profilePic = findViewById(R.id.imageView2)
@@ -125,6 +128,7 @@ class EditProfileActivity : AppCompatActivity() {
         storageReference.putFile(uri).addOnSuccessListener {
             progressDialog.dismiss()
             Toast.makeText(this, "Profile updated succesfully", Toast.LENGTH_SHORT).show()
+            this.finish()
         }.addOnFailureListener{
             progressDialog.dismiss()
             Toast.makeText(this, "Failed to upload the image", Toast.LENGTH_SHORT).show()
@@ -138,6 +142,5 @@ class EditProfileActivity : AppCompatActivity() {
             .compress(1024)			//Final image size will be less than 1 MB(Optional)
             .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
             .start()
-
     }
 }

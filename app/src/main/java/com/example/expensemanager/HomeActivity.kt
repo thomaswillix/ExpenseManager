@@ -42,19 +42,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         statsFragment = StatsFragment()
         setFragment(homeFragment)
 
-        if (user != null)
-        {
-            var name = ""
-            if(user.displayName != null){
-                name = user.displayName!!
-            } else{
-                val email = user.email
-                name = email?.substring(0, email.indexOf("@")).toString()
-            }
-            toolbar.title = "Welcome,\n$name"
-        } else{
-            toolbar.title = "Welcome,\nuser"
-        }
+
         setSupportActionBar(toolbar)
 
         drawerLayout = findViewById(R.id.drawer_layout)
@@ -135,5 +123,25 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         displaySelectedListener(item.itemId)
         return true
+    }
+    override fun onResume() {
+        super.onResume()
+        getProfileData()
+    }
+
+    private fun getProfileData(){
+        if (user != null)
+        {
+            var name = ""
+            if(user.displayName != null){
+                name = user.displayName!!
+            } else{
+                val email = user.email
+                name = email?.substring(0, email.indexOf("@")).toString()
+            }
+            toolbar.title = "Welcome,\n$name"
+        } else{
+            toolbar.title = "Welcome,\nuser"
+        }
     }
 }
