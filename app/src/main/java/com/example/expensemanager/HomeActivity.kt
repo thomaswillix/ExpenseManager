@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.FrameLayout
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -32,19 +34,27 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var homeFragment: HomeFragment
     private lateinit var statsFragment: StatsFragment
 
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            drawerLayout = findViewById(R.id.drawer_layout)
+            if (drawerLayout.isDrawerOpen(GravityCompat.END)){
+                drawerLayout.closeDrawer(GravityCompat.END)
+            }
+            showDialog()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-
         toolbar = findViewById(R.id.my_toolbar)
         user = FirebaseAuth.getInstance().currentUser!!
         homeFragment = HomeFragment()
         statsFragment = StatsFragment()
         setFragment(homeFragment)
-
-
         setSupportActionBar(toolbar)
 
+        onBackPressedDispatcher.addCallback(this,onBackPressedCallback)
         drawerLayout = findViewById(R.id.drawer_layout)
         val toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close)
 
@@ -73,25 +83,21 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                     else -> false
                 }
-
         }
-
-
     }
-
+    private fun showDialog(){
+        MaterialAlertDialogBuilder(this).apply {
+            setTitle("Are you sure?")
+            setMessage("Do you want to log out?")
+            setPositiveButton("Yes") { _, _ -> finish() }
+            setNegativeButton("No", null)
+            show()
+        }
+    }
     fun setFragment(fragment: Fragment){
         val fragmentTransaction : FragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.main_frame, fragment)
         fragmentTransaction.commit()
-    }
-
-    override fun onBackPressed() {
-        drawerLayout = findViewById(R.id.drawer_layout)
-        if (drawerLayout.isDrawerOpen(GravityCompat.END)){
-            drawerLayout.closeDrawer(GravityCompat.END)
-        } else {
-            super.onBackPressed()
-        }
     }
     //Navigation for the LeftNavigationMenu
     fun displaySelectedListener (itemId: Int){
@@ -116,7 +122,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         drawerLayout = findViewById(R.id.drawer_layout)
         drawerLayout.closeDrawer(GravityCompat.START)
-
     }
 
 
@@ -124,6 +129,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         displaySelectedListener(item.itemId)
         return true
     }
+
     override fun onResume() {
         super.onResume()
         getProfileData()
