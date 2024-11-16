@@ -6,11 +6,11 @@
     android:gravity="center"
     android:orientation="vertical"
     android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
-    android:background="@color/white">
+    android:background="#fffffd">
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        app:srcCompat="@drawable/wisewallet2" />
+        app:srcCompat="@drawable/wisewallet" />
 
 </LinearLayout>

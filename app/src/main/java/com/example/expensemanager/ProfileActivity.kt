@@ -42,6 +42,10 @@ class ProfileActivity : AppCompatActivity() {
         btnProfile.setOnClickListener {
             this.finish()
         }
+        val config = findViewById<Button>(R.id.settingsBtn)
+        config.setOnClickListener {
+            startActivity(Intent(applicationContext, ConfigurationActivity::class.java))
+        }
         val info = findViewById<Button>(R.id.editBtn)
         info.setOnClickListener {
             startActivity(Intent(applicationContext, EditProfileActivity::class.java))
@@ -50,7 +54,6 @@ class ProfileActivity : AppCompatActivity() {
     fun getProfileData(){
         val profilePic = findViewById<ImageView>(R.id.imageView1)
         val userName = findViewById<TextView>(R.id.textView1)
-        val emailTv = findViewById<TextView>(R.id.textView2)
 
         var name = ""
         val email = user.email
@@ -60,7 +63,6 @@ class ProfileActivity : AppCompatActivity() {
             name = email?.substring(0, email.indexOf("@")).toString()
         }
         userName.text = "$name"
-        emailTv.text = "$email"
 
         // First we create a temp file
         val localFile : File = File.createTempFile("pfp", "jpg")

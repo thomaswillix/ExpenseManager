@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".RegistrationActivity"
     android:gravity="center"
-    android:background="@drawable/background_color"
+    android:background="@color/background"
     android:orientation="vertical">
 
     <ScrollView
@@ -25,14 +25,15 @@
                 android:layout_width="103dp"
                 android:layout_height="103dp"
                 android:layout_marginBottom="40dp"
-                app:srcCompat="@drawable/wisewallet1" />
+                app:srcCompat="@drawable/wisewallet" />
 
             <EditText
                 android:id="@+id/email_registration"
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/background_color"
+                android:background="@color/background"
                 android:hint="example@email.com"
+                android:inputType="textEmailAddress"
                 android:padding="15dp"
                 android:textColor="@color/black"
                 android:textColorHint="#717171"></EditText>
@@ -41,8 +42,9 @@
                 android:id="@+id/password_registration"
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/background_color"
+                android:background="@color/background"
                 android:hint="******"
+                android:inputType="textPassword"
                 android:padding="15dp"
                 android:textColor="@color/black"
                 android:textColorHint="#717171"></EditText>

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="@drawable/background_color"
+    android:background="@color/background"
     tools:context=".MainActivity">
     <ScrollView
         android:layout_width="match_parent"
@@ -24,14 +24,15 @@
                 android:layout_width="103dp"
                 android:layout_height="103dp"
                 android:layout_marginBottom="40dp"
-                app:srcCompat="@drawable/wisewallet1" />
+                app:srcCompat="@drawable/wisewallet" />
 
             <EditText
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:hint="example@email.com"
-                android:background="@drawable/background_color"
+                android:background="@color/background"
                 android:padding="15dp"
+                android:inputType="textEmailAddress"
                 android:textColor="@color/black"
                 android:textColorHint="#717171"
                 android:id="@+id/email_login">
@@ -40,8 +41,9 @@
             <EditText
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/background_color"
+                android:background="@color/background"
                 android:padding="15dp"
+                android:inputType="textPassword"
                 android:hint="******"
                 android:textColor="@color/black"
                 android:textColorHint="#717171"

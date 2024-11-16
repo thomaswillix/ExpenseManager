@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#ECECEC"
+    android:background="#fffffd"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -11,7 +11,7 @@
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:id="@+id/bottomNavigationBar"
-        android:background="#ececec"
+        android:background="@color/background"
         app:menu="@menu/bottom_menu"
         app:itemIconSize="32dp">
     </com.google.android.material.bottomnavigation.BottomNavigationView>

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="#ececec"
+    android:background="#fffffd"
     tools:context=".StatsFragment">
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"

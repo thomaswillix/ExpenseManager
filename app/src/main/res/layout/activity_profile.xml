@@ -57,23 +57,12 @@
                     app:layout_constraintEnd_toEndOf="@id/cardView"
                     app:layout_constraintStart_toStartOf="@id/cardView"
                     app:layout_constraintTop_toBottomOf="@+id/cardView" />
-
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
-                    android:textSize="20sp"
-                    app:layout_constraintEnd_toEndOf="@id/textView1"
-                    app:layout_constraintStart_toStartOf="@id/textView1"
-                    app:layout_constraintTop_toBottomOf="@+id/textView1" />
-
                 <LinearLayout
                     android:id="@+id/linearLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    app:layout_constraintTop_toBottomOf="@+id/textView2">
+                    app:layout_constraintTop_toBottomOf="@+id/textView1">
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/settingsBtn"
@@ -87,7 +76,7 @@
                         android:drawableStart="@drawable/settings"
                         android:drawablePadding="20dp"
                         android:paddingStart="20dp"
-                        android:text="Account Settings"
+                        android:text="Settings"
                         android:textAlignment="viewStart" />
 
                     <androidx.appcompat.widget.AppCompatButton

@@ -146,14 +146,14 @@ class HomeFragment : Fragment() {
     }
 
     private fun insertArrayIntoDropdown(){
-        //Create Dialog
-        val inflater = LayoutInflater.from(activity)
-        val myViewm = inflater.inflate(R.layout.custom_layout_for_insertdata,null)
+        val inflater = LayoutInflater.from(activity) ?: return // Verifica que activity no sea null
+        val myViewm = inflater.inflate(R.layout.custom_layout_for_insertdata, null)
 
-        //Insert array of types in the dropdown
-        val types = resources.getStringArray(R.array.types)
+        val list = mutableListOf<String>()
+        list.addAll(listOf("House", "Food", "Entertainment", "Personal expenses", "Health care", "Transportation", "Debt / Student Loan"))
+
         val stuff = myViewm.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
-        val arrayAdapter = ArrayAdapter(myViewm.context, R.layout.dropdown_item, types)
+        val arrayAdapter = ArrayAdapter(myViewm.context, R.layout.dropdown_item, list)
 
         stuff.setAdapter(arrayAdapter)
     }

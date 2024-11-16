@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".HomeFragment"
-    android:backgroundTint="#ECECEC">
+    android:backgroundTint="@color/background">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
