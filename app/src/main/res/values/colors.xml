@@ -5,6 +5,7 @@
     <color name="background">#FFFFFD</color>
     <color name="nav_header">#03045E</color>
     <color name="dashboard">#0096C7</color>
+    <color name="azul_bonico">#0077B6</color>
     <color name="income"> #4fab9a </color>
     <color name="expense"> #a5270f </color>
     <color name="purple_200">#FFBB86FC</color>

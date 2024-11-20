@@ -1,15 +1,27 @@
 package com.example.expensemanager
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.net.toUri
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageException
+import com.google.firebase.storage.StorageReference
+import java.io.File
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -19,41 +31,82 @@ private const val ARG_PARAM2 = "param2"
 class ProfileViewModeFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
-    private var param2: String? = null
+    // Firebase
+    private lateinit var auth: FirebaseAuth
+    private lateinit var user: FirebaseUser
+    private lateinit var databaseReference: DatabaseReference
+    private lateinit var storageReference: StorageReference
+    private lateinit var uri: Uri
+    private lateinit var myView: View
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    // Profile Pic
+    private lateinit var profilePic: ImageView
+
+    //Fragment
+    private lateinit var editMode: ProfileEditModeFragment
+    private lateinit var viewMode: ProfileViewModeFragment
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile_view_mode, container, false)
+        myView  = inflater.inflate(R.layout.fragment_profile_view_mode, container,false)
+        auth = FirebaseAuth.getInstance()
+        databaseReference = FirebaseDatabase.getInstance().getReference("users")
+        storageReference = FirebaseStorage.getInstance().getReference().child("Users").child(
+            FirebaseAuth.getInstance().uid.toString())
+
+        val btnEdit = myView.findViewById<Button>(R.id.edit_profile_btn)
+        btnEdit.setOnClickListener {
+            val newFragment = ProfileEditModeFragment() // Fragmento que deseas cargar
+            replaceFragment(newFragment) // Cambia el fragmento
+        }
+        getUserData(myView)
+        return  myView
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileViewModeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileViewModeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    private fun replaceFragment(newFragment: ProfileEditModeFragment) {
+        val fragmentTransaction = parentFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.viewMode, fragment)
+        fragmentTransaction.addToBackStack(null)  // Permite volver atrás
+        fragmentTransaction.commit()
+    }
+
+    fun getUserData(myView: View) {
+        user = FirebaseAuth.getInstance().currentUser!!
+        val mName = myView.findViewById<EditText>(R.id.name_profile)
+        val mEmail = myView.findViewById<EditText>(R.id.email_profile)
+        profilePic = myView.findViewById(R.id.imageView2)
+        getProfilePic(profilePic)
+
+        var name = ""
+        val email = user.email!!
+        if (user.displayName != null) {
+            name = user.displayName!!
+        } else{
+            name = email.substring(0, email.indexOf("@"))
+        }
+        mName.setText(name, TextView.BufferType.EDITABLE)
+        mEmail.setText(email, TextView.BufferType.EDITABLE)
+
+
+        val btnBack = myView.findViewById<Button>(R.id.back_profile_btn)
+        btnBack.setOnClickListener {
+            //this.finish() // TODO
+        }
+    }
+    fun getProfilePic(imageView: ImageView){
+        // First we create a temp file
+        val localFile : File = File.createTempFile("pfp", "jpg")
+        // Then we get the File from the storage reference
+        try {
+            storageReference.getFile(localFile).addOnSuccessListener { // if it succeeds we set it to the imageView
+                val bitmap: Bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+                uri = localFile.toUri()
+                imageView.setImageBitmap(bitmap)
             }
+        }catch (e : StorageException){}
     }
 }
