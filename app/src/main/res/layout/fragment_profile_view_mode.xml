@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PersonalDataActivity"
+    tools:context=".ProfileViewModeFragment"
     android:background="#ececec">
 
         <ScrollView
@@ -46,43 +46,44 @@
                             android:src="@drawable/pfp"/>
                     </androidx.cardview.widget.CardView>
 
-                    <EditText
-                        android:id="@+id/name_profile"
+                    <TextView
+                        android:id="@+id/name_profileViewMode"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
-                        android:hint="Name"
+                        android:backgroundTint="#ececec"
+                        android:text="Name"
+                        android:textSize="18sp"
+                        android:clickable="false"
                         android:layout_marginTop="40dp"
                         android:layout_marginLeft="40dp"
                         android:layout_marginRight="40dp"
-                        android:inputType="text"
-                        android:elevation="5dp"
                         android:background="@drawable/btn_background_1"
                         app:layout_constraintEnd_toEndOf="@id/cardView1"
                         app:layout_constraintStart_toStartOf="@id/cardView1"
                         app:layout_constraintTop_toBottomOf="@+id/cardView1" />
 
-                    <EditText
-                        android:id="@+id/email_profile"
+                    <TextView
+                        android:id="@+id/email_profileViewMode"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
-                        android:hint="Email"
+                        android:text="Email"
+                        android:textSize="18sp"
+                        android:clickable="false"
                         android:layout_marginTop="30dp"
                         android:layout_marginLeft="40dp"
                         android:layout_marginRight="40dp"
-                        android:inputType="textEmailAddress"
-                        android:elevation="5dp"
-                        android:background="@drawable/btn_background_1"
-                        app:layout_constraintEnd_toEndOf="@id/name_profile"
-                        app:layout_constraintStart_toStartOf="@id/name_profile"
-                        app:layout_constraintTop_toBottomOf="@+id/name_profile" />
+                        android:background="#ececec"
+                        app:layout_constraintEnd_toEndOf="@id/name_profileViewMode"
+                        app:layout_constraintStart_toStartOf="@id/name_profileViewMode"
+                        app:layout_constraintTop_toBottomOf="@+id/name_profileViewMode" />
 
                     <Button
                         android:id="@+id/confirm_info_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Confirm"
+                        android:text="Edit profile"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:layout_marginTop="120dp"
@@ -90,13 +91,13 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/email_profile"/>
+                        app:layout_constraintTop_toBottomOf="@+id/email_profileViewMode"/>
 
                     <Button
                         android:id="@+id/back_profile_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Go back to Profile"
+                        android:text="Go back"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:layout_marginTop="15dp"
@@ -108,4 +109,5 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
         </ScrollView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,7 +16,7 @@
             android:name=".ConfigurationActivity"
             android:exported="false" />
         <activity
-            android:name=".EditProfileActivity"
+            android:name=".PersonalDataActivity"
             android:exported="false" />
         <activity
             android:name=".ProfileActivity"

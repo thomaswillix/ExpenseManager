@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PersonalDataActivity"
-    android:background="#ececec">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ProfileEditModeFragment">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -43,7 +42,17 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:id="@+id/imageView2"
+                            android:foreground="#A6999797"
                             android:src="@drawable/pfp"/>
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:id="@+id/edit"
+                            android:layout_gravity="bottom|right"
+                            android:layout_marginRight="20dp"
+                            android:layout_marginBottom="10dp"
+
+                            android:src="@drawable/edit"/>
                     </androidx.cardview.widget.CardView>
 
                     <EditText
@@ -78,6 +87,22 @@
                         app:layout_constraintStart_toStartOf="@id/name_profile"
                         app:layout_constraintTop_toBottomOf="@+id/name_profile" />
 
+                    <EditText
+                        android:id="@+id/phone_profile"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginRight="40dp"
+                        android:background="@drawable/btn_background_1"
+                        android:elevation="5dp"
+                        android:hint="Phone Number"
+                        android:inputType="phone|number"
+                        android:padding="10dp"
+                        app:layout_constraintEnd_toEndOf="@id/name_profile"
+                        app:layout_constraintStart_toStartOf="@id/email_profile"
+                        app:layout_constraintTop_toBottomOf="@+id/email_profile" />
+
                     <Button
                         android:id="@+id/confirm_info_btn"
                         android:layout_width="wrap_content"
@@ -108,4 +133,4 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
         </ScrollView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

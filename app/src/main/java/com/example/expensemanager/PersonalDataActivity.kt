@@ -14,7 +14,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.net.toUri
-import com.example.expensemanager.Model.User
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -26,7 +25,7 @@ import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
 import java.io.File
 
-class EditProfileActivity : AppCompatActivity() {
+class PersonalDataActivity : AppCompatActivity() {
     // Firebase
     private lateinit var auth: FirebaseAuth
     private lateinit var user: FirebaseUser

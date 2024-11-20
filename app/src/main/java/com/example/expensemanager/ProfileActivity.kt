@@ -3,20 +3,11 @@ package com.example.expensemanager
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.MenuItem
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.core.net.toUri
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
-import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.FirebaseStorage
@@ -48,7 +39,7 @@ class ProfileActivity : AppCompatActivity() {
         }
         val info = findViewById<Button>(R.id.editBtn)
         info.setOnClickListener {
-            startActivity(Intent(applicationContext, EditProfileActivity::class.java))
+            startActivity(Intent(applicationContext, PersonalDataActivity::class.java))
         }
     }
     fun getProfileData(){
