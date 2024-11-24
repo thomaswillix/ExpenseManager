@@ -1,86 +1,157 @@
 package com.example.expensemanager
 
-import android.app.ProgressDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.TextUtils
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
-import com.google.android.gms.tasks.OnCompleteListener
+import android.view.MenuItem
+import android.widget.FrameLayout
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import com.example.expensemanager.Profile.ProfileActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    private lateinit var toolbar: androidx.appcompat.widget.Toolbar
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var naviView: NavigationView
+    private lateinit var fragment: Fragment
+    private lateinit var ft: FragmentTransaction
+    private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var frameLayout: FrameLayout
 
     // Firebase
+    private lateinit var user: FirebaseUser
     private lateinit var auth: FirebaseAuth
+
+    //Fragment
+    private lateinit var homeFragment: HomeFragment
+    private lateinit var statsFragment: StatsFragment
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            drawerLayout = findViewById(R.id.drawer_layout)
+            if (drawerLayout.isDrawerOpen(GravityCompat.END)){
+                drawerLayout.closeDrawer(GravityCompat.END)
+            }
+            showDialog()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        toolbar = findViewById(R.id.my_toolbar)
         auth = FirebaseAuth.getInstance()
-        // TODO DELETE THIS LATER: JUST FOR DEVELOPING SAKE
-        // --------------------------------------------------------------------
-        if (auth.currentUser != null){
-            startActivity(Intent(applicationContext, HomeActivity::class.java))
-        }
-        // --------------------------------------------------------------------
-        loginDetails()
-    }
-    fun loginDetails(){
-        val mEmail = findViewById<EditText>(R.id.email_login)
-        val mPass = findViewById<EditText>(R.id.password_login)
-        val btnLogin = findViewById<Button>(R.id.btn_login)
-        val mForgetPass = findViewById<TextView>(R.id.forget_password)
-        val mSignUpHere = findViewById<TextView>(R.id.signup_reg)
+        user = FirebaseAuth.getInstance().currentUser!!
+        homeFragment = HomeFragment()
+        statsFragment = StatsFragment()
+        setFragment(homeFragment)
+        setSupportActionBar(toolbar)
 
-        btnLogin.setOnClickListener(View.OnClickListener {
-            val email = mEmail.text.toString().trim()
-            val password = mPass.text.toString().trim()
+        onBackPressedDispatcher.addCallback(this,onBackPressedCallback)
+        drawerLayout = findViewById(R.id.drawer_layout)
+        val toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close)
 
-            if (TextUtils.isEmpty(email)){
-                mEmail.setError("Email is required")
-            }
-            if (TextUtils.isEmpty(password)){
-                mPass.setError("Password is required")
-            }
-            if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
-                val progressDialog = ProgressDialog(this)
-                progressDialog.setMessage("Please wait")
-                progressDialog.show()
-                auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(
-                    OnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            progressDialog.dismiss()
-                            Toast.makeText(
-                                applicationContext,
-                                "Login was completed successfully",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            startActivity(Intent(applicationContext, HomeActivity::class.java))
-                        } else {
-                            progressDialog.dismiss()
-                            Toast.makeText(
-                                applicationContext,
-                                "Login failed",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        naviView = findViewById(R.id.nav_view)
+        naviView.setNavigationItemSelectedListener (this)
+
+        bottomNavigationView = findViewById(R.id.bottomNavigationBar)
+        frameLayout = findViewById(R.id.main_frame)
+        //Navigation from the bottomNavigationBar
+        bottomNavigationView.setOnNavigationItemSelectedListener {
+                when(it.itemId){
+                    R.id.profile -> {
+                        setFragment(homeFragment)
+                        true
                     }
-                )
+                    R.id.home -> {
+                        setFragment(homeFragment)
+                        true
+                    }
+                    R.id.stats -> {
+                        setFragment(statsFragment)
+                        true
+                    }
+                    else -> false
+                }
+        }
+    }
+    private fun showDialog(){
+        MaterialAlertDialogBuilder(this).apply {
+            setTitle("Are you sure?")
+            setMessage("Do you want to log out?")
+            setPositiveButton("Yes") { _, _ -> auth.signOut() }
+            setNegativeButton("No", null)
+            show()
+        }
+    }
+    fun setFragment(fragment: Fragment){
+        val fragmentTransaction : FragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.main_frame, fragment)
+        fragmentTransaction.commit()
+    }
+    //Navigation for the LeftNavigationMenu
+    fun displaySelectedListener (itemId: Int){
+        fragment = Fragment()
+        when(itemId){
+            R.id.profile -> {
+                startActivity(Intent(applicationContext, ProfileActivity::class.java))
+                fragment = HomeFragment()
             }
-        })
+            R.id.home -> {
+                fragment = HomeFragment()
+            }
+            R.id.stats -> {
+                fragment = StatsFragment()
+                setFragment(statsFragment)
+            }
+        }
+        if (fragment != null){
+            ft = getSupportFragmentManager().beginTransaction()
+            ft.replace(R.id.main_frame, fragment)
+            ft.commit()
+        }
+        drawerLayout = findViewById(R.id.drawer_layout)
+        drawerLayout.closeDrawer(GravityCompat.START)
+    }
 
-        //Registration activity
-        mSignUpHere.setOnClickListener(View.OnClickListener {
-            startActivity(Intent(this, RegistrationActivity::class.java))
-        })
-        //Reset password activity
-        mForgetPass.setOnClickListener(View.OnClickListener {
-            startActivity(Intent(this, ResetActivity::class.java))
-        })
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        displaySelectedListener(item.itemId)
+        return true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getProfileData()
+    }
+
+    private fun getProfileData(){
+        user = FirebaseAuth.getInstance().currentUser!!
+        if (user != null)
+        {
+            var name = ""
+            if(user.displayName != null){
+                name = user.displayName!!
+            } else{
+                val email = user.email
+                name = email?.substring(0, email.indexOf("@")).toString()
+            }
+            toolbar.title = "Welcome,\n$name"
+        } else{
+            toolbar.title = "Welcome,\nuser"
+        }
     }
 }

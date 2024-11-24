@@ -61,17 +61,11 @@ dependencies {
     implementation("com.google.android.material:material:1.8.0")
     // Image picker to change profile picture
     implementation("com.github.dhaval2404:imagepicker:2.1")
-    // Import the firebase BoM
+    // Firebase imports
     implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
-    // Dependency for the Firebase Analytics library
-    implementation("com.google.firebase:firebase-analytics")
-    // Dependency for the Cloud Storage library
     implementation("com.google.firebase:firebase-storage")
-    // Dependency for the Firebase Authentication library
     implementation("com.google.firebase:firebase-auth")
-    // Dependency for the Realtime Database library
     implementation("com.google.firebase:firebase-database")
-    // Dependency for the Firebase Core library
     implementation("com.google.firebase:firebase-core:10.0.1")
     //implementation("com.firebaseui:firebase-ui-database")
     implementation("com.firebase:firebase-client-android:2.5.2")

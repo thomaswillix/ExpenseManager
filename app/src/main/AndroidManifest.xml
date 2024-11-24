@@ -17,22 +17,19 @@
             android:name=".ConfigurationActivity"
             android:exported="false" />
         <activity
-            android:name=".PersonalDataActivity"
+            android:name=".Profile.PersonalDataActivity"
             android:exported="false" />
         <activity
-            android:name=".ProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".HomeActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ResetActivity"
-            android:exported="false" />
-        <activity
-            android:name=".RegistrationActivity"
+            android:name=".Profile.ProfileActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".SignupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

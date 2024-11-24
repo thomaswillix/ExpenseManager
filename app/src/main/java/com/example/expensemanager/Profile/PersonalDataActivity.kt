@@ -1,8 +1,8 @@
-package com.example.expensemanager
+package com.example.expensemanager.Profile
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.example.expensemanager.R
 
 
 class PersonalDataActivity : AppCompatActivity() {
