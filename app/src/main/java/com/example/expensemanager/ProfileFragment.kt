@@ -32,8 +32,6 @@ import java.io.File
 
 
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
     // Firebase
     private lateinit var auth: FirebaseAuth
     private lateinit var user: FirebaseUser
@@ -41,7 +39,8 @@ class ProfileFragment : Fragment() {
     private lateinit var storageReference: StorageReference
     private lateinit var uri: Uri
     private lateinit var myView: View
-
+    private lateinit var editModeLayout: View
+    private lateinit var viewModeLayout: View
     // Profile Pic
     private lateinit var profilePic: ImageView
 
@@ -63,19 +62,19 @@ class ProfileFragment : Fragment() {
         val btnEdit = myView.findViewById<Button>(R.id.edit_profile_btn)
 
         //EditMode
-        val editModeLayout = myView.findViewById<LinearLayout>(R.id.editModeLayout)
+        editModeLayout = myView.findViewById<LinearLayout>(R.id.editModeLayout)
         val btnCancel = myView.findViewById<Button>(R.id.cancel_view_btn)
 
         // Mostrar la vista de perfil por defecto
         viewModeLayout.visibility = View.VISIBLE
         editModeLayout.visibility = View.GONE
+        getUserData(myView)
 
         btnBack.setOnClickListener {
             activity?.finish()
         }
         // Cambiar al modo de edición
         btnEdit.setOnClickListener {
-            getUserData(myView)
             viewModeLayout.visibility = View.GONE
             editModeLayout.visibility = View.VISIBLE
         }
@@ -87,24 +86,10 @@ class ProfileFragment : Fragment() {
         return  myView
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        profilePic = myView.findViewById(R.id.imageView2)
-        if (resultCode == Activity.RESULT_OK) {
-            //Image Uri will not be null for RESULT_OK
-            uri = data?.data!!
-            // Use Uri object instead of File to avoid storage permissions
-            profilePic.setImageURI(uri)
-        } else if (resultCode == ImagePicker.RESULT_ERROR) {
-            Toast.makeText(activity, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(activity, "Task Cancelled", Toast.LENGTH_SHORT).show()
-        }
-    }
     fun getUserData(myView: View) {
         user = FirebaseAuth.getInstance().currentUser!!
         //ViewMode
-        val imageeViewMode = myView.findViewById<ImageView>(R.id.imageView2)
+        val imageViewMode = myView.findViewById<ImageView>(R.id.imageView2)
 
         val tvName = myView.findViewById<TextView>(R.id.name_profileViewMode)
         val tvEmail = myView.findViewById<TextView>(R.id.email_profileViewMode)
@@ -119,7 +104,7 @@ class ProfileFragment : Fragment() {
         val etPhone = myView.findViewById<EditText>(R.id.phone_profile)
         //val number: PhoneAuthCredential
         getProfilePic(profilePic)
-        getProfilePic(imageeViewMode)
+        getProfilePic(imageViewMode)
 
         var name = ""
         val email = user.email!!
@@ -177,8 +162,6 @@ class ProfileFragment : Fragment() {
             }
     }
     fun uploadProfilePic(progressDialog: ProgressDialog){
-        profilePic = myView.findViewById(R.id.imageView2)
-
         if (uri == null){
             uri = Uri.parse("android.resource://${android.R.attr.packageNames}${R.drawable.pfp}")
             profilePic.setImageURI(uri)
@@ -186,7 +169,9 @@ class ProfileFragment : Fragment() {
         storageReference.putFile(uri).addOnSuccessListener {
             progressDialog.dismiss()
             Toast.makeText(activity, "Profile updated succesfully", Toast.LENGTH_SHORT).show()
-            //this.finish() TODO
+            editModeLayout.visibility = View.GONE
+            viewModeLayout.visibility = View.VISIBLE
+
         }.addOnFailureListener{
             progressDialog.dismiss()
             Toast.makeText(activity, "Failed to upload the image", Toast.LENGTH_SHORT).show()
@@ -200,5 +185,19 @@ class ProfileFragment : Fragment() {
             .compress(1024)			//Final image size will be less than 1 MB(Optional)
             .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
             .start()
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        profilePic = myView.findViewById(R.id.imageView_Edit)
+        if (resultCode == Activity.RESULT_OK) {
+            //Image Uri will not be null for RESULT_OK
+            uri = data?.data!!
+            // Use Uri object instead of File to avoid storage permissions
+            profilePic.setImageURI(uri)
+        } else if (resultCode == ImagePicker.RESULT_ERROR) {
+            Toast.makeText(activity, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(activity, "Task Cancelled", Toast.LENGTH_SHORT).show()
+        }
     }
 }

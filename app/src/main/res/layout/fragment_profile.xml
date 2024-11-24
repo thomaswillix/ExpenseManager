@@ -168,18 +168,25 @@
                     android:id="@+id/imageView_Edit"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:foreground="#A6B4B1B1"
+                    android:foreground="#36000000"
                     android:src="@drawable/pfp" />
-
-                <ImageView
-                    android:id="@+id/edit_pfp"
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardView2_Edit"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:layout_gravity="bottom|right"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginBottom="10dp"
+                    app:cardCornerRadius="100dp"
+                    android:layout_gravity="center"
+                    android:elevation="5dp">
+                    <ImageView
+                        android:id="@+id/edit_pfp"
+                        android:padding="12dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center|fill"
+                        android:src="@drawable/edit"
+                        android:background="#000000"/>
+                </androidx.cardview.widget.CardView>
 
-                    android:src="@drawable/edit" />
             </androidx.cardview.widget.CardView>
 
             <EditText
