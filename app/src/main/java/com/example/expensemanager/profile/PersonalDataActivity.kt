@@ -1,4 +1,4 @@
-package com.example.expensemanager.Profile
+package com.example.expensemanager.profile
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

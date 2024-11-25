@@ -1,5 +1,6 @@
 package com.example.expensemanager
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
@@ -16,7 +17,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.expensemanager.Model.Data
+import com.example.expensemanager.model.Data
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -30,13 +31,13 @@ import java.util.Date
 class HomeFragment : Fragment() {
 
     //Floating button
-    private lateinit var fab_main_btn: FloatingActionButton
-    private lateinit var fab_income_btn: FloatingActionButton
-    private lateinit var fab_expense_btn: FloatingActionButton
+    private lateinit var fabMainBtn: FloatingActionButton
+    private lateinit var fabIncomeBtn: FloatingActionButton
+    private lateinit var fabExpenseBtn: FloatingActionButton
 
     //Floating button textview
-    private lateinit var fab_income_txt: TextView
-    private lateinit var fab_expense_txt: TextView
+    private lateinit var fabIncomeTxt: TextView
+    private lateinit var fabExpenseTxt: TextView
 
     //Flag
     private var isOpen: Boolean = false
@@ -53,7 +54,7 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val myView : View = inflater.inflate(R.layout.fragment_home, container,false)
         auth = FirebaseAuth.getInstance()
         val user : FirebaseUser = auth.currentUser!!
@@ -63,43 +64,43 @@ class HomeFragment : Fragment() {
 
         insertArrayIntoDropdown()
         //Connect floating button to layout
-        fab_main_btn = myView.findViewById(R.id.fb_main_plus_btn)
-        fab_income_btn =myView.findViewById(R.id.income_Ft_btn)
-        fab_expense_btn =myView.findViewById(R.id.expense_Ft_btn)
+        fabMainBtn = myView.findViewById(R.id.fb_main_plus_btn)
+        fabIncomeBtn =myView.findViewById(R.id.income_Ft_btn)
+        fabExpenseBtn =myView.findViewById(R.id.expense_Ft_btn)
 
         //Connect floating text to layout
-        fab_income_txt = myView.findViewById(R.id.income_ft_text)
-        fab_expense_txt = myView.findViewById(R.id.expense_ft_text)
+        fabIncomeTxt = myView.findViewById(R.id.income_ft_text)
+        fabExpenseTxt = myView.findViewById(R.id.expense_ft_text)
 
         //Animation
         fadeOpen = AnimationUtils.loadAnimation(activity, R.anim.fade_open)
         fadeClose = AnimationUtils.loadAnimation(activity, R.anim.fade_close)
 
-        fab_main_btn.setOnClickListener {
+        fabMainBtn.setOnClickListener {
 
             addData()
 
             if (isOpen){
-                fab_income_btn.startAnimation(fadeClose)
-                fab_expense_btn.startAnimation(fadeClose)
-                fab_income_btn.isClickable = false
-                fab_expense_btn.isClickable = false
+                fabIncomeBtn.startAnimation(fadeClose)
+                fabExpenseBtn.startAnimation(fadeClose)
+                fabIncomeBtn.isClickable = false
+                fabExpenseBtn.isClickable = false
 
-                fab_income_txt.startAnimation(fadeClose)
-                fab_expense_txt.startAnimation(fadeClose)
-                fab_income_txt.isClickable = false
-                fab_expense_txt.isClickable = false
+                fabIncomeTxt.startAnimation(fadeClose)
+                fabExpenseTxt.startAnimation(fadeClose)
+                fabIncomeTxt.isClickable = false
+                fabExpenseTxt.isClickable = false
                 isOpen = false
             } else{
-                fab_income_btn.startAnimation(fadeOpen)
-                fab_expense_btn.startAnimation(fadeOpen)
-                fab_income_btn.isClickable = true
-                fab_expense_btn.isClickable = true
+                fabIncomeBtn.startAnimation(fadeOpen)
+                fabExpenseBtn.startAnimation(fadeOpen)
+                fabIncomeBtn.isClickable = true
+                fabExpenseBtn.isClickable = true
 
-                fab_income_txt.startAnimation(fadeOpen)
-                fab_expense_txt.startAnimation(fadeOpen)
-                fab_income_txt.isClickable = true
-                fab_expense_txt.isClickable = true
+                fabIncomeTxt.startAnimation(fadeOpen)
+                fabExpenseTxt.startAnimation(fadeOpen)
+                fabIncomeTxt.isClickable = true
+                fabExpenseTxt.isClickable = true
                 isOpen = true
             }
         }
@@ -107,26 +108,26 @@ class HomeFragment : Fragment() {
     }
     private fun ftAnimation(){
         if (isOpen){
-            fab_income_btn.startAnimation(fadeClose)
-            fab_expense_btn.startAnimation(fadeClose)
-            fab_income_btn.isClickable = false
-            fab_expense_btn.isClickable = false
+            fabIncomeBtn.startAnimation(fadeClose)
+            fabExpenseBtn.startAnimation(fadeClose)
+            fabIncomeBtn.isClickable = false
+            fabExpenseBtn.isClickable = false
 
-            fab_income_txt.startAnimation(fadeClose)
-            fab_expense_txt.startAnimation(fadeClose)
-            fab_income_txt.isClickable = false
-            fab_expense_txt.isClickable = false
+            fabIncomeTxt.startAnimation(fadeClose)
+            fabExpenseTxt.startAnimation(fadeClose)
+            fabIncomeTxt.isClickable = false
+            fabExpenseTxt.isClickable = false
             isOpen = false
         } else{
-            fab_income_btn.startAnimation(fadeOpen)
-            fab_expense_btn.startAnimation(fadeOpen)
-            fab_income_btn.isClickable = true
-            fab_expense_btn.isClickable = true
+            fabIncomeBtn.startAnimation(fadeOpen)
+            fabExpenseBtn.startAnimation(fadeOpen)
+            fabIncomeBtn.isClickable = true
+            fabExpenseBtn.isClickable = true
 
-            fab_income_txt.startAnimation(fadeOpen)
-            fab_expense_txt.startAnimation(fadeOpen)
-            fab_income_txt.isClickable = true
-            fab_expense_txt.isClickable = true
+            fabIncomeTxt.startAnimation(fadeOpen)
+            fabExpenseTxt.startAnimation(fadeOpen)
+            fabIncomeTxt.isClickable = true
+            fabExpenseTxt.isClickable = true
             isOpen = true
         }
     }
@@ -135,46 +136,47 @@ class HomeFragment : Fragment() {
 /*        */
         //Fab button income
 
-        fab_income_btn.setOnClickListener {
+        fabIncomeBtn.setOnClickListener {
             incomeDataInsert()
             ftAnimation()
         }
-        fab_expense_btn.setOnClickListener {
+        fabExpenseBtn.setOnClickListener {
             expenseDataInsert()
             ftAnimation()
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun insertArrayIntoDropdown(){
-        val inflater = LayoutInflater.from(activity) ?: return // Verifica que activity no sea null
-        val myViewm = inflater.inflate(R.layout.custom_layout_for_insertdata, null)
+        val inflater = LayoutInflater.from(activity) ?: return // Verify that activity is not null
+        val myView = inflater.inflate(R.layout.custom_layout_for_insertdata, null)
 
         val list = mutableListOf<String>()
         list.addAll(listOf("House", "Food", "Entertainment", "Personal expenses", "Health care", "Transportation", "Debt / Student Loan"))
 
-        val stuff = myViewm.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
-        val arrayAdapter = ArrayAdapter(myViewm.context, R.layout.dropdown_item, list)
+        val stuff = myView.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
+        val arrayAdapter = ArrayAdapter(myView.context, R.layout.dropdown_item, list)
 
         stuff.setAdapter(arrayAdapter)
     }
-    fun incomeDataInsert(){
+    private fun incomeDataInsert(){
         //Create Dialog
         val myDialog =  (AlertDialog.Builder(activity))
         val inflater = LayoutInflater.from(activity)
-        val myViewm = inflater.inflate(R.layout.custom_layout_for_insertdata,null)
-        myDialog.setView(myViewm)
+        val myView = inflater.inflate(R.layout.custom_layout_for_insertdata,null)
+        myDialog.setView(myView)
         val dialog:AlertDialog = myDialog.create()
         dialog.setCancelable(false)
 
         //Get id's from view
-        val editAmount = myViewm.findViewById<EditText>(R.id.amount_edt)
-        val editNote = myViewm.findViewById<EditText>(R.id.note_edt)
+        val editAmount = myView.findViewById<EditText>(R.id.amount_edt)
+        val editNote = myView.findViewById<EditText>(R.id.note_edt)
 
-        val typeOfIncome = myViewm.findViewById<TextInputLayout>(R.id.textInputLayout)
+        val typeOfIncome = myView.findViewById<TextInputLayout>(R.id.textInputLayout)
         val selectedValue: Editable? = (typeOfIncome.editText as AutoCompleteTextView).text
 
-        val btnCancel = myViewm.findViewById<Button>(R.id.btn_cancel)
-        val btnSave = myViewm.findViewById<Button>(R.id.btn_save)
+        val btnCancel = myView.findViewById<Button>(R.id.btn_cancel)
+        val btnSave = myView.findViewById<Button>(R.id.btn_save)
 
         dialog.show()
 
@@ -187,13 +189,13 @@ class HomeFragment : Fragment() {
                 return@setOnClickListener
             }
             if (TextUtils.isEmpty(amountStr)){
-                editAmount.setError("Required field...")
+                editAmount.error = "Required field..."
                 return@setOnClickListener
             }
             val ourAmount : Int = Integer.parseInt(amountStr)
 
             if (TextUtils.isEmpty(noteStr)){
-                editNote.setError("Required field...")
+                editNote.error = "Required field..."
                 return@setOnClickListener
             }
             val id : String = incomeDatabase.push().key!!
@@ -210,23 +212,23 @@ class HomeFragment : Fragment() {
         }
 
     }
-    fun expenseDataInsert(){
+    private fun expenseDataInsert(){
         val myDialog =  (AlertDialog.Builder(activity))
         val inflater = LayoutInflater.from(activity)
-        val myViewm = inflater.inflate(R.layout.custom_layout_for_insertdata,null)
-        myDialog.setView(myViewm)
+        val myView = inflater.inflate(R.layout.custom_layout_for_insertdata,null)
+        myDialog.setView(myView)
         val dialog:AlertDialog = myDialog.create()
         dialog.setCancelable(false)
 
         //Get id's from view
-        val editAmount = myViewm.findViewById<EditText>(R.id.amount_edt)
-        val editNote = myViewm.findViewById<EditText>(R.id.note_edt)
+        val editAmount = myView.findViewById<EditText>(R.id.amount_edt)
+        val editNote = myView.findViewById<EditText>(R.id.note_edt)
 
-        val typeOfIncome = myViewm.findViewById<TextInputLayout>(R.id.textInputLayout)
+        val typeOfIncome = myView.findViewById<TextInputLayout>(R.id.textInputLayout)
         val selectedValue: Editable? = (typeOfIncome.editText as AutoCompleteTextView).text
 
-        val btnCancel = myViewm.findViewById<Button>(R.id.btn_cancel)
-        val btnSave = myViewm.findViewById<Button>(R.id.btn_save)
+        val btnCancel = myView.findViewById<Button>(R.id.btn_cancel)
+        val btnSave = myView.findViewById<Button>(R.id.btn_save)
 
         dialog.show()
 
@@ -239,13 +241,13 @@ class HomeFragment : Fragment() {
                 return@setOnClickListener
             }
             if (TextUtils.isEmpty(amountStr)){
-                editAmount.setError("Required field...")
+                editAmount.error = "Required field..."
                 return@setOnClickListener
             }
             val ourAmount : Int = Integer.parseInt(amountStr)
 
             if (TextUtils.isEmpty(noteStr)){
-                editNote.setError("Required field...")
+                editNote.error = "Required field..."
                 return@setOnClickListener
             }
             val id : String = expenseDatabase.push().key!!

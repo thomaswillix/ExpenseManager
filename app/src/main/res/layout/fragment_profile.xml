@@ -4,8 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Profile.ProfileFragment"
-    android:background="#ececec">
+    tools:context=".profile.ProfileFragment"
+    android:background="#ececec"
+    tools:ignore="ExtraText,HardcodedText" >
 
     <!-- Vista de Perfil (Modo Vista) -->
     <LinearLayout
@@ -26,6 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="150dp"
                 android:scaleType="fitXY"
+                android:contentDescription="background picture"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -46,7 +48,8 @@
                     android:id="@+id/imageView2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/pfp" />
+                    android:src="@drawable/pfp"
+                    android:contentDescription="Profile picture"/>
             </androidx.cardview.widget.CardView>
 
             <TextView
@@ -64,7 +67,8 @@
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="@id/cardView1"
                 app:layout_constraintStart_toStartOf="@id/cardView1"
-                app:layout_constraintTop_toBottomOf="@+id/cardView1" />
+                app:layout_constraintTop_toBottomOf="@+id/cardView1"
+                tools:ignore="TextContrastCheck" />
 
             <TextView
                 android:id="@+id/email_profileViewMode"
@@ -80,7 +84,8 @@
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="@id/name_profileViewMode"
                 app:layout_constraintStart_toStartOf="@id/name_profileViewMode"
-                app:layout_constraintTop_toBottomOf="@+id/name_profileViewMode" />
+                app:layout_constraintTop_toBottomOf="@+id/name_profileViewMode"
+                tools:ignore="TextContrastCheck" />
 
             <TextView
                 android:id="@+id/phone_profileViewMode"
@@ -96,7 +101,8 @@
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="@id/email_profileViewMode"
                 app:layout_constraintStart_toStartOf="@id/email_profileViewMode"
-                app:layout_constraintTop_toBottomOf="@+id/email_profileViewMode" />
+                app:layout_constraintTop_toBottomOf="@+id/email_profileViewMode"
+                tools:ignore="TextContrastCheck" />
 
             <Button
                 android:id="@+id/edit_profile_btn"
@@ -126,7 +132,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintVertical_bias="1.0"
-                app:layout_constraintTop_toBottomOf="@+id/phone_profileViewMode"/>
+                app:layout_constraintTop_toBottomOf="@+id/phone_profileViewMode" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
@@ -137,7 +143,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        tools:ignore="MissingConstraints">
+        tools:ignore="MissingConstraints, TextColor">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -148,6 +154,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="150dp"
                 android:scaleType="fitXY"
+                android:contentDescription="background picture"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -169,7 +176,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:foreground="#36000000"
-                    android:src="@drawable/pfp" />
+                    android:src="@drawable/pfp"
+                    android:contentDescription="Profile picture"/>
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardView2_Edit"
                     android:layout_width="50dp"
@@ -184,7 +192,8 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center|fill"
                         android:src="@drawable/edit"
-                        android:background="#000000"/>
+                        android:background="#000000"
+                        android:contentDescription="Edit profile picture icon"/>
                 </androidx.cardview.widget.CardView>
 
             </androidx.cardview.widget.CardView>
@@ -203,7 +212,8 @@
                 android:padding="10dp"
                 app:layout_constraintEnd_toEndOf="@id/cardView_Edit"
                 app:layout_constraintStart_toStartOf="@id/cardView_Edit"
-                app:layout_constraintTop_toBottomOf="@+id/cardView_Edit" />
+                app:layout_constraintTop_toBottomOf="@+id/cardView_Edit"
+                tools:ignore="Autofill" />
 
             <EditText
                 android:id="@+id/email_profile"
@@ -219,7 +229,8 @@
                 android:padding="10dp"
                 app:layout_constraintEnd_toEndOf="@id/name_profile"
                 app:layout_constraintStart_toStartOf="@id/name_profile"
-                app:layout_constraintTop_toBottomOf="@+id/name_profile" />
+                app:layout_constraintTop_toBottomOf="@+id/name_profile"
+                tools:ignore="Autofill" />
 
             <EditText
                 android:id="@+id/phone_profile"
@@ -235,7 +246,8 @@
                 android:padding="10dp"
                 app:layout_constraintEnd_toEndOf="@id/name_profile"
                 app:layout_constraintStart_toStartOf="@id/email_profile"
-                app:layout_constraintTop_toBottomOf="@+id/email_profile" />
+                app:layout_constraintTop_toBottomOf="@+id/email_profile"
+                tools:ignore="Autofill" />
 
             <Button
                 android:id="@+id/cancel_view_btn"
@@ -249,7 +261,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/phone_profile"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintVertical_bias="1.0"
+                tools:ignore="HardcodedText" />
 
             <Button
                 android:id="@+id/confirm_info_btn"
@@ -265,7 +278,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/cancel_view_btn"
-                app:layout_constraintTop_toBottomOf="@+id/phone_profile" />
+                app:layout_constraintTop_toBottomOf="@+id/phone_profile"
+                tools:ignore="HardcodedText" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>>

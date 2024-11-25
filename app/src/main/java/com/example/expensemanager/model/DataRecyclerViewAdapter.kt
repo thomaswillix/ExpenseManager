@@ -1,4 +1,4 @@
-package com.example.expensemanager.Model
+package com.example.expensemanager.model
 
 import android.view.LayoutInflater
 import android.view.View

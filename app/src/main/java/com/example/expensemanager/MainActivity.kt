@@ -11,7 +11,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import com.example.expensemanager.Profile.ProfileActivity
+import com.example.expensemanager.profile.ProfileActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         bottomNavigationView = findViewById(R.id.bottomNavigationBar)
         frameLayout = findViewById(R.id.main_frame)
         //Navigation from the bottomNavigationBar
+        @Suppress("DEPRECATION")
         bottomNavigationView.setOnNavigationItemSelectedListener {
                 when(it.itemId){
                     R.id.profile -> {
@@ -92,18 +93,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         MaterialAlertDialogBuilder(this).apply {
             setTitle("Are you sure?")
             setMessage("Do you want to log out?")
-            setPositiveButton("Yes") { _, _ -> auth.signOut() }
+            setPositiveButton("Yes") { _, _ ->
+                auth.signOut()
+                val intent = Intent(applicationContext, LoginActivity::class.java)
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                startActivity(intent)
+                finish()
+            }
             setNegativeButton("No", null)
             show()
         }
     }
-    fun setFragment(fragment: Fragment){
+    private fun setFragment(fragment: Fragment){
         val fragmentTransaction : FragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.main_frame, fragment)
         fragmentTransaction.commit()
     }
     //Navigation for the LeftNavigationMenu
-    fun displaySelectedListener (itemId: Int){
+    private fun displaySelectedListener (itemId: Int){
         fragment = Fragment()
         when(itemId){
             R.id.profile -> {
@@ -118,11 +125,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 setFragment(statsFragment)
             }
         }
-        if (fragment != null){
-            ft = getSupportFragmentManager().beginTransaction()
-            ft.replace(R.id.main_frame, fragment)
-            ft.commit()
-        }
+        ft = supportFragmentManager.beginTransaction()
+        ft.replace(R.id.main_frame, fragment)
+        ft.commit()
+
         drawerLayout = findViewById(R.id.drawer_layout)
         drawerLayout.closeDrawer(GravityCompat.START)
     }
@@ -140,18 +146,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun getProfileData(){
         user = FirebaseAuth.getInstance().currentUser!!
-        if (user != null)
-        {
-            var name = ""
-            if(user.displayName != null){
-                name = user.displayName!!
-            } else{
-                val email = user.email
-                name = email?.substring(0, email.indexOf("@")).toString()
-            }
-            toolbar.title = "Welcome,\n$name"
+        val name :String
+        if(user.displayName != null){
+            name = user.displayName!!
         } else{
-            toolbar.title = "Welcome,\nuser"
+            val email = user.email
+            name = email?.substring(0, email.indexOf("@")).toString()
         }
+        toolbar.title = "Welcome,\n$name"
     }
 }

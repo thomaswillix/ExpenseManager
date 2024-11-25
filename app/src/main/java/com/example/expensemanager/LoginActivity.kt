@@ -1,20 +1,15 @@
 package com.example.expensemanager
 
-import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Patterns
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.expensemanager.databinding.ActivityLoginBinding
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
@@ -29,13 +24,13 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         // TODO DELETE THIS LATER: JUST FOR DEVELOPING SAKE
         // --------------------------------------------------------------------
-        /*if (auth.currentUser != null){
+        if (auth.currentUser != null){
             startActivity(Intent(applicationContext, MainActivity::class.java))
-        }*/
+        }
         // --------------------------------------------------------------------
         login()
     }
-    fun login(){
+    private fun login(){
         binding.loginBtn.setOnClickListener {
             val email = binding.loginEmail.text.toString()
             val password = binding.loginPassword.text.toString()

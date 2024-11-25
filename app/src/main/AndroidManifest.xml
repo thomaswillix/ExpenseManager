@@ -17,10 +17,10 @@
             android:name=".ConfigurationActivity"
             android:exported="false" />
         <activity
-            android:name=".Profile.PersonalDataActivity"
+            android:name=".profile.PersonalDataActivity"
             android:exported="false" />
         <activity
-            android:name=".Profile.ProfileActivity"
+            android:name=".profile.ProfileActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

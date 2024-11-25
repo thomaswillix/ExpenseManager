@@ -1,4 +1,6 @@
-package com.example.expensemanager.Profile
+@file:Suppress("DEPRECATION")
+
+package com.example.expensemanager.profile
 
 import android.app.Activity
 import android.app.ProgressDialog
@@ -47,7 +49,7 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         myView  = inflater.inflate(R.layout.fragment_profile, container,false)
         auth = FirebaseAuth.getInstance()
@@ -65,7 +67,7 @@ class ProfileFragment : Fragment() {
         editModeLayout = myView.findViewById<LinearLayout>(R.id.editModeLayout)
         val btnCancel = myView.findViewById<Button>(R.id.cancel_view_btn)
 
-        // Mostrar la vista de perfil por defecto
+        // Show view mode by default
         viewModeLayout.visibility = View.VISIBLE
         editModeLayout.visibility = View.GONE
         getUserData(myView)
@@ -73,7 +75,7 @@ class ProfileFragment : Fragment() {
         btnBack.setOnClickListener {
             activity?.finish()
         }
-        // Cambiar al modo de edición
+        // Change into edit mode
         btnEdit.setOnClickListener {
             viewModeLayout.visibility = View.GONE
             editModeLayout.visibility = View.VISIBLE
@@ -86,7 +88,7 @@ class ProfileFragment : Fragment() {
         return  myView
     }
 
-    fun getUserData(myView: View) {
+    private fun getUserData(myView: View) {
         user = FirebaseAuth.getInstance().currentUser!!
         //ViewMode
         val imageViewMode = myView.findViewById<ImageView>(R.id.imageView2)
@@ -96,7 +98,7 @@ class ProfileFragment : Fragment() {
         val tvPhone = myView.findViewById<TextView>(R.id.phone_profileViewMode)
 
         //Edit Mode
-        profilePic = myView.findViewById<ImageView>(R.id.imageView_Edit)
+        profilePic = myView.findViewById(R.id.imageView_Edit)
         val btnSave = myView.findViewById<Button>(R.id.confirm_info_btn)
 
         val etName = myView.findViewById<EditText>(R.id.name_profile)
@@ -106,17 +108,17 @@ class ProfileFragment : Fragment() {
         getProfilePic(profilePic)
         getProfilePic(imageViewMode)
 
-        var name = ""
+        val name : String
         val email = user.email!!
         var phone = ""
-        if (user.displayName != null) name = user.displayName!!
-        else name = email.substring(0, email.indexOf("@"))
+        name = if (user.displayName != null) user.displayName!!
+        else email.substring(0, email.indexOf("@"))
 
         if (user.phoneNumber != null) phone = user.phoneNumber.toString()
 
-        tvName.setText(name)
-        tvEmail.setText(email)
-        tvPhone.setText(phone)
+        tvName.text = name
+        tvEmail.text = email
+        tvPhone.text = phone
 
         etName.setText(name, TextView.BufferType.EDITABLE)
         etEmail.setText(email, TextView.BufferType.EDITABLE)
@@ -130,7 +132,7 @@ class ProfileFragment : Fragment() {
             changeProfilePic()
         }
     }
-    fun getProfilePic(imageView: ImageView){
+    private fun getProfilePic(imageView: ImageView){
         // First we create a temp file
         val localFile : File = File.createTempFile("pfp", "jpg")
         // Then we get the File from the storage reference
@@ -140,9 +142,9 @@ class ProfileFragment : Fragment() {
                 uri = localFile.toUri()
                 imageView.setImageBitmap(bitmap)
             }
-        }catch (e : StorageException){}
+        }catch (_: StorageException){}
     }
-    fun changeDetails(name: String, email: String){
+    private fun changeDetails(name: String, email: String){
         val profileUpdates = userProfileChangeRequest {
             displayName = name
         }
@@ -161,14 +163,14 @@ class ProfileFragment : Fragment() {
                 }
             }
     }
-    fun uploadProfilePic(progressDialog: ProgressDialog){
+    private fun uploadProfilePic(progressDialog: ProgressDialog){
         if (uri == null){
             uri = Uri.parse("android.resource://${android.R.attr.packageNames}${R.drawable.pfp}")
             profilePic.setImageURI(uri)
         }
         storageReference.putFile(uri).addOnSuccessListener {
             progressDialog.dismiss()
-            Toast.makeText(activity, "Profile updated succesfully", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, "Profile updated successfully", Toast.LENGTH_SHORT).show()
             editModeLayout.visibility = View.GONE
             viewModeLayout.visibility = View.VISIBLE
 
@@ -178,7 +180,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    fun changeProfilePic (){
+    private fun changeProfilePic (){
         ImagePicker.with(this)
         ImagePicker.with(this)
             .cropSquare()	//Crop square image, its same as crop(1f, 1f)
@@ -186,18 +188,23 @@ class ProfileFragment : Fragment() {
             .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
             .start()
     }
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         profilePic = myView.findViewById(R.id.imageView_Edit)
-        if (resultCode == Activity.RESULT_OK) {
-            //Image Uri will not be null for RESULT_OK
-            uri = data?.data!!
-            // Use Uri object instead of File to avoid storage permissions
-            profilePic.setImageURI(uri)
-        } else if (resultCode == ImagePicker.RESULT_ERROR) {
-            Toast.makeText(activity, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(activity, "Task Cancelled", Toast.LENGTH_SHORT).show()
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                //Image Uri will not be null for RESULT_OK
+                uri = data?.data!!
+                // Use Uri object instead of File to avoid storage permissions
+                profilePic.setImageURI(uri)
+            }
+            ImagePicker.RESULT_ERROR -> {
+                Toast.makeText(activity, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+            }
+            else -> {
+                Toast.makeText(activity, "Task Cancelled", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

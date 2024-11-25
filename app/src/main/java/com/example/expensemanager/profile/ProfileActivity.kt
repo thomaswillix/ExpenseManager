@@ -1,4 +1,4 @@
-package com.example.expensemanager.Profile
+package com.example.expensemanager.profile
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -44,18 +44,18 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(Intent(applicationContext, PersonalDataActivity::class.java))
         }
     }
-    fun getProfileData(){
+    private fun getProfileData(){
         val profilePic = findViewById<ImageView>(R.id.imageView1)
         val userName = findViewById<TextView>(R.id.textView1)
 
-        var name = ""
+        val name:String
         val email = user.email
-        if (user.displayName != null) {
-            name = user.displayName!!
+        name = if (user.displayName != null) {
+            user.displayName!!
         } else{
-            name = email?.substring(0, email.indexOf("@")).toString()
+            email?.substring(0, email.indexOf("@")).toString()
         }
-        userName.text = "$name"
+        userName.text = name
 
         // First we create a temp file
         val localFile : File = File.createTempFile("pfp", "jpg")
@@ -65,7 +65,7 @@ class ProfileActivity : AppCompatActivity() {
                 val bitmap: Bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
                 profilePic.setImageBitmap(bitmap)
             }
-        }catch (e : StorageException){}
+        }catch (_: StorageException){}
     }
 
     override fun onResume() {
