@@ -45,7 +45,9 @@ class SignupActivity : AppCompatActivity() {
         }
         binding.loginRedirectTxt.setOnClickListener {
             val loginIntent = Intent(this, LoginActivity::class.java)
+            loginIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             startActivity(loginIntent)
+            this.finish()
         }
     }
 }
