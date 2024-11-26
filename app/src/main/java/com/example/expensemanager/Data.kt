@@ -1,4 +1,4 @@
-package com.example.expensemanager.model
+package com.example.expensemanager
 
 
 class Data (var amount : Int, var type : String, var note : String, var id : String, var date : String) {

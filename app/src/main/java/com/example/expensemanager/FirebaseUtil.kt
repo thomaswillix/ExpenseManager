@@ -1,6 +1,5 @@
-package com.example.expensemanager.util
+package com.example.expensemanager
 
-import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference

@@ -22,12 +22,9 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
-        // TODO DELETE THIS LATER: JUST FOR DEVELOPING SAKE
-        // --------------------------------------------------------------------
         if (auth.currentUser != null){
             startActivity(Intent(applicationContext, MainActivity::class.java))
         }
-        // --------------------------------------------------------------------
         login()
     }
     private fun login(){

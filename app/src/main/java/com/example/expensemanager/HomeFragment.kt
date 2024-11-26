@@ -1,6 +1,5 @@
 package com.example.expensemanager
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
@@ -17,7 +16,6 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.expensemanager.model.Data
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -146,7 +144,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    @SuppressLint("InflateParams")
     private fun insertArrayIntoDropdown(){
         val inflater = LayoutInflater.from(activity) ?: return // Verify that activity is not null
         val myView = inflater.inflate(R.layout.custom_layout_for_insertdata, null)

@@ -1,6 +1,4 @@
-@file:Suppress("DEPRECATION")
-
-package com.example.expensemanager.profile
+package com.example.expensemanager
 
 import android.app.Activity
 import android.app.ProgressDialog
@@ -12,15 +10,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import com.example.expensemanager.R
+import com.example.expensemanager.databinding.FragmentProfileBinding
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -41,72 +36,49 @@ class ProfileFragment : Fragment() {
     private lateinit var storageReference: StorageReference
     private lateinit var uri: Uri
     private lateinit var myView: View
-    private lateinit var editModeLayout: View
-    private lateinit var viewModeLayout: View
     // Profile Pic
     private lateinit var profilePic: ImageView
+
+    private lateinit var binding: FragmentProfileBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        myView  = inflater.inflate(R.layout.fragment_profile, container,false)
+        binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
+        myView  = binding.root
         auth = FirebaseAuth.getInstance()
         databaseReference = FirebaseDatabase.getInstance().getReference("users")
         storageReference = FirebaseStorage.getInstance().getReference().child("Users").child(
             FirebaseAuth.getInstance().uid.toString())
         super.onViewCreated(myView, savedInstanceState)
 
-        // ViewMode
-        val viewModeLayout = myView.findViewById<LinearLayout>(R.id.viewModeLayout)
-        val btnBack = myView.findViewById<Button>(R.id.back_profile_btn)
-        val btnEdit = myView.findViewById<Button>(R.id.edit_profile_btn)
-
-        //EditMode
-        editModeLayout = myView.findViewById<LinearLayout>(R.id.editModeLayout)
-        val btnCancel = myView.findViewById<Button>(R.id.cancel_view_btn)
-
         // Show view mode by default
-        viewModeLayout.visibility = View.VISIBLE
-        editModeLayout.visibility = View.GONE
+        binding.viewModeLayout.visibility = View.VISIBLE
+        binding.editModeLayout.visibility = View.GONE
         getUserData(myView)
 
-        btnBack.setOnClickListener {
+        binding.backProfileBtn.setOnClickListener {
             activity?.finish()
         }
-        // Change into edit mode
-        btnEdit.setOnClickListener {
-            viewModeLayout.visibility = View.GONE
-            editModeLayout.visibility = View.VISIBLE
+        binding.editProfileBtn.setOnClickListener {
+            binding.viewModeLayout.visibility = View.GONE
+            binding.editModeLayout.visibility = View.VISIBLE
         }
-        btnCancel.setOnClickListener {
+        binding.cancelViewBtn.setOnClickListener {
             getUserData(myView)
-            editModeLayout.visibility = View.GONE
-            viewModeLayout.visibility = View.VISIBLE
+            binding.viewModeLayout.visibility = View.VISIBLE
+            binding.editModeLayout.visibility = View.GONE
         }
         return  myView
     }
 
     private fun getUserData(myView: View) {
         user = FirebaseAuth.getInstance().currentUser!!
-        //ViewMode
-        val imageViewMode = myView.findViewById<ImageView>(R.id.imageView2)
-
-        val tvName = myView.findViewById<TextView>(R.id.name_profileViewMode)
-        val tvEmail = myView.findViewById<TextView>(R.id.email_profileViewMode)
-        val tvPhone = myView.findViewById<TextView>(R.id.phone_profileViewMode)
-
-        //Edit Mode
         profilePic = myView.findViewById(R.id.imageView_Edit)
-        val btnSave = myView.findViewById<Button>(R.id.confirm_info_btn)
-
-        val etName = myView.findViewById<EditText>(R.id.name_profile)
-        val etEmail = myView.findViewById<EditText>(R.id.email_profile)
-        val etPhone = myView.findViewById<EditText>(R.id.phone_profile)
-        //val number: PhoneAuthCredential
         getProfilePic(profilePic)
-        getProfilePic(imageViewMode)
+        getProfilePic(binding.imageView2)
 
         val name : String
         val email = user.email!!
@@ -116,16 +88,16 @@ class ProfileFragment : Fragment() {
 
         if (user.phoneNumber != null) phone = user.phoneNumber.toString()
 
-        tvName.text = name
-        tvEmail.text = email
-        tvPhone.text = phone
+        binding.nameProfileViewMode.text = name
+        binding.emailProfileViewMode.text = email
+        binding.phoneProfileViewMode.text = phone
 
-        etName.setText(name, TextView.BufferType.EDITABLE)
-        etEmail.setText(email, TextView.BufferType.EDITABLE)
-        etPhone.setText(phone, TextView.BufferType.EDITABLE)
+        binding.nameProfile.setText(name, TextView.BufferType.EDITABLE)
+        binding.emailProfile.setText(email, TextView.BufferType.EDITABLE)
+        binding.phoneProfile.setText(phone, TextView.BufferType.EDITABLE)
 
-        btnSave.setOnClickListener {
-            changeDetails(etName.text.toString(), email)
+        binding.confirmInfoBtn.setOnClickListener {
+            changeDetails(binding.nameProfile.text.toString(), email)
         }
 
         profilePic.setOnClickListener {
@@ -148,6 +120,7 @@ class ProfileFragment : Fragment() {
         val profileUpdates = userProfileChangeRequest {
             displayName = name
         }
+
         val progressDialog = ProgressDialog(activity)
         progressDialog.setMessage("Please wait")
         progressDialog.show()
@@ -171,8 +144,8 @@ class ProfileFragment : Fragment() {
         storageReference.putFile(uri).addOnSuccessListener {
             progressDialog.dismiss()
             Toast.makeText(activity, "Profile updated successfully", Toast.LENGTH_SHORT).show()
-            editModeLayout.visibility = View.GONE
-            viewModeLayout.visibility = View.VISIBLE
+            binding.editModeLayout.visibility = View.GONE
+            binding.viewModeLayout.visibility = View.VISIBLE
 
         }.addOnFailureListener{
             progressDialog.dismiss()

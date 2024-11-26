@@ -1,10 +1,9 @@
-package com.example.expensemanager.model
+package com.example.expensemanager
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.expensemanager.R
 import com.example.expensemanager.databinding.ExpenseRecyclerDataBinding
 
 class DataRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -30,7 +29,7 @@ class DataRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     ) {
         private lateinit var mView: View
         private val binding = ExpenseRecyclerDataBinding.bind(itemView)
-        fun onBind(data:Data){
+        fun onBind(data: Data){
             binding.dateTextExpense.text = data.date
             binding.typeTextExpense.text = data.type
             binding.noteTextExpense.text = data.note

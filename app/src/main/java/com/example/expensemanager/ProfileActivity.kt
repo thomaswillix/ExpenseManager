@@ -1,4 +1,4 @@
-package com.example.expensemanager.profile
+package com.example.expensemanager
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import com.example.expensemanager.ConfigurationActivity
-import com.example.expensemanager.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.FirebaseStorage
