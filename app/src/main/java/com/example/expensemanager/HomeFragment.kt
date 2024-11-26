@@ -16,6 +16,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.expensemanager.databinding.FragmentHomeBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -27,15 +28,6 @@ import java.util.Date
 
 
 class HomeFragment : Fragment() {
-
-    //Floating button
-    private lateinit var fabMainBtn: FloatingActionButton
-    private lateinit var fabIncomeBtn: FloatingActionButton
-    private lateinit var fabExpenseBtn: FloatingActionButton
-
-    //Floating button textview
-    private lateinit var fabIncomeTxt: TextView
-    private lateinit var fabExpenseTxt: TextView
 
     //Flag
     private var isOpen: Boolean = false
@@ -49,11 +41,15 @@ class HomeFragment : Fragment() {
     private lateinit var incomeDatabase : DatabaseReference
     private lateinit var expenseDatabase : DatabaseReference
 
+    //Binding
+    private lateinit var binding: FragmentHomeBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val myView : View = inflater.inflate(R.layout.fragment_home, container,false)
+        binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
+        val myView : View = binding.root
         auth = FirebaseAuth.getInstance()
         val user : FirebaseUser = auth.currentUser!!
         val uid:String = user.uid
@@ -61,44 +57,35 @@ class HomeFragment : Fragment() {
         expenseDatabase =FirebaseDatabase.getInstance().getReference().child("ExpenseData").child(uid)
 
         insertArrayIntoDropdown()
-        //Connect floating button to layout
-        fabMainBtn = myView.findViewById(R.id.fb_main_plus_btn)
-        fabIncomeBtn =myView.findViewById(R.id.income_Ft_btn)
-        fabExpenseBtn =myView.findViewById(R.id.expense_Ft_btn)
-
-        //Connect floating text to layout
-        fabIncomeTxt = myView.findViewById(R.id.income_ft_text)
-        fabExpenseTxt = myView.findViewById(R.id.expense_ft_text)
-
         //Animation
         fadeOpen = AnimationUtils.loadAnimation(activity, R.anim.fade_open)
         fadeClose = AnimationUtils.loadAnimation(activity, R.anim.fade_close)
 
-        fabMainBtn.setOnClickListener {
+        binding.fabMainBtn.setOnClickListener {
 
             addData()
 
             if (isOpen){
-                fabIncomeBtn.startAnimation(fadeClose)
-                fabExpenseBtn.startAnimation(fadeClose)
-                fabIncomeBtn.isClickable = false
-                fabExpenseBtn.isClickable = false
+                binding.fabIncomeBtn.startAnimation(fadeClose)
+                binding.fabExpenseBtn.startAnimation(fadeClose)
+                binding.fabIncomeBtn.isClickable = false
+                binding.fabExpenseBtn.isClickable = false
 
-                fabIncomeTxt.startAnimation(fadeClose)
-                fabExpenseTxt.startAnimation(fadeClose)
-                fabIncomeTxt.isClickable = false
-                fabExpenseTxt.isClickable = false
+                binding.tvIncome.startAnimation(fadeClose)
+                binding.tvExpense.startAnimation(fadeClose)
+                binding.tvIncome.isClickable = false
+                binding.tvExpense.isClickable = false
                 isOpen = false
             } else{
-                fabIncomeBtn.startAnimation(fadeOpen)
-                fabExpenseBtn.startAnimation(fadeOpen)
-                fabIncomeBtn.isClickable = true
-                fabExpenseBtn.isClickable = true
+                binding.fabIncomeBtn.startAnimation(fadeOpen)
+                binding.fabExpenseBtn.startAnimation(fadeOpen)
+                binding.fabIncomeBtn.isClickable = true
+                binding.fabExpenseBtn.isClickable = true
 
-                fabIncomeTxt.startAnimation(fadeOpen)
-                fabExpenseTxt.startAnimation(fadeOpen)
-                fabIncomeTxt.isClickable = true
-                fabExpenseTxt.isClickable = true
+                binding.tvIncome.startAnimation(fadeOpen)
+                binding.tvExpense.startAnimation(fadeOpen)
+                binding.tvIncome.isClickable = true
+                binding.tvExpense.isClickable = true
                 isOpen = true
             }
         }
@@ -106,26 +93,26 @@ class HomeFragment : Fragment() {
     }
     private fun ftAnimation(){
         if (isOpen){
-            fabIncomeBtn.startAnimation(fadeClose)
-            fabExpenseBtn.startAnimation(fadeClose)
-            fabIncomeBtn.isClickable = false
-            fabExpenseBtn.isClickable = false
+            binding.fabIncomeBtn.startAnimation(fadeClose)
+            binding.fabExpenseBtn.startAnimation(fadeClose)
+            binding.fabIncomeBtn.isClickable = false
+            binding.fabExpenseBtn.isClickable = false
 
-            fabIncomeTxt.startAnimation(fadeClose)
-            fabExpenseTxt.startAnimation(fadeClose)
-            fabIncomeTxt.isClickable = false
-            fabExpenseTxt.isClickable = false
+            binding.tvIncome.startAnimation(fadeClose)
+            binding.tvExpense.startAnimation(fadeClose)
+            binding.tvIncome.isClickable = false
+            binding.tvExpense.isClickable = false
             isOpen = false
         } else{
-            fabIncomeBtn.startAnimation(fadeOpen)
-            fabExpenseBtn.startAnimation(fadeOpen)
-            fabIncomeBtn.isClickable = true
-            fabExpenseBtn.isClickable = true
+            binding.fabIncomeBtn.startAnimation(fadeOpen)
+            binding.fabExpenseBtn.startAnimation(fadeOpen)
+            binding.fabIncomeBtn.isClickable = true
+            binding.fabExpenseBtn.isClickable = true
 
-            fabIncomeTxt.startAnimation(fadeOpen)
-            fabExpenseTxt.startAnimation(fadeOpen)
-            fabIncomeTxt.isClickable = true
-            fabExpenseTxt.isClickable = true
+            binding.tvIncome.startAnimation(fadeOpen)
+            binding.tvExpense.startAnimation(fadeOpen)
+            binding.tvIncome.isClickable = true
+            binding.tvExpense.isClickable = true
             isOpen = true
         }
     }
@@ -134,11 +121,11 @@ class HomeFragment : Fragment() {
 /*        */
         //Fab button income
 
-        fabIncomeBtn.setOnClickListener {
+        binding.fabIncomeBtn.setOnClickListener {
             incomeDataInsert()
             ftAnimation()
         }
-        fabExpenseBtn.setOnClickListener {
+        binding.fabExpenseBtn.setOnClickListener {
             expenseDataInsert()
             ftAnimation()
         }

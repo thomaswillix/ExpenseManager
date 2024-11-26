@@ -161,7 +161,8 @@ class ProfileFragment : Fragment() {
             .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
             .start()
     }
-    @Deprecated("Deprecated in Java")
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         profilePic = myView.findViewById(R.id.imageView_Edit)

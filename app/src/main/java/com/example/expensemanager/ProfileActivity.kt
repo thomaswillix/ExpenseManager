@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import com.example.expensemanager.databinding.ActivityProfileBinding
+import com.example.expensemanager.databinding.ActivitySignupBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.FirebaseStorage
@@ -20,8 +22,13 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var user: FirebaseUser
     private lateinit var storageReference: StorageReference
 
+
+    private lateinit var binding: ActivityProfileBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(R.layout.activity_profile)
 
         user = FirebaseAuth.getInstance().currentUser!!
@@ -43,9 +50,6 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
     private fun getProfileData(){
-        val profilePic = findViewById<ImageView>(R.id.imageView1)
-        val userName = findViewById<TextView>(R.id.textView1)
-
         val name:String
         val email = user.email
         name = if (user.displayName != null) {
@@ -53,7 +57,7 @@ class ProfileActivity : AppCompatActivity() {
         } else{
             email?.substring(0, email.indexOf("@")).toString()
         }
-        userName.text = name
+        binding.textView1.text = name
 
         // First we create a temp file
         val localFile : File = File.createTempFile("pfp", "jpg")
@@ -61,7 +65,7 @@ class ProfileActivity : AppCompatActivity() {
         try {
             storageReference.getFile(localFile).addOnSuccessListener { // if it succeeds we set it to the imageView
                 val bitmap: Bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-                profilePic.setImageBitmap(bitmap)
+                binding.imageView1.setImageBitmap(bitmap)
             }
         }catch (_: StorageException){}
     }

@@ -127,7 +127,7 @@
                         android:id="@+id/btn_cancel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@color/expense"
+                        android:backgroundTint="@color/totalExpenses"
                         android:text="Cancel"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/white" />
