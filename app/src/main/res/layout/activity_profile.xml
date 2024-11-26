@@ -9,7 +9,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:ignore="HardcodedText">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,12 +23,13 @@
                     android:id="@+id/background"
                     android:layout_width="wrap_content"
                     android:layout_height="150dp"
+                    android:contentDescription="Background"
                     android:scaleType="fitXY"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/background_profile" />
+                    app:srcCompat="@drawable/background_profile"/>
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardView"
@@ -43,6 +45,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:id="@+id/imageView1"
+                        android:contentDescription="Profile picture"
                         android:src="@drawable/pfp"/>
                 </androidx.cardview.widget.CardView>
 
@@ -77,7 +80,8 @@
                         android:drawablePadding="20dp"
                         android:paddingStart="20dp"
                         android:text="Settings"
-                        android:textAlignment="viewStart" />
+                        android:textAlignment="viewStart"
+                        tools:ignore="RtlSymmetry" />
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/editBtn"
@@ -92,7 +96,8 @@
                         android:drawablePadding="20dp"
                         android:paddingStart="20dp"
                         android:text="Personal Information"
-                        android:textAlignment="viewStart" />
+                        android:textAlignment="viewStart"
+                        tools:ignore="RtlSymmetry" />
                 </LinearLayout>
 
                 <Button

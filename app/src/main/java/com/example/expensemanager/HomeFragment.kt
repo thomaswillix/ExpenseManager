@@ -13,11 +13,9 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.expensemanager.databinding.FragmentHomeBinding
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -153,14 +151,14 @@ class HomeFragment : Fragment() {
         dialog.setCancelable(false)
 
         //Get id's from view
-        val editAmount = myView.findViewById<EditText>(R.id.amount_edt)
-        val editNote = myView.findViewById<EditText>(R.id.note_edt)
+        val editAmount = myView.findViewById<EditText>(R.id.amountEdt)
+        val editNote = myView.findViewById<EditText>(R.id.noteEdt)
 
         val typeOfIncome = myView.findViewById<TextInputLayout>(R.id.textInputLayout)
         val selectedValue: Editable? = (typeOfIncome.editText as AutoCompleteTextView).text
 
-        val btnCancel = myView.findViewById<Button>(R.id.btn_cancel)
-        val btnSave = myView.findViewById<Button>(R.id.btn_save)
+        val btnCancel = myView.findViewById<Button>(R.id.btnCancelData)
+        val btnSave = myView.findViewById<Button>(R.id.btnSave)
 
         dialog.show()
 
@@ -199,20 +197,21 @@ class HomeFragment : Fragment() {
     private fun expenseDataInsert(){
         val myDialog =  (AlertDialog.Builder(activity))
         val inflater = LayoutInflater.from(activity)
+        //TODO: Change layout and create a new one for expenses
         val myView = inflater.inflate(R.layout.custom_layout_for_insertdata,null)
         myDialog.setView(myView)
         val dialog:AlertDialog = myDialog.create()
         dialog.setCancelable(false)
 
         //Get id's from view
-        val editAmount = myView.findViewById<EditText>(R.id.amount_edt)
-        val editNote = myView.findViewById<EditText>(R.id.note_edt)
+        val editAmount = myView.findViewById<EditText>(R.id.amountEdt)
+        val editNote = myView.findViewById<EditText>(R.id.noteEdt)
 
         val typeOfIncome = myView.findViewById<TextInputLayout>(R.id.textInputLayout)
         val selectedValue: Editable? = (typeOfIncome.editText as AutoCompleteTextView).text
 
-        val btnCancel = myView.findViewById<Button>(R.id.btn_cancel)
-        val btnSave = myView.findViewById<Button>(R.id.btn_save)
+        val btnCancel = myView.findViewById<Button>(R.id.btnCancelData)
+        val btnSave = myView.findViewById<Button>(R.id.btnSave)
 
         dialog.show()
 

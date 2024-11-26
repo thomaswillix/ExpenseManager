@@ -14,7 +14,7 @@
         android:id="@+id/dialogBox"
         android:background="@color/nav_header"
         android:orientation="vertical"
-        tools:ignore="HardcodedText">
+        tools:ignore="HardcodedText,UselessParent">
 
         <TextView
             android:layout_width="match_parent"
@@ -54,9 +54,11 @@
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:text="No"
+                android:background="@drawable/my_button_bg"
                 android:layout_marginBottom="8dp"
                 app:cornerRadius = "20dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                tools:ignore="ButtonStyle" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -66,6 +68,7 @@
                 android:layout_marginEnd="40dp"
                 android:textColor="@color/white"
                 android:textSize="14sp"
+                android:background="@drawable/my_button_bg"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="10dp"
                 android:text="Yes"
