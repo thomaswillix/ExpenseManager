@@ -17,6 +17,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.userProfileChangeRequest
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -152,6 +153,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else{
             val email = user.email
             name = email?.substring(0, email.indexOf("@")).toString()
+            val profileUpdates = userProfileChangeRequest {
+                displayName = name
+            }
+            user.updateProfile(profileUpdates)
         }
         toolbar.title = "Welcome,\n$name"
     }
