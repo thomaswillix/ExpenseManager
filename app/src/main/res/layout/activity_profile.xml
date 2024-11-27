@@ -21,7 +21,7 @@
 
                 <ImageView
                     android:id="@+id/background"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="150dp"
                     android:contentDescription="Background"
                     android:scaleType="fitXY"
@@ -69,7 +69,7 @@
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/settingsBtn"
-                        android:layout_width="match_parent"
+                        android:layout_width="350dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="32dp"
                         android:layout_marginTop="20dp"
@@ -79,13 +79,14 @@
                         android:drawableStart="@drawable/settings"
                         android:drawablePadding="20dp"
                         android:paddingStart="20dp"
+                        android:layout_gravity="center"
                         android:text="Settings"
                         android:textAlignment="viewStart"
-                        tools:ignore="RtlSymmetry" />
+                        tools:ignore="RtlCompat,RtlSymmetry" />
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/editBtn"
-                        android:layout_width="match_parent"
+                        android:layout_width="350dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="32dp"
                         android:layout_marginTop="10dp"
@@ -95,6 +96,7 @@
                         android:drawableStart="@drawable/info"
                         android:drawablePadding="20dp"
                         android:paddingStart="20dp"
+                        android:layout_gravity="center"
                         android:text="Personal Information"
                         android:textAlignment="viewStart"
                         tools:ignore="RtlSymmetry" />
