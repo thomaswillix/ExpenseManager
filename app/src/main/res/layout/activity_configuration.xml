@@ -6,6 +6,21 @@
     android:layout_height="match_parent"
     android:background="@color/background"
     tools:context=".ConfigurationActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/appbarCfg"
+        tools:ignore="MissingConstraints">
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/myToolbarCfg"
+            app:titleTextColor="@color/black"
+            android:background="#FFFFFF"
+            android:theme="@style/ToolbarTheme"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="wrap_content"

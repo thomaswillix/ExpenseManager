@@ -17,6 +17,19 @@
         android:visibility="visible"
         tools:ignore="MissingConstraints">
 
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/appbarVm">
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/myToolbarVm"
+                app:titleTextColor="@color/black"
+                android:background="#ececec"
+                android:theme="@style/ToolbarTheme"/>
+        </com.google.android.material.appbar.AppBarLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -145,7 +158,18 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         tools:ignore="MissingConstraints, TextColor">
-
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/appbarEdt">
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/myToolbarEdt"
+                app:titleTextColor="@color/black"
+                android:background="#ececec"
+                android:theme="@style/ToolbarTheme"/>
+        </com.google.android.material.appbar.AppBarLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">

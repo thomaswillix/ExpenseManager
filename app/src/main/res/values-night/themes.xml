@@ -4,4 +4,8 @@
         <item name="colorPrimary">@color/white</item>
         <item name="android:statusBarColor">@color/nav_header</item>
     </style>
+    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <!-- Customize color of navigation drawer icon and back arrow -->
+        <item name="colorControlNormal">@color/background</item>
+    </style>
 </resources>

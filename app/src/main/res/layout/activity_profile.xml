@@ -15,10 +15,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/appbarPr">
+                <androidx.appcompat.widget.Toolbar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/myToolbarPr"
+                    app:titleTextColor="@color/black"
+                    android:background="#ececec"
+                    android:theme="@style/ToolbarTheme"/>
+            </com.google.android.material.appbar.AppBarLayout>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
                 <ImageView
                     android:id="@+id/background"
                     android:layout_width="match_parent"
