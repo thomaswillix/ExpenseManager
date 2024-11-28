@@ -17,19 +17,6 @@
         android:visibility="visible"
         tools:ignore="MissingConstraints">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/appbarVm">
-            <androidx.appcompat.widget.Toolbar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/myToolbarVm"
-                app:titleTextColor="@color/black"
-                android:background="#ececec"
-                android:theme="@style/ToolbarTheme"/>
-        </com.google.android.material.appbar.AppBarLayout>
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -125,24 +112,15 @@
                 app:layout_constraintTop_toBottomOf="@+id/phone_profileViewMode"
                 app:layout_constraintStart_toStartOf="@id/phone_profileViewMode"
                 app:layout_constraintEnd_toEndOf="@id/phone_profileViewMode">
-                <Button
-                    android:id="@+id/back_profile_btn"
-                    android:layout_width="140dp"
-                    android:layout_height="60dp"
-                    android:backgroundTint="@color/nav_header"
-                    android:text="Go back"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="15dp"
-                    tools:ignore="ButtonStyle" />
+
                 <Button
                     android:id="@+id/edit_profile_btn"
-                    android:layout_width="140dp"
+                    android:layout_width="200dp"
                     android:layout_height="60dp"
                     android:layout_marginStart="15dp"
                     android:backgroundTint="@color/azul_bonico"
                     android:text="Edit profile"
-                    android:textSize="14sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
                     tools:ignore="ButtonStyle" />
             </LinearLayout>
@@ -158,18 +136,7 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         tools:ignore="MissingConstraints, TextColor">
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/appbarEdt">
-            <androidx.appcompat.widget.Toolbar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/myToolbarEdt"
-                app:titleTextColor="@color/black"
-                android:background="#ececec"
-                android:theme="@style/ToolbarTheme"/>
-        </com.google.android.material.appbar.AppBarLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">

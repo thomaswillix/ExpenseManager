@@ -6,10 +6,7 @@ import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import com.example.expensemanager.databinding.ActivityProfileBinding
-import com.example.expensemanager.databinding.ActivitySignupBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.FirebaseStorage
@@ -33,6 +30,12 @@ class ProfileActivity : AppCompatActivity() {
 
         user = FirebaseAuth.getInstance().currentUser!!
         storageReference = FirebaseStorage.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().uid.toString())
+
+        val toolbar : androidx.appcompat.widget.Toolbar = findViewById(R.id.myToolbarPr)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.show()
+        supportActionBar!!.setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         getProfileData()
 

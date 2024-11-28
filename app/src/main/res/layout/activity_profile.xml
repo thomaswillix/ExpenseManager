@@ -24,8 +24,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/myToolbarPr"
-                    app:titleTextColor="@color/black"
                     android:background="#ececec"
+                    app:titleTextColor="@color/black"
+                    app:title="Profile"
                     android:theme="@style/ToolbarTheme"/>
             </com.google.android.material.appbar.AppBarLayout>
 
@@ -112,7 +113,7 @@
                         android:layout_gravity="center"
                         android:text="Personal Information"
                         android:textAlignment="viewStart"
-                        tools:ignore="RtlSymmetry" />
+                        tools:ignore="RtlCompat,RtlSymmetry" />
                 </LinearLayout>
 
                 <Button

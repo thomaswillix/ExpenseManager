@@ -59,9 +59,6 @@ class ProfileFragment : Fragment() {
         binding.editModeLayout.visibility = View.GONE
         getUserData(myView)
 
-        binding.backProfileBtn.setOnClickListener {
-            activity?.finish()
-        }
         binding.editProfileBtn.setOnClickListener {
             binding.viewModeLayout.visibility = View.GONE
             binding.editModeLayout.visibility = View.VISIBLE
