@@ -161,7 +161,7 @@ class ProfileFragment : Fragment() {
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+        super. onActivityResult(requestCode, resultCode, data)
         profilePic = myView.findViewById(R.id.imageView_Edit)
         when (resultCode) {
             Activity.RESULT_OK -> {
