@@ -116,19 +116,6 @@
                         tools:ignore="RtlCompat,RtlSymmetry" />
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Back to Home page"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="180dp"
-                    android:backgroundTint="@color/nav_header"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/linearLayout"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </ScrollView>

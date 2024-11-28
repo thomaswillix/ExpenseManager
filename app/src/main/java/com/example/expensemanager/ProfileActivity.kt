@@ -29,6 +29,7 @@ class ProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_profile)
 
         user = FirebaseAuth.getInstance().currentUser!!
+
         storageReference = FirebaseStorage.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().uid.toString())
 
         val toolbar : androidx.appcompat.widget.Toolbar = findViewById(R.id.myToolbarPr)
@@ -39,10 +40,6 @@ class ProfileActivity : AppCompatActivity() {
 
         getProfileData()
 
-        val btnProfile = findViewById<Button>(R.id.button)
-        btnProfile.setOnClickListener {
-            this.finish()
-        }
         val config = findViewById<Button>(R.id.settingsBtn)
         config.setOnClickListener {
             startActivity(Intent(applicationContext, ConfigurationActivity::class.java))
@@ -70,7 +67,8 @@ class ProfileActivity : AppCompatActivity() {
                 val bitmap: Bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
                 binding.imageView1.setImageBitmap(bitmap)
             }
-        }catch (_: StorageException){}
+        }catch (_: StorageException){
+        }
     }
 
     override fun onResume() {

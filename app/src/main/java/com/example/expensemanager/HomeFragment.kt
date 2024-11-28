@@ -42,6 +42,20 @@ class HomeFragment : Fragment() {
     //Binding
     private lateinit var binding: FragmentHomeBinding
 
+    private fun toggleVisibility(buttons: List<View>, textViews: List<View>,
+        fadeAnimation: Animation, isClickable: Boolean) {
+        // Aplicar la animación y clicabilidad
+        buttons.forEach { button ->
+            button.startAnimation(fadeAnimation)
+            button.isClickable = isClickable
+        }
+
+        textViews.forEach { textView ->
+            textView.startAnimation(fadeAnimation)
+            textView.isClickable = isClickable
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,7 +68,6 @@ class HomeFragment : Fragment() {
         incomeDatabase =FirebaseDatabase.getInstance().getReference().child("IncomeData").child(uid)
         expenseDatabase =FirebaseDatabase.getInstance().getReference().child("ExpenseData").child(uid)
 
-        insertArrayIntoDropdown()
         //Animation
         fadeOpen = AnimationUtils.loadAnimation(activity, R.anim.fade_open)
         fadeClose = AnimationUtils.loadAnimation(activity, R.anim.fade_close)
@@ -64,53 +77,37 @@ class HomeFragment : Fragment() {
             addData()
 
             if (isOpen){
-                binding.fabIncomeBtn.startAnimation(fadeClose)
-                binding.fabExpenseBtn.startAnimation(fadeClose)
-                binding.fabIncomeBtn.isClickable = false
-                binding.fabExpenseBtn.isClickable = false
-
-                binding.tvIncome.startAnimation(fadeClose)
-                binding.tvExpense.startAnimation(fadeClose)
-                binding.tvIncome.isClickable = false
-                binding.tvExpense.isClickable = false
+                toggleVisibility(
+                    buttons = listOf(binding.fabIncomeBtn, binding.fabExpenseBtn), textViews = listOf(binding.tvIncome, binding.tvExpense),
+                    fadeAnimation = fadeClose, isClickable = false
+                )
                 isOpen = false
             } else{
-                binding.fabIncomeBtn.startAnimation(fadeOpen)
-                binding.fabExpenseBtn.startAnimation(fadeOpen)
-                binding.fabIncomeBtn.isClickable = true
-                binding.fabExpenseBtn.isClickable = true
-
-                binding.tvIncome.startAnimation(fadeOpen)
-                binding.tvExpense.startAnimation(fadeOpen)
-                binding.tvIncome.isClickable = true
-                binding.tvExpense.isClickable = true
+                // Si está cerrado, aplicar animaciones de apertura
+                toggleVisibility(
+                    buttons = listOf(binding.fabIncomeBtn, binding.fabExpenseBtn), textViews = listOf(binding.tvIncome, binding.tvExpense),
+                    fadeAnimation = fadeOpen, isClickable = true
+                )
                 isOpen = true
             }
         }
         return  myView
     }
+
     private fun ftAnimation(){
-        if (isOpen){
-            binding.fabIncomeBtn.startAnimation(fadeClose)
-            binding.fabExpenseBtn.startAnimation(fadeClose)
-            binding.fabIncomeBtn.isClickable = false
-            binding.fabExpenseBtn.isClickable = false
-
-            binding.tvIncome.startAnimation(fadeClose)
-            binding.tvExpense.startAnimation(fadeClose)
-            binding.tvIncome.isClickable = false
-            binding.tvExpense.isClickable = false
+        if (isOpen) {
+            // Animaciones de cierre
+            toggleVisibility(
+                buttons = listOf(binding.fabIncomeBtn, binding.fabExpenseBtn), textViews = listOf(binding.tvIncome, binding.tvExpense),
+                fadeAnimation = fadeClose, isClickable = false
+            )
             isOpen = false
-        } else{
-            binding.fabIncomeBtn.startAnimation(fadeOpen)
-            binding.fabExpenseBtn.startAnimation(fadeOpen)
-            binding.fabIncomeBtn.isClickable = true
-            binding.fabExpenseBtn.isClickable = true
-
-            binding.tvIncome.startAnimation(fadeOpen)
-            binding.tvExpense.startAnimation(fadeOpen)
-            binding.tvIncome.isClickable = true
-            binding.tvExpense.isClickable = true
+        } else {
+            // Animaciones de apertura
+            toggleVisibility(
+                buttons = listOf(binding.fabIncomeBtn, binding.fabExpenseBtn), textViews = listOf(binding.tvIncome, binding.tvExpense),
+                fadeAnimation = fadeOpen, isClickable = true
+            )
             isOpen = true
         }
     }
@@ -128,34 +125,33 @@ class HomeFragment : Fragment() {
             ftAnimation()
         }
     }
-
-    private fun insertArrayIntoDropdown(){
-        val inflater = LayoutInflater.from(activity) ?: return // Verify that activity is not null
-        val myView = inflater.inflate(R.layout.custom_layout_for_insertdata, null)
-
-        val list = mutableListOf<String>()
-        list.addAll(listOf("House", "Food", "Entertainment", "Personal expenses", "Health care", "Transportation", "Debt / Student Loan"))
-
-        val stuff = myView.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
-        val arrayAdapter = ArrayAdapter(myView.context, R.layout.dropdown_item, list)
-
-        stuff.setAdapter(arrayAdapter)
-    }
     private fun incomeDataInsert(){
         //Create Dialog
         val myDialog =  (AlertDialog.Builder(activity))
-        val inflater = LayoutInflater.from(activity)
-        val myView = inflater.inflate(R.layout.custom_layout_for_insertdata,null)
+        val myView = layoutInflater.inflate(R.layout.custom_layout_for_insertdata,null)
         myDialog.setView(myView)
         val dialog:AlertDialog = myDialog.create()
         dialog.setCancelable(false)
 
-        //Get id's from view
+        // Insert array
+        val list = mutableListOf<String>()
+        list.addAll(listOf("Payckeck", "Intellectual Propperty", "Stocks", "Business", "Savings, bonds or lending"
+            , "others")
+        )
+
+        val autoCompleteTextView = myView.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
+        val arrayAdapter = ArrayAdapter<String>(myView.context, R.layout.dropdown_item, list)
+
+        var type = ""
+        autoCompleteTextView.setAdapter(arrayAdapter)
+        autoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
+            val item : String = parent.getItemAtPosition(position).toString()
+            Toast.makeText(activity, item, Toast.LENGTH_SHORT).show()
+            type = item
+        }
+        // Get id's from view
         val editAmount = myView.findViewById<EditText>(R.id.amountEdt)
         val editNote = myView.findViewById<EditText>(R.id.noteEdt)
-
-        val typeOfIncome = myView.findViewById<TextInputLayout>(R.id.textInputLayout)
-        val selectedValue: Editable? = (typeOfIncome.editText as AutoCompleteTextView).text
 
         val btnCancel = myView.findViewById<Button>(R.id.btnCancelData)
         val btnSave = myView.findViewById<Button>(R.id.btnSave)
@@ -163,11 +159,10 @@ class HomeFragment : Fragment() {
         dialog.show()
 
         btnSave.setOnClickListener {
-            val typeStr :String = selectedValue.toString()
             val amountStr = editAmount.text.toString().trim()
             val noteStr = editNote.text.toString().trim()
-            if (TextUtils.isEmpty(typeStr)){
-                typeOfIncome.setError("Required field...")
+            if (TextUtils.isEmpty(type)){
+                autoCompleteTextView.setError("Required field...")
                 return@setOnClickListener
             }
             if (TextUtils.isEmpty(amountStr)){
@@ -182,7 +177,7 @@ class HomeFragment : Fragment() {
             }
             val id : String = incomeDatabase.push().key!!
             val mDate : String = DateFormat.getDateInstance().format(Date())
-            val data = Data(ourAmount, typeStr, noteStr, id, mDate)
+            val data = Data(ourAmount, type, noteStr, id, mDate)
 
             incomeDatabase.child(id).setValue(data)
             Toast.makeText(activity, "Data added", Toast.LENGTH_SHORT).show()
@@ -196,19 +191,32 @@ class HomeFragment : Fragment() {
     }
     private fun expenseDataInsert(){
         val myDialog =  (AlertDialog.Builder(activity))
-        val inflater = LayoutInflater.from(activity)
         //TODO: Change layout and create a new one for expenses
-        val myView = inflater.inflate(R.layout.custom_layout_for_insertdata,null)
+        val myView = layoutInflater.inflate(R.layout.custom_layout_for_insertdata,null)
         myDialog.setView(myView)
         val dialog:AlertDialog = myDialog.create()
         dialog.setCancelable(false)
 
+        // Insert array
+        val list = mutableListOf<String>()
+        list.addAll(listOf("House", "Food", "Entertainment", "Personal expenses", "Health care",
+            "Transportation", "Debt / Student Loan", "others")
+        )
+
+        val autoCompleteTextView = myView.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
+        val arrayAdapter = ArrayAdapter<String>(myView.context, R.layout.dropdown_item, list)
+
+        autoCompleteTextView.setAdapter(arrayAdapter)
+
+        var type = ""
+        autoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
+            val item : String = parent.getItemAtPosition(position).toString()
+            Toast.makeText(activity, item, Toast.LENGTH_SHORT).show()
+            type = item
+        }
         //Get id's from view
         val editAmount = myView.findViewById<EditText>(R.id.amountEdt)
         val editNote = myView.findViewById<EditText>(R.id.noteEdt)
-
-        val typeOfIncome = myView.findViewById<TextInputLayout>(R.id.textInputLayout)
-        val selectedValue: Editable? = (typeOfIncome.editText as AutoCompleteTextView).text
 
         val btnCancel = myView.findViewById<Button>(R.id.btnCancelData)
         val btnSave = myView.findViewById<Button>(R.id.btnSave)
@@ -216,15 +224,17 @@ class HomeFragment : Fragment() {
         dialog.show()
 
         btnSave.setOnClickListener {
-            val typeStr :String = selectedValue.toString()
             val amountStr = editAmount.text.toString().trim()
             val noteStr = editNote.text.toString().trim()
-            if (TextUtils.isEmpty(typeStr)){
-                typeOfIncome.setError("Required field...")
+            if (TextUtils.isEmpty(type)){
+                autoCompleteTextView.setError("Required field...")
                 return@setOnClickListener
             }
             if (TextUtils.isEmpty(amountStr)){
                 editAmount.error = "Required field..."
+                return@setOnClickListener
+            } else if (!TextUtils.isDigitsOnly(amountStr)){
+                editAmount.error = "Only numeric numbers"
                 return@setOnClickListener
             }
             val ourAmount : Int = Integer.parseInt(amountStr)
@@ -235,7 +245,7 @@ class HomeFragment : Fragment() {
             }
             val id : String = expenseDatabase.push().key!!
             val mDate : String = DateFormat.getDateInstance().format(Date())
-            val data = Data(ourAmount, typeStr, noteStr, id, mDate)
+            val data = Data(ourAmount, type, noteStr, id, mDate)
 
             expenseDatabase.child(id).setValue(data)
             Toast.makeText(activity, "Data added", Toast.LENGTH_SHORT).show()
