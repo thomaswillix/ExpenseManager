@@ -191,7 +191,7 @@
 
             <EditText
                 android:id="@+id/name_profile"
-                android:layout_width="match_parent"
+                android:layout_width="350dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
                 android:layout_marginTop="40dp"
@@ -208,7 +208,7 @@
 
             <EditText
                 android:id="@+id/email_profile"
-                android:layout_width="match_parent"
+                android:layout_width="350dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
                 android:layout_marginTop="30dp"
@@ -225,7 +225,7 @@
 
             <EditText
                 android:id="@+id/phone_profile"
-                android:layout_width="match_parent"
+                android:layout_width="350dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
                 android:layout_marginTop="30dp"
@@ -256,8 +256,8 @@
                     android:layout_height="60dp"
                     android:backgroundTint="@color/nav_header"
                     android:text="Cancel"
-                    android:textSize="14sp"
-                    android:layout_marginEnd="15dp"
+                    android:textSize="16sp"
+                    android:layout_marginEnd="17dp"
                     android:textStyle="bold"
                     tools:ignore="ButtonStyle,HardcodedText" />
 
@@ -265,10 +265,10 @@
                     android:id="@+id/confirm_info_btn"
                     android:layout_width="140dp"
                     android:layout_height="60dp"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="17dp"
                     android:backgroundTint="@color/azul_bonico"
                     android:text="Confirm"
-                    android:textSize="14sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     tools:ignore="ButtonStyle,HardcodedText" />
             </LinearLayout>

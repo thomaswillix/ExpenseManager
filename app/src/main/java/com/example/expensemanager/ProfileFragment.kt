@@ -134,7 +134,7 @@ class ProfileFragment : Fragment() {
             }
     }
     private fun uploadProfilePic(progressDialog: ProgressDialog){
-        if (uri == null){
+        if (uri == null){       // Ignore warning, it does have a null value when user has not selected any photo.
             uri = Uri.parse("android.resource://${android.R.attr.packageNames}${R.drawable.pfp}")
             profilePic.setImageURI(uri)
         }
