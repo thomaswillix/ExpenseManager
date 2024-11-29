@@ -158,88 +158,101 @@
         </LinearLayout>
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="280dp"
             android:layout_marginTop="10dp"
             android:orientation="vertical"
             android:padding="20dp"
-            tools:listitem="@layout/list_item" />
+            tools:listitem="@layout/list_item"/>
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width= "match_parent"
             android:layout_height="match_parent">
-            <!---> TODO: Ver comportamiento de los botones y arreglar interfaz<-->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:id="@+id/expensesFT"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
 
-                <TextView
-                    android:id="@+id/tvExpense"
+                    <TextView
+                        android:id="@+id/tvExpense"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@color/nav_header"
+                        android:padding="5dp"
+                        android:text="Expense"
+                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textColor="@color/white"
+                        android:visibility="invisible" />
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/fabExpenseBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:contentDescription="Floating action buton to add an expense"
+                        android:backgroundTint="@color/totalExpenses"
+                        app:fabSize="normal"
+                        android:elevation="6dp"
+                        android:visibility="invisible"
+                        app:pressedTranslationZ="12dp"
+                        android:src="@drawable/money_loss"/>
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:background="@color/nav_header"
-                    android:padding="5dp"
-                    android:text="Expense"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@color/white"
-                    android:visibility="invisible" />
+                    android:id="@+id/incomesFT"
+                    app:layout_constraintTop_toBottomOf="@id/expensesFT"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Income"
+                        android:id="@+id/tvIncome"
+                        android:textColor="@color/white"
+                        android:padding="5dp"
+                        android:background="@color/nav_header"
+                        android:layout_gravity="center"
+                        android:visibility="invisible"
+                        android:textAppearance="?android:textAppearanceSmall"/>
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/fabIncomeBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:backgroundTint="@color/income"
+                        android:contentDescription="Floating action buton to add an income"
+                        android:elevation="6dp"
+                        android:src="@drawable/money_growth"
+                        android:visibility="invisible"
+                        app:fabSize="normal"
+                        app:pressedTranslationZ="12dp" />
+                </LinearLayout>
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fabExpenseBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/fabMainBtn"
                     android:layout_gravity="center"
-                    android:contentDescription="Floating action buton to add an expense"
-                    android:backgroundTint="@color/totalExpenses"
-                    app:fabSize="normal"
-                    android:elevation="6dp"
-                    android:visibility="invisible"
-                    app:pressedTranslationZ="12dp"
-                    android:src="@drawable/money_loss"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="20dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Income"
-                    android:id="@+id/tvIncome"
-                    android:textColor="@color/white"
-                    android:padding="5dp"
-                    android:background="@color/nav_header"
-                    android:layout_gravity="center"
-                    android:visibility="invisible"
-                    android:textAppearance="?android:textAppearanceSmall"/>
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fabIncomeBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:contentDescription="Floaing button to ad a transaction"
+                    app:shapeAppearance="@drawable/add"
+                    android:layout_marginBottom="16dp"
                     android:backgroundTint="@color/income"
-                    android:contentDescription="Floating action buton to add an income"
                     android:elevation="6dp"
-                    android:src="@drawable/money_growth"
-                    android:visibility="invisible"
                     app:fabSize="normal"
-                    app:pressedTranslationZ="12dp" />
-            </LinearLayout>
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/fabMainBtn"
-                android:layout_gravity="center"
-                android:contentDescription="Floaing button to ad a transaction"
-                app:shapeAppearance="@drawable/add"
-                android:layout_marginBottom="16dp"
-                android:backgroundTint="@color/income"
-                android:elevation="6dp"
-                app:fabSize="normal"
-                android:src="@drawable/add"/>
+                    android:src="@drawable/add"
+                    app:layout_constraintTop_toBottomOf="@id/incomesFT"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </LinearLayout>
 </ScrollView>
