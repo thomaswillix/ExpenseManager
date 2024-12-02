@@ -1,6 +1,7 @@
 package com.example.expensemanager
 
 import android.app.Activity
+import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Bitmap
@@ -11,8 +12,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import com.example.expensemanager.databinding.FragmentProfileBinding
@@ -118,10 +121,10 @@ class ProfileFragment : Fragment() {
             displayName = name
         }
 
-        val progressDialog = ProgressDialog(activity)
-        progressDialog.setMessage("Please wait")
-        progressDialog.show()
-        //user.updatePhoneNumber(phone)
+        //val builder = AlertDialog.Builder(activity)
+        /*val view  = ProgressBar(activity)
+        builder.setView(view)
+        val dialog = builder.create()//user.updatePhoneNumber(phone)
         user.updateProfile(profileUpdates)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -131,7 +134,7 @@ class ProfileFragment : Fragment() {
                     progressDialog.dismiss()
                     Toast.makeText(activity, "Failed to update your profile", Toast.LENGTH_SHORT).show()
                 }
-            }
+            }*/
     }
     private fun uploadProfilePic(progressDialog: ProgressDialog){
         if (uri == null){       // Ignore warning, it does have a null value when user has not selected any photo.

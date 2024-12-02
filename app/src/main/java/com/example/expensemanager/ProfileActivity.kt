@@ -19,33 +19,30 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var user: FirebaseUser
     private lateinit var storageReference: StorageReference
 
-
+    // Binding
     private lateinit var binding: ActivityProfileBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityProfileBinding.inflate(layoutInflater)
-        setContentView(R.layout.activity_profile)
+        setContentView(binding.root)
 
         user = FirebaseAuth.getInstance().currentUser!!
 
         storageReference = FirebaseStorage.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().uid.toString())
 
-        val toolbar : androidx.appcompat.widget.Toolbar = findViewById(R.id.myToolbarPr)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.myToolbarPr)
         supportActionBar!!.show()
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         getProfileData()
 
-        val config = findViewById<Button>(R.id.settingsBtn)
-        config.setOnClickListener {
+        binding.settingsBtn.setOnClickListener {
             startActivity(Intent(applicationContext, ConfigurationActivity::class.java))
         }
-        val info = findViewById<Button>(R.id.editBtn)
-        info.setOnClickListener {
+        binding.editBtn.setOnClickListener {
             startActivity(Intent(applicationContext, PersonalDataActivity::class.java))
         }
     }
@@ -58,7 +55,6 @@ class ProfileActivity : AppCompatActivity() {
             email?.substring(0, email.indexOf("@")).toString()
         }
         binding.textView1.text = name
-
         // First we create a temp file
         val localFile : File = File.createTempFile("pfp", "jpg")
         // Then we get the File from the storage reference

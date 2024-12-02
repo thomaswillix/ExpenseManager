@@ -14,8 +14,9 @@ import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
 
-    // Firebase
+    //Binding
     private lateinit var binding: ActivityLoginBinding
+    // Firebase
     private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,5 +81,11 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this, "Check your email", Toast.LENGTH_SHORT).show()
                 }
             }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.loginEmail.text.clear()
+        binding.loginPassword.text.clear()
     }
 }
