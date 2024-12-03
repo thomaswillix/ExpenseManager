@@ -1,8 +1,6 @@
 package com.example.expensemanager
 
 import android.app.Activity
-import android.app.Dialog
-import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -63,23 +61,23 @@ class ProfileFragment : Fragment() {
         // Show view mode by default
         binding.viewModeLayout.visibility = View.VISIBLE
         binding.editModeLayout.visibility = View.GONE
-        getUserData(myView)
+        getUserData()
 
         binding.editProfileBtn.setOnClickListener {
             binding.viewModeLayout.visibility = View.GONE
             binding.editModeLayout.visibility = View.VISIBLE
         }
         binding.cancelViewBtn.setOnClickListener {
-            getUserData(myView)
+            getUserData()
             binding.viewModeLayout.visibility = View.VISIBLE
             binding.editModeLayout.visibility = View.GONE
         }
         return  myView
     }
 
-    private fun getUserData(myView: View) {
+    private fun getUserData() {
         user = FirebaseAuth.getInstance().currentUser!!
-        profilePic = myView.findViewById(R.id.imageView_Edit)
+        profilePic = binding.imageViewEdit
         getProfilePic(profilePic)
         getProfilePic(binding.imageView2)
 
@@ -153,6 +151,7 @@ class ProfileFragment : Fragment() {
             Toast.makeText(activity, "Profile updated successfully", Toast.LENGTH_SHORT).show()
             binding.editModeLayout.visibility = View.GONE
             binding.viewModeLayout.visibility = View.VISIBLE
+            getUserData()
 
         }.addOnFailureListener{
             progressDialog.dismiss()
