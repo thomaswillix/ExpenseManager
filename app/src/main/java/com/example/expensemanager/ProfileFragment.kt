@@ -48,14 +48,17 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
+        // Binding inflation
         binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
         myView  = binding.root
+        super.onViewCreated(myView, savedInstanceState)
+        //Firebase
         auth = FirebaseAuth.getInstance()
         databaseReference = FirebaseDatabase.getInstance().getReference("users")
         storageReference = FirebaseStorage.getInstance().getReference().child("Users").child(
             FirebaseAuth.getInstance().uid.toString())
-        super.onViewCreated(myView, savedInstanceState)
+        // Default value
+        uri = Uri.parse("android.resource://${activity?.packageName}/drawable/pfp")
 
         // Show view mode by default
         binding.viewModeLayout.visibility = View.VISIBLE
@@ -104,12 +107,12 @@ class ProfileFragment : Fragment() {
             changeProfilePic()
         }
     }
-    private fun getProfilePic(imageView: ImageView){
+    private fun  getProfilePic(imageView: ImageView){
         // First we create a temp file
         val localFile : File = File.createTempFile("pfp", "jpg")
         // Then we get the File from the storage reference
         try {
-            storageReference.getFile(localFile).addOnSuccessListener { // if it succeeds we set it to the imageView
+                storageReference.getFile(localFile).addOnSuccessListener { // if it succeeds we set it to the imageView
                 val bitmap: Bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
                 uri = localFile.toUri()
                 imageView.setImageBitmap(bitmap)
@@ -121,10 +124,14 @@ class ProfileFragment : Fragment() {
             displayName = name
         }
 
-        //val builder = AlertDialog.Builder(activity)
-        /*val view  = ProgressBar(activity)
-        builder.setView(view)
-        val dialog = builder.create()//user.updatePhoneNumber(phone)
+        val progressDialog = AlertDialog.
+        Builder(requireContext()).
+        setView(ProgressBar(activity)).
+        setCancelable(false).
+        setTitle("Updating Profile data").
+        create()
+
+        progressDialog.show()
         user.updateProfile(profileUpdates)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -134,11 +141,11 @@ class ProfileFragment : Fragment() {
                     progressDialog.dismiss()
                     Toast.makeText(activity, "Failed to update your profile", Toast.LENGTH_SHORT).show()
                 }
-            }*/
+            }
     }
-    private fun uploadProfilePic(progressDialog: ProgressDialog){
-        if (uri == null){       // Ignore warning, it does have a null value when user has not selected any photo.
-            uri = Uri.parse("android.resource://${android.R.attr.packageNames}${R.drawable.pfp}")
+    private fun uploadProfilePic(progressDialog: AlertDialog){
+        if (!::uri.isInitialized) {
+            uri = Uri.parse("android.resource://${activity?.packageName}/drawable/pfp")
             profilePic.setImageURI(uri)
         }
         storageReference.putFile(uri).addOnSuccessListener {
@@ -168,10 +175,12 @@ class ProfileFragment : Fragment() {
         profilePic = myView.findViewById(R.id.imageView_Edit)
         when (resultCode) {
             Activity.RESULT_OK -> {
-                //Image Uri will not be null for RESULT_OK
-                uri = data?.data!!
-                // Use Uri object instead of File to avoid storage permissions
-                profilePic.setImageURI(uri)
+                data?.data?.let {
+                    uri = it
+                    profilePic.setImageURI(uri)
+                } ?: run {
+                    Toast.makeText(activity, "No image selected", Toast.LENGTH_SHORT).show()
+                }
             }
             ImagePicker.RESULT_ERROR -> {
                 Toast.makeText(activity, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
