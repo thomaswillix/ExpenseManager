@@ -3,7 +3,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="background">#FFFFFD</color>
-    <color name="nav_header">#03045E</color>
+    <color name="dark_blue_logo">#03045E</color>
+    <color name="dark_blue_icons">#023E8A</color>
     <color name="dashboard">#0096C7</color>
     <color name="azul_bonico">#0077B6</color>
     <color name="income"> #4fab9a </color>

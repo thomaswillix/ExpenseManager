@@ -12,7 +12,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="70dp"
         tools:ignore="HardcodedText">
 
         <LinearLayout
@@ -28,10 +28,26 @@
                 android:layout_marginBottom="40dp"
                 app:srcCompat="@drawable/wisewallet" />
 
+
+            <EditText
+                android:id="@+id/signupUsername"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:background="@color/background"
+                android:hint="Username"
+                android:drawableStart="@drawable/baseline_username_24"
+                android:drawablePadding="8dp"
+                android:inputType="textPersonName"
+                android:padding="15dp"
+                android:textColor="@color/black"
+                android:textColorHint="#717171" />
+
             <EditText
                 android:id="@+id/signupEmail"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:background="@color/background"
                 android:hint="Email"
                 android:drawableStart="@drawable/baseline_email_24"
