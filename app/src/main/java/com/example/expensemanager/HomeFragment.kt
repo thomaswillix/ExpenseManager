@@ -42,6 +42,27 @@ class HomeFragment : Fragment() {
     private lateinit var incomeDatabase : DatabaseReference
     private lateinit var expenseDatabase : DatabaseReference
 
+    val incomeListener = object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            showIncomeData(dataSnapshot)
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+            // Getting Post failed, log a message
+            Log.w("loadPost:onCancelled", databaseError.toException())
+        }
+    }
+    val expenseListener = object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            showExpenseData(dataSnapshot)
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+            // Getting Post failed, log a message
+            Log.w("loadPost:onCancelled", databaseError.toException())
+        }
+    }
+
     //Binding
     private lateinit var binding: FragmentHomeBinding
 
@@ -70,27 +91,15 @@ class HomeFragment : Fragment() {
         val uid:String = user.uid
         incomeDatabase =FirebaseDatabase.getInstance().getReference().child("IncomeData").child(uid)
         expenseDatabase =FirebaseDatabase.getInstance().getReference().child("ExpenseData").child(uid)
+        //Value event listeners for both databases
+        if (isAdded) {
+            incomeDatabase.addValueEventListener(incomeListener)
+            expenseDatabase.addValueEventListener(expenseListener)
+        }
         //Animation
         fadeOpen = AnimationUtils.loadAnimation(activity, R.anim.fade_open)
         fadeClose = AnimationUtils.loadAnimation(activity, R.anim.fade_close)
 
-        if (isAdded) {
-            // Aquí puedes interactuar con la actividad, por ejemplo:
-            val activity = requireActivity() // Esto no lanzará una excepción si el fragmento está adjunto
-            // User Liste
-            val transactionListener = object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    showData(dataSnapshot, activity)
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                    // Getting Post failed, log a message
-                    Log.w("loadPost:onCancelled", databaseError.toException())
-                }
-            }
-            incomeDatabase.addValueEventListener(transactionListener)
-            expenseDatabase.addValueEventListener(transactionListener)
-        }
         binding.fabMainBtn.setOnClickListener {
 
             addData()
@@ -113,9 +122,8 @@ class HomeFragment : Fragment() {
         return  myView
     }
 
-    private fun showData(dataSnapshot: DataSnapshot, activity: FragmentActivity) {
+    private fun showExpenseData(dataSnapshot: DataSnapshot) {
         val values = arrayListOf<Data>()
-
         for (ds in dataSnapshot.children){
             val data = ds.getValue(Data::class.java)
             // Verifica si 'data' no es null antes de acceder a sus propiedades
@@ -126,10 +134,25 @@ class HomeFragment : Fragment() {
                 Log.e("Show data", "Data is null for child: ${ds.key}")
             }
         }
-        val listAdapter = ListAdapter(activity, R.layout.list_item, values)
-        binding.listTransactios.adapter = listAdapter
+        val listAdapter = ListAdapter(requireContext(), R.layout.list_item, values)
+        binding.listExpenses.adapter = listAdapter
         listAdapter.notifyDataSetChanged() // Notifica que los datos han cambiado
-
+    }
+    private fun showIncomeData(dataSnapshot: DataSnapshot) {
+        val values = arrayListOf<Data>()
+        for (ds in dataSnapshot.children){
+            val data = ds.getValue(Data::class.java)
+            // Verifica si 'data' no es null antes de acceder a sus propiedades
+            if (data != null) {
+                values.add(data)
+                Log.w("Show data", "Id: ${data.id}, Amount: ${data.amount}, Type: ${data.type}")
+            } else {
+                Log.e("Show data", "Data is null for child: ${ds.key}")
+            }
+        }
+        val listAdapter = ListAdapter(requireContext(), R.layout.list_item, values)
+        binding.listIncomes.adapter = listAdapter
+        listAdapter.notifyDataSetChanged() // Notifica que los datos han cambiado
     }
 
     private fun ftAnimation(){
