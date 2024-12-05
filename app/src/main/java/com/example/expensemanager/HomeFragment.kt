@@ -2,8 +2,8 @@ package com.example.expensemanager
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.text.Editable
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,12 +15,15 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import com.example.expensemanager.databinding.FragmentHomeBinding
-import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.text.DateFormat
 import java.util.Date
 
@@ -67,11 +70,27 @@ class HomeFragment : Fragment() {
         val uid:String = user.uid
         incomeDatabase =FirebaseDatabase.getInstance().getReference().child("IncomeData").child(uid)
         expenseDatabase =FirebaseDatabase.getInstance().getReference().child("ExpenseData").child(uid)
-
         //Animation
         fadeOpen = AnimationUtils.loadAnimation(activity, R.anim.fade_open)
         fadeClose = AnimationUtils.loadAnimation(activity, R.anim.fade_close)
 
+        if (isAdded) {
+            // Aquí puedes interactuar con la actividad, por ejemplo:
+            val activity = requireActivity() // Esto no lanzará una excepción si el fragmento está adjunto
+            // User Liste
+            val transactionListener = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    showData(dataSnapshot, activity)
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Getting Post failed, log a message
+                    Log.w("loadPost:onCancelled", databaseError.toException())
+                }
+            }
+            incomeDatabase.addValueEventListener(transactionListener)
+            expenseDatabase.addValueEventListener(transactionListener)
+        }
         binding.fabMainBtn.setOnClickListener {
 
             addData()
@@ -94,6 +113,25 @@ class HomeFragment : Fragment() {
         return  myView
     }
 
+    private fun showData(dataSnapshot: DataSnapshot, activity: FragmentActivity) {
+        val values = arrayListOf<Data>()
+
+        for (ds in dataSnapshot.children){
+            val data = ds.getValue(Data::class.java)
+            // Verifica si 'data' no es null antes de acceder a sus propiedades
+            if (data != null) {
+                values.add(data)
+                Log.w("Show data", "Id: ${data.id}, Amount: ${data.amount}, Type: ${data.type}")
+            } else {
+                Log.e("Show data", "Data is null for child: ${ds.key}")
+            }
+        }
+        val listAdapter = ListAdapter(activity, R.layout.list_item, values)
+        binding.listTransactios.adapter = listAdapter
+        listAdapter.notifyDataSetChanged() // Notifica que los datos han cambiado
+
+    }
+
     private fun ftAnimation(){
         if (isOpen) {
             // Animaciones de cierre
@@ -113,9 +151,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun addData(){
-/*        */
-        //Fab button income
-
         binding.fabIncomeBtn.setOnClickListener {
             incomeDataInsert()
             ftAnimation()
@@ -125,6 +160,7 @@ class HomeFragment : Fragment() {
             ftAnimation()
         }
     }
+
     private fun incomeDataInsert(){
         //Create Dialog
         val myDialog =  (AlertDialog.Builder(activity))
@@ -146,7 +182,7 @@ class HomeFragment : Fragment() {
         autoCompleteTextView.setAdapter(arrayAdapter)
         autoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
             val item : String = parent.getItemAtPosition(position).toString()
-            Toast.makeText(activity, item, Toast.LENGTH_SHORT).show()
+            toastMessage(item)
             type = item
         }
         // Get id's from view
@@ -169,7 +205,7 @@ class HomeFragment : Fragment() {
                 editAmount.error = "Required field..."
                 return@setOnClickListener
             }
-            val ourAmount : Int = Integer.parseInt(amountStr)
+            val ourAmount : Double = amountStr.toDouble()
 
             if (TextUtils.isEmpty(noteStr)){
                 editNote.error = "Required field..."
@@ -180,7 +216,7 @@ class HomeFragment : Fragment() {
             val data = Data(ourAmount, type, noteStr, id, mDate)
 
             incomeDatabase.child(id).setValue(data)
-            Toast.makeText(activity, "Data added", Toast.LENGTH_SHORT).show()
+            toastMessage("Data added")
 
             dialog.dismiss()
         }
@@ -189,6 +225,7 @@ class HomeFragment : Fragment() {
         }
 
     }
+
     private fun expenseDataInsert(){
         val myDialog =  (AlertDialog.Builder(activity))
         //TODO: Change layout and create a new one for expenses
@@ -211,7 +248,7 @@ class HomeFragment : Fragment() {
         var type = ""
         autoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
             val item : String = parent.getItemAtPosition(position).toString()
-            Toast.makeText(activity, item, Toast.LENGTH_SHORT).show()
+            toastMessage(item)
             type = item
         }
         //Get id's from view
@@ -237,7 +274,7 @@ class HomeFragment : Fragment() {
                 editAmount.error = "Only numeric numbers"
                 return@setOnClickListener
             }
-            val ourAmount : Int = Integer.parseInt(amountStr)
+            val ourAmount : Double = amountStr.toDouble()
 
             if (TextUtils.isEmpty(noteStr)){
                 editNote.error = "Required field..."
@@ -248,13 +285,17 @@ class HomeFragment : Fragment() {
             val data = Data(ourAmount, type, noteStr, id, mDate)
 
             expenseDatabase.child(id).setValue(data)
-            Toast.makeText(activity, "Data added", Toast.LENGTH_SHORT).show()
+            toastMessage("Data added")
 
             dialog.dismiss()
         }
         btnCancel.setOnClickListener {
             dialog.dismiss()
         }
+    }
+
+    private fun toastMessage(message:String){
+        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 }
 

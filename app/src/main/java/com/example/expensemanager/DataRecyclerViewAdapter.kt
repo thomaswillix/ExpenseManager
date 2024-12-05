@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.expensemanager.databinding.ExpenseRecyclerDataBinding
+import com.example.expensemanager.databinding.ListItemBinding
 
 class DataRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val dataFeedItems = mutableListOf<Data>()
@@ -25,15 +26,54 @@ class DataRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         notifyDataSetChanged()
     }
     inner class ExpenseItemViewHolder(parent:ViewGroup) : RecyclerView.ViewHolder(
-        LayoutInflater.from(parent.context).inflate(R.layout.expense_recycler_data, parent, false)
+        LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
     ) {
-        private lateinit var mView: View
-        private val binding = ExpenseRecyclerDataBinding.bind(itemView)
+        private val binding = ListItemBinding.bind(itemView)
         fun onBind(data: Data){
-            binding.dateTextExpense.text = data.date
-            binding.typeTextExpense.text = data.type
-            binding.noteTextExpense.text = data.note
-            binding.amountTextExpense.text = data.amount.toString()
+            binding.date.text = data.date
+            binding.category.text = data.type
+            binding.quantity.text = data.amount.toString()
+            when(data.type){
+                "Food" -> {
+                    binding.icon.setImageResource(R.drawable.food)
+                }
+                "House"-> {
+                    binding.icon.setImageResource(R.drawable.house)
+                }
+                "Entertainment"->{
+                    binding.icon.setImageResource(R.drawable.entertainment)
+                }
+                "Personal expenses"->{
+                    // TODO
+                }
+                "Health care"->{
+                    binding.icon.setImageResource(R.drawable.healthcare)
+                }
+                "Transportation"->{
+                    binding.icon.setImageResource(R.drawable.transport)
+                }
+                "Debt / Student Loan"->{
+                    // TODO
+                }
+                "Payckeck"->{
+                    // TODO
+                }
+                "Intellectual Propperty"->{
+                    // TODO
+                }
+                "Stocks"->{
+                    // TODO
+                }
+                "Business"->{
+                    // TODO
+                }
+                "Savings, bonds or lending"->{
+                    // TODO
+                }
+                "others"->{
+                    // TODO
+                }
+            }
         }
     }
 }

@@ -1,8 +1,10 @@
 package com.example.expensemanager
 
 
-class Data (var amount : Int, var type : String, var note : String, var id : String, var date : String) {
-    override fun toString(): String {
-        return "Amount: " + amount.toString() + "€, note: " + note + ", date: " + date
-    }
-}
+data class Data (
+    val amount: Double = 0.0,
+    val type: String = "",
+    val note: String = "",
+    val id: String = "",
+    val date: String = ""
+)
