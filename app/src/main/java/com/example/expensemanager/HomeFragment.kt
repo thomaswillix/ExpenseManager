@@ -1,6 +1,7 @@
 package com.example.expensemanager
 
 import android.app.AlertDialog
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -14,6 +15,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.example.expensemanager.databinding.FragmentHomeBinding
@@ -25,7 +27,10 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import java.text.DateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Date
+import java.util.Locale
 
 
 class HomeFragment : Fragment() {
@@ -41,27 +46,12 @@ class HomeFragment : Fragment() {
     private lateinit var auth : FirebaseAuth
     private lateinit var incomeDatabase : DatabaseReference
     private lateinit var expenseDatabase : DatabaseReference
+    private val incomeValues = mutableListOf<Data>()
+    private val expenseValues = mutableListOf<Data>()
+    private val combinedValues = mutableListOf<Data>()
+    // Formateador de fecha
+    val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM. yyyy", Locale("es"))
 
-    val incomeListener = object : ValueEventListener {
-        override fun onDataChange(dataSnapshot: DataSnapshot) {
-            showIncomeData(dataSnapshot)
-        }
-
-        override fun onCancelled(databaseError: DatabaseError) {
-            // Getting Post failed, log a message
-            Log.w("loadPost:onCancelled", databaseError.toException())
-        }
-    }
-    val expenseListener = object : ValueEventListener {
-        override fun onDataChange(dataSnapshot: DataSnapshot) {
-            showExpenseData(dataSnapshot)
-        }
-
-        override fun onCancelled(databaseError: DatabaseError) {
-            // Getting Post failed, log a message
-            Log.w("loadPost:onCancelled", databaseError.toException())
-        }
-    }
 
     //Binding
     private lateinit var binding: FragmentHomeBinding
@@ -89,13 +79,51 @@ class HomeFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         val user : FirebaseUser = auth.currentUser!!
         val uid:String = user.uid
-        incomeDatabase =FirebaseDatabase.getInstance().getReference().child("IncomeData").child(uid)
-        expenseDatabase =FirebaseDatabase.getInstance().getReference().child("ExpenseData").child(uid)
-        //Value event listeners for both databases
+        incomeDatabase =FirebaseDatabase.getInstance().reference.child("IncomeData").child(uid)
+        expenseDatabase =FirebaseDatabase.getInstance().reference.child("ExpenseData").child(uid)
+
+        val incomeListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                incomeValues.clear()
+                for (ds in dataSnapshot.children) {
+                    val data = ds.getValue(Data::class.java)
+                    if (data != null) {
+                        incomeValues.add(data)
+                    }
+                }
+                // Actualizar lista combinada
+                updateCombinedList(formatter)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("loadIncome:onCancelled", databaseError.toException())
+            }
+        }
+
+        val expenseListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                expenseValues.clear()
+                for (ds in dataSnapshot.children) {
+                    val data = ds.getValue(Data::class.java)
+                    if (data != null) {
+                        expenseValues.add(data)
+                    }
+                }
+                // Actualizar lista combinada
+                updateCombinedList(formatter)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("loadExpense:onCancelled", databaseError.toException())
+            }
+        }
+
+        // Vincula los listeners si el Fragment está añadido
         if (isAdded) {
             incomeDatabase.addValueEventListener(incomeListener)
             expenseDatabase.addValueEventListener(expenseListener)
         }
+
         //Animation
         fadeOpen = AnimationUtils.loadAnimation(activity, R.anim.fade_open)
         fadeClose = AnimationUtils.loadAnimation(activity, R.anim.fade_close)
@@ -122,37 +150,21 @@ class HomeFragment : Fragment() {
         return  myView
     }
 
-    private fun showExpenseData(dataSnapshot: DataSnapshot) {
-        val values = arrayListOf<Data>()
-        for (ds in dataSnapshot.children){
-            val data = ds.getValue(Data::class.java)
-            // Verifica si 'data' no es null antes de acceder a sus propiedades
-            if (data != null) {
-                values.add(data)
-                Log.w("Show data", "Id: ${data.id}, Amount: ${data.amount}, Type: ${data.type}")
-            } else {
-                Log.e("Show data", "Data is null for child: ${ds.key}")
-            }
+    // Función para actualizar la lista combinada y ordenarla
+    private fun updateCombinedList(formatter: DateTimeFormatter) {
+        combinedValues.clear()
+        combinedValues.addAll(incomeValues)
+        combinedValues.addAll(expenseValues)
+
+        // Ordenar la lista combinada por fecha
+        combinedValues.sortBy { data ->
+            LocalDate.parse(data.date, formatter)
         }
-        val listAdapter = ListAdapter(requireContext(), R.layout.list_item, values)
-        binding.listExpenses.adapter = listAdapter
-        listAdapter.notifyDataSetChanged() // Notifica que los datos han cambiado
-    }
-    private fun showIncomeData(dataSnapshot: DataSnapshot) {
-        val values = arrayListOf<Data>()
-        for (ds in dataSnapshot.children){
-            val data = ds.getValue(Data::class.java)
-            // Verifica si 'data' no es null antes de acceder a sus propiedades
-            if (data != null) {
-                values.add(data)
-                Log.w("Show data", "Id: ${data.id}, Amount: ${data.amount}, Type: ${data.type}")
-            } else {
-                Log.e("Show data", "Data is null for child: ${ds.key}")
-            }
-        }
-        val listAdapter = ListAdapter(requireContext(), R.layout.list_item, values)
-        binding.listIncomes.adapter = listAdapter
-        listAdapter.notifyDataSetChanged() // Notifica que los datos han cambiado
+
+        // Actualizar el adaptador
+        val listAdapter = ListAdapter(requireContext(), R.layout.list_item, combinedValues)
+        binding.listCombined.adapter = listAdapter
+        listAdapter.notifyDataSetChanged()
     }
 
     private fun ftAnimation(){
@@ -235,7 +247,7 @@ class HomeFragment : Fragment() {
                 return@setOnClickListener
             }
             val id : String = incomeDatabase.push().key!!
-            val mDate : String = DateFormat.getDateInstance().format(Date())
+            val mDate: String = LocalDate.now().format(formatter)
             val data = Data(ourAmount, type, noteStr, id, mDate)
 
             incomeDatabase.child(id).setValue(data)
@@ -304,7 +316,7 @@ class HomeFragment : Fragment() {
                 return@setOnClickListener
             }
             val id : String = expenseDatabase.push().key!!
-            val mDate : String = DateFormat.getDateInstance().format(Date())
+            val mDate: String = LocalDate.now().format(formatter)
             val data = Data(ourAmount, type, noteStr, id, mDate)
 
             expenseDatabase.child(id).setValue(data)

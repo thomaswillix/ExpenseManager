@@ -156,22 +156,16 @@
                     android:text="View All"/>
             </RelativeLayout>
         </LinearLayout>
+
         <ListView
-            android:id="@+id/listIncomes"
+            android:id="@+id/listCombined"
             android:layout_width="match_parent"
-            android:layout_height="110dp"
+            android:layout_height="280dp"
             android:layout_marginTop="10dp"
             android:orientation="vertical"
             android:padding="20dp"
-            tools:listitem="@layout/list_item"/>
-        <ListView
-            android:id="@+id/listExpenses"
-            android:layout_width="match_parent"
-            android:layout_height="110dp"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical"
-            android:padding="20dp"
-            tools:listitem="@layout/list_item"/>
+            tools:listitem="@layout/list_item" />
+
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width= "match_parent"
             android:layout_height="match_parent">
