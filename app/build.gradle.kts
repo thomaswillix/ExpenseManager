@@ -61,6 +61,8 @@ dependencies {
     implementation("com.google.android.material:material:1.8.0")
     // Image picker to change profile picture
     implementation("com.github.dhaval2404:imagepicker:2.1")
+    // AnyChart
+    implementation("com.github.AnyChart:AnyChart-Android:1.1.5")
     // Firebase imports
     implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
     implementation("com.google.firebase:firebase-storage")

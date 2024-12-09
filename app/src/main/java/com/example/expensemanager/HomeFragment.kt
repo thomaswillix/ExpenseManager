@@ -2,7 +2,6 @@ package com.example.expensemanager
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -16,9 +15,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import com.example.expensemanager.databinding.FragmentHomeBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -27,10 +24,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import java.text.DateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Date
 import java.util.Locale
 
 
@@ -52,7 +47,6 @@ class HomeFragment : Fragment() {
     private val combinedValues = mutableListOf<Data>()
     // Formateador de fecha
     val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM yyyy", Locale("en"))
-
 
     //Binding
     private lateinit var binding: FragmentHomeBinding
