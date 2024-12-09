@@ -1,5 +1,6 @@
 package com.example.expensemanager
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
@@ -50,7 +51,7 @@ class HomeFragment : Fragment() {
     private val expenseValues = mutableListOf<Data>()
     private val combinedValues = mutableListOf<Data>()
     // Formateador de fecha
-    val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM. yyyy", Locale("es"))
+    val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM yyyy", Locale("en"))
 
 
     //Binding
@@ -83,14 +84,21 @@ class HomeFragment : Fragment() {
         expenseDatabase =FirebaseDatabase.getInstance().reference.child("ExpenseData").child(uid)
 
         val incomeListener = object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 incomeValues.clear()
+                binding.totalIncome.text = "0.00"
                 for (ds in dataSnapshot.children) {
                     val data = ds.getValue(Data::class.java)
                     if (data != null) {
                         incomeValues.add(data)
+                        val value : Double = binding.totalIncome.text.toString().toDouble() + data.amount
+                        binding.totalIncome.text = value.toString()
                     }
                 }
+                val text : String
+                text = "+" + binding.totalIncome.text
+                binding.totalIncome.text = text
                 // Actualizar lista combinada
                 updateCombinedList(formatter)
             }
@@ -101,14 +109,21 @@ class HomeFragment : Fragment() {
         }
 
         val expenseListener = object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 expenseValues.clear()
+                binding.totalIncome.text = "0.00"
                 for (ds in dataSnapshot.children) {
                     val data = ds.getValue(Data::class.java)
                     if (data != null) {
                         expenseValues.add(data)
+                        val value : Double = binding.totalExpenses.text.toString().toDouble() + data.amount
+                        binding.totalExpenses.text = value.toString()
                     }
                 }
+                val text : String
+                text = "-" + binding.totalExpenses.text
+                binding.totalExpenses.text = text
                 // Actualizar lista combinada
                 updateCombinedList(formatter)
             }
@@ -155,16 +170,21 @@ class HomeFragment : Fragment() {
         combinedValues.clear()
         combinedValues.addAll(incomeValues)
         combinedValues.addAll(expenseValues)
+        val income  = binding.totalIncome.text.toString().toDouble()
+        val expenses  = binding.totalExpenses.text.toString().toDouble()
+        val balance = income + expenses
+        binding.totalBalance.text = "$balance €"
+        if(combinedValues.isEmpty()){
 
-        // Ordenar la lista combinada por fecha
-        combinedValues.sortBy { data ->
-            LocalDate.parse(data.date, formatter)
+        } else {
+            // Ordenar la lista combinada por fecha
+            combinedValues.sortByDescending { data ->
+                LocalDate.parse(data.date, formatter) }
+            // Actualizar el adaptador
+            val listAdapter = ListAdapter(requireContext(), R.layout.list_item, combinedValues)
+            binding.listCombined.adapter = listAdapter
+            listAdapter.notifyDataSetChanged()
         }
-
-        // Actualizar el adaptador
-        val listAdapter = ListAdapter(requireContext(), R.layout.list_item, combinedValues)
-        binding.listCombined.adapter = listAdapter
-        listAdapter.notifyDataSetChanged()
     }
 
     private fun ftAnimation(){

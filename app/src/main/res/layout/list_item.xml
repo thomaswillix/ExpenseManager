@@ -25,8 +25,9 @@
                 app:cardCornerRadius="30dp">
 
                 <ImageView
-                    android:layout_width="55dp"
-                    android:layout_height="55dp"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center"
                     android:id="@+id/icon"
                     android:contentDescription="Type of expense/income icon"
                     android:src="@drawable/food"/>
@@ -44,9 +45,19 @@
                 android:text="Food"
                 android:textColor="@color/black"
                 android:id="@+id/category"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notes"
+                android:textColor="@color/black"
+                android:id="@+id/note"
+                android:layout_marginTop="30dp"
+                android:textSize="14sp"
+                android:textStyle="italic" />
+
         </RelativeLayout>
 
         <RelativeLayout

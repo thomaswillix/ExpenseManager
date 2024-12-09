@@ -9,6 +9,10 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import java.text.DateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class ListAdapter(context: Context, resource: Int, objects: MutableList<Data>) :
     ArrayAdapter<Data>(context, resource, objects) {
@@ -20,13 +24,27 @@ class ListAdapter(context: Context, resource: Int, objects: MutableList<Data>) :
         val icon = view.findViewById<ImageView>(R.id.icon)
         val type = view.findViewById<TextView>(R.id.category)
         val quantity = view.findViewById<TextView>(R.id.quantity)
+        val note = view.findViewById<TextView>(R.id.note)
         val date = view.findViewById<TextView>(R.id.date)
 
         if (data != null) {
             type.text = data.type
-            date.text = data.date
-            quantity.text = data.amount.toString()
+            // Suponiendo que 'data.date' es un String con formato de fecha como "d MMM. yyyy"
+            val formatter = DateTimeFormatter.ofPattern("d MMM yyyy", Locale("en"))
+            val parsedDate = LocalDate.parse(data.date, formatter)
 
+            // Obtén la fecha actual como LocalDate
+            val today = LocalDate.now()
+
+            // Compara las fechas
+            if (parsedDate.isEqual(today)) {
+                date.text = "Today"
+            } else {
+                date.text = data.date
+            }
+
+            quantity.text = data.amount.toString()
+            note.text = data.note
             when(data.type){
                 "Food" -> {
                     icon!!.setImageResource(R.drawable.food)
