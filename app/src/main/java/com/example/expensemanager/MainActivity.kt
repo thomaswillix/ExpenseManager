@@ -150,19 +150,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         getProfileData()
     }
 
-    private fun getProfileData(){
-        user = FirebaseAuth.getInstance().currentUser!!
-        val name :String
-        if(user.displayName != null){
+    private fun getProfileData() {
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val name: String
+
+        // Usar Firebase Task para realizar la actualización de perfil de manera asíncrona
+        if (user.displayName != null) {
             name = user.displayName!!
-        } else{
+            toolbar.title = "Welcome,\n$name"
+        } else {
             val email = user.email
             name = email?.substring(0, email.indexOf("@")).toString()
-            val profileUpdates = userProfileChangeRequest {
-                displayName = name
+
+            // Realizar actualización de perfil de forma asíncrona
+            val profileUpdates = userProfileChangeRequest { displayName = name }
+            user.updateProfile(profileUpdates).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    toolbar.title = "Welcome,\n$name"
+                } else {
+                    toolbar.title = "Welcome,\n$name"
+                }
             }
-            user.updateProfile(profileUpdates)
         }
-        toolbar.title = "Welcome,\n$name"
     }
 }
