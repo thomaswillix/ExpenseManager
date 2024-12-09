@@ -112,7 +112,7 @@ class HomeFragment : Fragment() {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 expenseValues.clear()
-                binding.totalIncome.text = "0.00"
+                binding.totalExpenses.text = "0.00"
                 for (ds in dataSnapshot.children) {
                     val data = ds.getValue(Data::class.java)
                     if (data != null) {
