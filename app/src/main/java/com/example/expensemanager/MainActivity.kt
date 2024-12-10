@@ -37,6 +37,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     //Fragment
     private lateinit var homeFragment: HomeFragment
     private lateinit var statsFragment: StatsFragment
+    
+    // Declarar el listener
+    private lateinit var authStateListener: FirebaseAuth.AuthStateListener
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -53,10 +56,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toolbar = findViewById(R.id.myToolbar)
         auth = FirebaseAuth.getInstance()
         user = FirebaseAuth.getInstance().currentUser!!
+        // Configura el AuthStateListener
+        authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            updateToolbarTitle(user)
+        }
+        // Registrar el listener en onStart()
+        auth.addAuthStateListener(authStateListener)
+        setSupportActionBar(toolbar)
         homeFragment = HomeFragment()
         statsFragment = StatsFragment()
         setFragment(homeFragment)
-        setSupportActionBar(toolbar)
 
         onBackPressedDispatcher.addCallback(this,onBackPressedCallback)
         drawerLayout = findViewById(R.id.drawerLayout)
@@ -71,7 +80,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         bottomNavigationView = findViewById(R.id.bottomNavigationBar)
         frameLayout = findViewById(R.id.main_frame)
         //Navigation from the bottomNavigationBar
-        @Suppress("DEPRECATION")
         bottomNavigationView.setOnNavigationItemSelectedListener {
                 when(it.itemId){
                     R.id.profile -> {
@@ -89,7 +97,40 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     else -> false
                 }
         }
+        
     }
+
+    override fun onStart() {
+        super.onStart()
+        auth.addAuthStateListener(authStateListener)
+
+        // Asegúrate de que el listener esté registrado cuando la actividad esté en primer plano
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // Eliminar el listener cuando la actividad no esté en primer plano para evitar fugas de memoria
+        auth.removeAuthStateListener(authStateListener)
+    }
+
+    // Método para actualizar el título del Toolbar con los datos del usuario
+    private fun updateToolbarTitle(user: FirebaseUser?) {
+        if (user != null) {
+            val name: String
+            // Si el usuario tiene un nombre de display, lo usamos
+            if (user.displayName != null) {
+                name = user.displayName!!
+            } else {
+                // Si no tiene nombre de display, usamos el email
+                val email = user.email
+                name = email?.substring(0, email.indexOf("@")) ?: "User"
+            }
+
+            // Actualizamos el título del toolbar
+            toolbar.title = "Welcome,\n$name"
+        }
+    }
+
     private fun showDialog(){
         val builder = AlertDialog.Builder(this)
         val view = layoutInflater.inflate(R.layout.dialog_logout, null)
@@ -143,34 +184,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         displaySelectedListener(item.itemId)
         return true
-    }
-
-    override fun onResume() {
-        super.onResume()
-        getProfileData()
-    }
-
-    private fun getProfileData() {
-        val user = FirebaseAuth.getInstance().currentUser!!
-        val name: String
-
-        // Usar Firebase Task para realizar la actualización de perfil de manera asíncrona
-        if (user.displayName != null) {
-            name = user.displayName!!
-            toolbar.title = "Welcome,\n$name"
-        } else {
-            val email = user.email
-            name = email?.substring(0, email.indexOf("@")).toString()
-
-            // Realizar actualización de perfil de forma asíncrona
-            val profileUpdates = userProfileChangeRequest { displayName = name }
-            user.updateProfile(profileUpdates).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    toolbar.title = "Welcome,\n$name"
-                } else {
-                    toolbar.title = "Welcome,\n$name"
-                }
-            }
-        }
     }
 }
