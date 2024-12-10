@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var homeFragment: HomeFragment
     private lateinit var statsFragment: StatsFragment
     
-    // Declarar el listener
+    // Listener
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -103,17 +103,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onStart() {
         super.onStart()
         auth.addAuthStateListener(authStateListener)
-
-        // Asegúrate de que el listener esté registrado cuando la actividad esté en primer plano
     }
 
     override fun onStop() {
         super.onStop()
-        // Eliminar el listener cuando la actividad no esté en primer plano para evitar fugas de memoria
         auth.removeAuthStateListener(authStateListener)
     }
 
-    // Método para actualizar el título del Toolbar con los datos del usuario
     private fun updateToolbarTitle(user: FirebaseUser?) {
         if (user != null) {
             val name: String

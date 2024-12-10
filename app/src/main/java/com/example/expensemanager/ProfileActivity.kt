@@ -17,10 +17,13 @@ import java.io.File
 class ProfileActivity : AppCompatActivity() {
     // Firebase
     private lateinit var user: FirebaseUser
+    private lateinit var auth: FirebaseAuth
     private lateinit var storageReference: StorageReference
 
     // Binding
     private lateinit var binding: ActivityProfileBinding
+    // Listener
+    private lateinit var authStateListener: FirebaseAuth.AuthStateListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,16 +31,20 @@ class ProfileActivity : AppCompatActivity() {
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        auth = FirebaseAuth.getInstance()
         user = FirebaseAuth.getInstance().currentUser!!
-
+        // Configura el AuthStateListener
+        authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            updateToolbarTitle(user)
+        }
+        // Registrar el listener en onStart()
+        auth.addAuthStateListener(authStateListener)
         storageReference = FirebaseStorage.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().uid.toString())
 
         setSupportActionBar(binding.myToolbarPr)
         supportActionBar!!.show()
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-
-        getProfileData()
 
         binding.settingsBtn.setOnClickListener {
             startActivity(Intent(applicationContext, ConfigurationActivity::class.java))
@@ -46,29 +53,39 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(Intent(applicationContext, PersonalDataActivity::class.java))
         }
     }
-    private fun getProfileData(){
-        val name:String
-        val email = user.email
-        name = if (user.displayName != null) {
-            user.displayName!!
-        } else{
-            email?.substring(0, email.indexOf("@")).toString()
-        }
-        binding.textView1.text = name
-        // First we create a temp file
-        val localFile : File = File.createTempFile("pfp", "jpg")
-        // Then we get the File from the storage reference
-        try {
-            storageReference.getFile(localFile).addOnSuccessListener { // if it succeeds we set it to the imageView
-                val bitmap: Bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-                binding.imageView1.setImageBitmap(bitmap)
-            }
-        }catch (_: StorageException){
-        }
+    override fun onStart() {
+        super.onStart()
+        auth.addAuthStateListener(authStateListener)
     }
 
-    override fun onResume() {
-        super.onResume()
-        getProfileData()
+    override fun onStop() {
+        super.onStop()
+        auth.removeAuthStateListener(authStateListener)
+    }
+    private fun updateToolbarTitle(user: FirebaseUser?) {
+        if (user != null) {
+            val name: String
+            // Si el usuario tiene un nombre de display, lo usamos
+            if (user.displayName != null) {
+                name = user.displayName!!
+            } else {
+                // Si no tiene nombre de display, usamos el email
+                val email = user.email
+                name = email?.substring(0, email.indexOf("@")) ?: "User"
+            }
+
+            // Actualizamos el título del toolbar
+            binding.textView1.text = name
+            // First we create a temp file
+            val localFile : File = File.createTempFile("pfp", "jpg")
+            // Then we get the File from the storage reference
+            try {
+                storageReference.getFile(localFile).addOnSuccessListener { // if it succeeds we set it to the imageView
+                    val bitmap: Bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+                    binding.imageView1.setImageBitmap(bitmap)
+                }
+            }catch (_: StorageException){
+            }
+        }
     }
 }
