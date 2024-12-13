@@ -15,6 +15,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.expensemanager.databinding.FragmentHomeBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -133,6 +134,9 @@ class HomeFragment : Fragment() {
             expenseDatabase.addValueEventListener(expenseListener)
         }
 
+        binding.listCombined.setOnItemClickListener { parent, view, position, id ->
+
+        }
         //Animation
         fadeOpen = AnimationUtils.loadAnimation(activity, R.anim.fade_open)
         fadeClose = AnimationUtils.loadAnimation(activity, R.anim.fade_close)
@@ -167,17 +171,30 @@ class HomeFragment : Fragment() {
         val income  = binding.totalIncome.text.toString().toDouble()
         val expenses  = binding.totalExpenses.text.toString().toDouble()
         val balance = income + expenses
-        binding.totalBalance.text = "$balance €"
+        if (balance > 0){
+            binding.totalBalance.text = "+$balance €"
+            context?.let { safeContext ->
+                binding.totalBalance.setTextColor(ContextCompat.getColor(safeContext, R.color.income))
+            }
+        } else{
+            binding.totalBalance.text = "$balance €"
+            context?.let { safeContext ->
+                binding.totalBalance.setTextColor(ContextCompat.getColor(safeContext, R.color.totalExpenses))
+            }
+        }
         if(combinedValues.isEmpty()){
 
         } else {
             // Ordenar la lista combinada por fecha
             combinedValues.sortByDescending { data ->
                 LocalDate.parse(data.date, formatter) }
-            // Actualizar el adaptador
-            val listAdapter = ListAdapter(requireContext(), R.layout.list_item, combinedValues)
-            binding.listCombined.adapter = listAdapter
-            listAdapter.notifyDataSetChanged()
+            // Verificar si el contexto está disponible
+            context?.let { safeContext ->
+                // Si el fragmento está adjunto, crear y asignar el adaptador
+                val listAdapter = ListAdapter(safeContext, R.layout.list_item, combinedValues)
+                binding.listCombined.adapter = listAdapter
+                listAdapter.notifyDataSetChanged()
+            }
         }
     }
 

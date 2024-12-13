@@ -8,9 +8,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="120dp"
         android:layout_marginVertical="10dp"
         android:orientation="horizontal"
+        android:gravity="center"
         tools:ignore="DisableBaselineAlignment,HardcodedText,UselessParent">
 
         <RelativeLayout
@@ -94,5 +95,25 @@
                     android:text="Today"/>
             </LinearLayout>
         </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        tools:ignore="HardcodedText">
+        <Button
+            android:id="@+id/trDetCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="25dp"
+            android:text="cancel"/>
+        <Button
+            android:id="@+id/trDetEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:text="edit"/>
     </LinearLayout>
 </LinearLayout>
