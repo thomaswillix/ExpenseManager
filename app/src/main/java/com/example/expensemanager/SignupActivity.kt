@@ -47,6 +47,7 @@ class SignupActivity : AppCompatActivity() {
         val delayTime: Long = 2000 // 2 segundos de tiempo de espera (puedes ajustarlo)
 
         binding.signupBtn.setOnClickListener{
+            binding.signupBtn.isEnabled = false
             progressDialog.show()
             email = binding.signupEmail.text.toString()
             password = binding.signupPassword.text.toString()

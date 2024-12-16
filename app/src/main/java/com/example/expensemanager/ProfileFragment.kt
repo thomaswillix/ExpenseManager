@@ -90,8 +90,6 @@ class ProfileFragment : Fragment() {
         name = if (user.displayName != null) user.displayName!!
         else email.substring(0, email.indexOf("@"))
 
-        if (user.phoneNumber != null)
-
         binding.nameProfileViewMode.text = name
         binding.emailProfileViewMode.text = email
 

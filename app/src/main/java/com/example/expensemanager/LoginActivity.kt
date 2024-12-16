@@ -78,6 +78,7 @@ class LoginActivity : AppCompatActivity() {
             }, delayTime)
         }
         binding.forgotPassword.setOnClickListener {
+            binding.forgotPassword.isEnabled = false
             val builder = AlertDialog.Builder(this)
             val view = layoutInflater.inflate(R.layout.dialog_forgot, null)
             val userEmail = view.findViewById<EditText>(R.id.editBox)
@@ -96,7 +97,7 @@ class LoginActivity : AppCompatActivity() {
             dialog.show()
             // Crear un Handler para habilitar el botón después del tiempo de espera
             Handler(Looper.getMainLooper()).postDelayed({
-                binding.loginBtn.isEnabled = true // Volver a habilitar el botón después del tiempo de espera
+                binding.forgotPassword.isEnabled = true // Volver a habilitar el botón después del tiempo de espera
             }, delayTime)
         }
         binding.signupRedirectTxt.setOnClickListener {
