@@ -4,6 +4,8 @@ import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import android.util.Patterns
 import android.widget.Button
@@ -34,13 +36,19 @@ class LoginActivity : AppCompatActivity() {
         Builder(this).
         setView(ProgressBar(this)).
         setCancelable(false).
-        setTitle("Please wait").
-        create()
+        setTitle("Logging in").
+        setIcon(R.drawable.baseline_login_24)
+            .create()
 
         login()
     }
     private fun login(){
+        //Delay
+        val delayTime: Long = 2000 // 2 segundos de tiempo de espera (puedes ajustarlo)
+
         binding.loginBtn.setOnClickListener {
+            // Deshabilitar el botón al hacer clic para evitar múltiples clics
+            binding.loginBtn.isEnabled = false
             progressDialog.show()
             val email = binding.loginEmail.text.toString()
             val password = binding.loginPassword.text.toString()
@@ -64,6 +72,10 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
             }
+            // Crear un Handler para habilitar el botón después del tiempo de espera
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.loginBtn.isEnabled = true // Volver a habilitar el botón después del tiempo de espera
+            }, delayTime)
         }
         binding.forgotPassword.setOnClickListener {
             val builder = AlertDialog.Builder(this)
@@ -82,6 +94,10 @@ class LoginActivity : AppCompatActivity() {
                 dialog.window!!.setBackgroundDrawable(ColorDrawable(0))
             }
             dialog.show()
+            // Crear un Handler para habilitar el botón después del tiempo de espera
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.loginBtn.isEnabled = true // Volver a habilitar el botón después del tiempo de espera
+            }, delayTime)
         }
         binding.signupRedirectTxt.setOnClickListener {
             val signupIntent = Intent(this, SignupActivity::class.java)

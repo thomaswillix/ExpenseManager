@@ -3,17 +3,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
+        <Button
+            android:id="@+id/deleteButton"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:backgroundTint="@color/background"
+            android:foregroundTint="@color/totalExpenses"
+            android:layout_marginEnd="345dp"
+            android:foreground="@drawable/baseline_delete_24"/>
+        <Button
+            android:id="@+id/closeButton"
+            android:layout_height="25dp"
+            android:layout_width="25dp"
+            android:backgroundTint="@color/background"
+            android:foregroundTint="@color/dark_blue_icons"
+            android:foreground="@drawable/baseline_close_24"/>
+    </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:layout_marginVertical="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="130dp"
         android:orientation="horizontal"
-        android:gravity="center"
+        android:layout_gravity="center"
         tools:ignore="DisableBaselineAlignment,HardcodedText,UselessParent">
-
         <RelativeLayout
             android:layout_width="70dp"
             android:layout_height="wrap_content"
@@ -74,7 +94,6 @@
                 android:layout_marginStart="15dp"
                 android:orientation="vertical">
 
-                <!-- Editable quantity field -->
                 <EditText
                     android:id="@+id/quantityEditText"
                     android:layout_width="wrap_content"
@@ -97,23 +116,16 @@
         </RelativeLayout>
     </LinearLayout>
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center"
+        android:layout_gravity="center"
         android:layout_marginTop="20dp"
         tools:ignore="HardcodedText">
-        <Button
-            android:id="@+id/trDetCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="25dp"
-            android:text="cancel"/>
         <Button
             android:id="@+id/trDetEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
-            android:text="edit"/>
+            android:text="confirm"/>
     </LinearLayout>
 </LinearLayout>

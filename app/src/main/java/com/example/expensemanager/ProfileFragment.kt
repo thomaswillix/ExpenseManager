@@ -4,11 +4,14 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -18,6 +21,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import com.example.expensemanager.databinding.FragmentProfileBinding
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.userProfileChangeRequest
@@ -83,19 +87,16 @@ class ProfileFragment : Fragment() {
 
         val name : String
         val email = user.email!!
-        var phone = ""
         name = if (user.displayName != null) user.displayName!!
         else email.substring(0, email.indexOf("@"))
 
-        if (user.phoneNumber != null) phone = user.phoneNumber.toString()
+        if (user.phoneNumber != null)
 
         binding.nameProfileViewMode.text = name
         binding.emailProfileViewMode.text = email
-        binding.phoneProfileViewMode.text = phone
 
         binding.nameProfile.setText(name, TextView.BufferType.EDITABLE)
         binding.emailProfile.setText(email, TextView.BufferType.EDITABLE)
-        binding.phoneProfile.setText(phone, TextView.BufferType.EDITABLE)
 
         binding.confirmInfoBtn.setOnClickListener {
             changeDetails(binding.nameProfile.text.toString(), email)
@@ -117,29 +118,70 @@ class ProfileFragment : Fragment() {
             }
         }catch (_: StorageException){}
     }
-    private fun changeDetails(name: String, email: String){
+    private fun changeDetails(name: String, newEmail: String){
+        //if(isConnected)
         val profileUpdates = userProfileChangeRequest {
             displayName = name
         }
-
         val progressDialog = AlertDialog.
         Builder(requireContext()).
         setView(ProgressBar(activity)).
         setCancelable(false).
         setTitle("Updating Profile data").
+        setIcon(R.drawable.edit).
         create()
 
         progressDialog.show()
-        user.updateProfile(profileUpdates)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    uploadProfilePic(progressDialog)
+        var userPassword = ""
+        if (user.email  != newEmail) {
+            // Pedir al usuario que ingrese su contraseña actual
+            context?.let { safeContext ->
+                val builder = AlertDialog.Builder(safeContext)
+                val view = layoutInflater.inflate(R.layout.dialog_email_change_request, null)
+                val password = view.findViewById<EditText>(R.id.editBox)
+                builder.setView(view)
+                val dialog = builder.create()
+                view.findViewById<Button>(R.id.btnCfrm).setOnClickListener {
+                    dialog.dismiss()
                 }
-                else{
-                    progressDialog.dismiss()
-                    Toast.makeText(activity, "Failed to update your profile", Toast.LENGTH_SHORT).show()
+                view.findViewById<Button>(R.id.btnCancel).setOnClickListener {
+                    dialog.dismiss()
                 }
+                if (dialog.window != null){
+                    dialog.window!!.setBackgroundDrawable(ColorDrawable(0))
+                }
+                dialog.show()
+
+                userPassword = password.text.toString()
             }
+
+            val credentials = EmailAuthProvider.getCredential(user.email.toString(), userPassword)
+
+            user.reauthenticate(credentials)
+                .addOnSuccessListener {
+                    // Reautenticación exitosa, proceder con la actualización del email
+                    user.verifyBeforeUpdateEmail(newEmail)
+                        .addOnFailureListener {
+                            progressDialog.dismiss()
+                            Toast.makeText(activity, "Failed to update your profile. Invalid email.", Toast.LENGTH_SHORT).show()
+                        }
+                }
+                .addOnFailureListener { exception ->
+                    progressDialog.dismiss()
+                    Toast.makeText(activity, "Reauthentication failed. Check credentials.", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            Toast.makeText(activity, "User is not authenticated.", Toast.LENGTH_SHORT).show()
+        }
+        user.updateProfile(profileUpdates).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                uploadProfilePic(progressDialog)
+            } else {
+                progressDialog.dismiss()
+                Toast.makeText(activity, "Failed to update your profile. Invalid username.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
     private fun uploadProfilePic(progressDialog: AlertDialog){
         if (!::uri.isInitialized) {
