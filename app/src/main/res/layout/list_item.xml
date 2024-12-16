@@ -38,49 +38,52 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_weight="20">
-
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
                 <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Food"
-                android:textColor="@color/black"
-                android:id="@+id/category"
-                android:layout_marginTop="5dp"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Notes"
-                android:textColor="@color/black"
-                android:id="@+id/note"
-                android:layout_marginTop="30dp"
-                android:textSize="14sp"
-                android:textStyle="italic" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Food"
+                    android:textColor="@color/black"
+                    android:id="@+id/category"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Notes"
+                    android:textColor="@color/black"
+                    android:id="@+id/note"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"
+                    android:textStyle="italic" />
 
+            </LinearLayout>
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:layout_weight="1">
+            android:layout_weight="0">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/quantity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
                     android:text="-45.00€"
                     android:textColor="@color/black"
-                    android:id="@+id/quantity"
-                    android:layout_marginTop="10dp"
                     android:textSize="16sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
