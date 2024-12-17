@@ -64,7 +64,6 @@ class SignupActivity : AppCompatActivity() {
                             FirebaseAuth.getInstance().currentUser!!.updateProfile(profileUpdates)
                             progressDialog.dismiss()
                             Toast.makeText(this, "Registration was completed successfully", Toast.LENGTH_SHORT).show()
-                            FirebaseAuth.getInstance().currentUser!!.sendEmailVerification()
                             val intent = Intent(this, LoginActivity::class.java)
                             startActivity(intent)
                         } else {
