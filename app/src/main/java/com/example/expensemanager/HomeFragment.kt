@@ -12,10 +12,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.BaseAdapter
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -138,9 +135,9 @@ class HomeFragment : Fragment() {
             incomeDatabase.addValueEventListener(incomeListener)
             expenseDatabase.addValueEventListener(expenseListener)
         }
-
+        //Detail view of a transaction
         binding.listCombined.setOnItemClickListener { parent, view, position, id ->
-            transactioDetailView(parent, view, position, id)
+            transactioDetailView(parent, position)
         }
         //Animation
         fadeOpen = AnimationUtils.loadAnimation(activity, R.anim.fade_open)
@@ -168,7 +165,7 @@ class HomeFragment : Fragment() {
         return  myView
     }
 
-    private fun transactioDetailView(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+    private fun transactioDetailView(parent: AdapterView<*>, position: Int) {
         val binding = TransactionDetailBinding.inflate(layoutInflater)
         val myDialog = AlertDialog.Builder(activity)
             .setView(binding.root)
@@ -225,6 +222,7 @@ class HomeFragment : Fragment() {
 
 
     // Función para actualizar la lista combinada y ordenarla
+    @SuppressLint("SetTextI18n")
     private fun updateCombinedList(formatter: DateTimeFormatter) {
         combinedValues.clear()
         combinedValues.addAll(incomeValues)
@@ -244,7 +242,7 @@ class HomeFragment : Fragment() {
             }
         }
         if(combinedValues.isEmpty()){
-
+            // TODO: SI ESTÁ VACÍO MOSTRAR UNA IMAGEN
         } else {
             // Ordenar la lista combinada por fecha
             combinedValues.sortByDescending { data ->
@@ -402,9 +400,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-
     private fun toastMessage(message:String){
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 }
-
