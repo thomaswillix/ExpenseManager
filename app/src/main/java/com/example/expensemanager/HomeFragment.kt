@@ -10,14 +10,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.BaseAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.expensemanager.databinding.CustomLayoutForInsertdataBinding
+import com.example.expensemanager.databinding.DialogConfirmDeleteBinding
 import com.example.expensemanager.databinding.FragmentHomeBinding
+import com.example.expensemanager.databinding.TransactionDetailBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -135,7 +140,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.listCombined.setOnItemClickListener { parent, view, position, id ->
-
+            transactioDetailView(parent, view, position, id)
         }
         //Animation
         fadeOpen = AnimationUtils.loadAnimation(activity, R.anim.fade_open)
@@ -162,6 +167,62 @@ class HomeFragment : Fragment() {
         }
         return  myView
     }
+
+    private fun transactioDetailView(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+        val binding = TransactionDetailBinding.inflate(layoutInflater)
+        val myDialog = AlertDialog.Builder(activity)
+            .setView(binding.root)
+            .create()
+        myDialog.setCancelable(false)
+
+        val selectedItem = parent.getItemAtPosition(position) as? Data
+
+        selectedItem?.let { item ->
+            binding.noteEditText.setText(item.note)
+            binding.quantityEditText.setText(item.amount.toString())
+        }
+
+        binding.deleteButton.setOnClickListener {
+            val confirmBinding = DialogConfirmDeleteBinding.inflate(layoutInflater)
+            val confirmDialog = AlertDialog.Builder(activity)
+                .setView(confirmBinding.root)
+                .create()
+
+            confirmBinding.btnYes.setOnClickListener {
+                (parent.adapter as? BaseAdapter)?.let { adapter ->
+                    if (adapter is ListAdapter) {
+                        val data = adapter.getData()
+                        data.removeAt(position)
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+                confirmDialog.dismiss()
+                myDialog.dismiss()
+            }
+
+            confirmBinding.btnNo.setOnClickListener {
+                confirmDialog.dismiss()
+            }
+
+            confirmDialog.show()
+        }
+
+        binding.closeButton.setOnClickListener {
+            myDialog.dismiss()
+        }
+
+        binding.trConfirm.setOnClickListener {
+            selectedItem?.let { item ->
+                item.note = binding.noteEditText.text.toString()
+                item.amount = binding.quantityEditText.text.toString().toDoubleOrNull() ?: 0.0
+            }
+            (parent.adapter as? BaseAdapter)?.notifyDataSetChanged()
+            myDialog.dismiss()
+        }
+
+        myDialog.show()
+    }
+
 
     // Función para actualizar la lista combinada y ordenarla
     private fun updateCombinedList(formatter: DateTimeFormatter) {
@@ -227,57 +288,46 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun incomeDataInsert(){
-        //Create Dialog
-        val myDialog =  (AlertDialog.Builder(activity))
-        val myView = layoutInflater.inflate(R.layout.custom_layout_for_insertdata,null)
-        myDialog.setView(myView)
-        val dialog:AlertDialog = myDialog.create()
+    private fun incomeDataInsert() {
+        val myDialog = AlertDialog.Builder(activity)
+        val binding = CustomLayoutForInsertdataBinding.inflate(layoutInflater) // Usar View Binding aquí
+        myDialog.setView(binding.root)
+        val dialog: AlertDialog = myDialog.create()
         dialog.setCancelable(false)
 
-        // Insert array
         val list = mutableListOf<String>()
-        list.addAll(listOf("Payckeck", "Intellectual Propperty", "Stocks", "Business", "Savings, bonds or lending"
-            , "others")
-        )
+        list.addAll(listOf("Payckeck", "Intellectual Propperty", "Stocks", "Business", "Savings, bonds or lending", "others"))
 
-        val autoCompleteTextView = myView.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
-        val arrayAdapter = ArrayAdapter<String>(myView.context, R.layout.dropdown_item, list)
+        val arrayAdapter = ArrayAdapter<String>(binding.root.context, R.layout.dropdown_item, list)
 
         var type = ""
-        autoCompleteTextView.setAdapter(arrayAdapter)
-        autoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
-            val item : String = parent.getItemAtPosition(position).toString()
+        binding.autoCompleteTextView.setAdapter(arrayAdapter)
+        binding.autoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
+            val item: String = parent.getItemAtPosition(position).toString()
             toastMessage(item)
             type = item
         }
-        // Get id's from view
-        val editAmount = myView.findViewById<EditText>(R.id.amountEdt)
-        val editNote = myView.findViewById<EditText>(R.id.noteEdt)
-
-        val btnCancel = myView.findViewById<Button>(R.id.btnCancelData)
-        val btnSave = myView.findViewById<Button>(R.id.btnSave)
 
         dialog.show()
 
-        btnSave.setOnClickListener {
-            val amountStr = editAmount.text.toString().trim()
-            val noteStr = editNote.text.toString().trim()
-            if (TextUtils.isEmpty(type)){
-                autoCompleteTextView.setError("Required field...")
+        binding.btnSave.setOnClickListener {
+            val amountStr = binding.amountEdt.text.toString().trim()
+            val noteStr = binding.noteEdt.text.toString().trim()
+            if (TextUtils.isEmpty(type)) {
+                binding.autoCompleteTextView.error = "Required field..."
                 return@setOnClickListener
             }
-            if (TextUtils.isEmpty(amountStr)){
-                editAmount.error = "Required field..."
+            if (TextUtils.isEmpty(amountStr)) {
+                binding.amountEdt.error = "Required field..."
                 return@setOnClickListener
             }
-            val ourAmount : Double = amountStr.toDouble()
+            val ourAmount: Double = amountStr.toDouble()
 
-            if (TextUtils.isEmpty(noteStr)){
-                editNote.error = "Required field..."
+            if (TextUtils.isEmpty(noteStr)) {
+                binding.noteEdt.error = "Required field..."
                 return@setOnClickListener
             }
-            val id : String = incomeDatabase.push().key!!
+            val id: String = incomeDatabase.push().key!!
             val mDate: String = LocalDate.now().format(formatter)
             val data = Data(ourAmount, type, noteStr, id, mDate)
 
@@ -286,67 +336,58 @@ class HomeFragment : Fragment() {
 
             dialog.dismiss()
         }
-        btnCancel.setOnClickListener {
+
+        binding.btnCancelData.setOnClickListener {
             dialog.dismiss()
         }
-
     }
 
-    private fun expenseDataInsert(){
-        val myDialog =  (AlertDialog.Builder(activity))
+
+    private fun expenseDataInsert() {
+        val myDialog = AlertDialog.Builder(activity)
         //TODO: Change layout and create a new one for expenses
-        val myView = layoutInflater.inflate(R.layout.custom_layout_for_insertdata,null)
-        myDialog.setView(myView)
-        val dialog:AlertDialog = myDialog.create()
+        val binding = CustomLayoutForInsertdataBinding.inflate(layoutInflater) // Usar View Binding aquí
+        myDialog.setView(binding.root)
+        val dialog: AlertDialog = myDialog.create()
         dialog.setCancelable(false)
 
-        // Insert array
         val list = mutableListOf<String>()
         list.addAll(listOf("House", "Food", "Entertainment", "Personal expenses", "Health care",
-            "Transportation", "Debt / Student Loan", "others")
-        )
+            "Transportation", "Debt / Student Loan", "others"))
 
-        val autoCompleteTextView = myView.findViewById<AutoCompleteTextView>(R.id.autoCompleteTextView)
-        val arrayAdapter = ArrayAdapter<String>(myView.context, R.layout.dropdown_item, list)
-
-        autoCompleteTextView.setAdapter(arrayAdapter)
+        val arrayAdapter = ArrayAdapter(binding.root.context, R.layout.dropdown_item, list)
+        binding.autoCompleteTextView.setAdapter(arrayAdapter)
 
         var type = ""
-        autoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
-            val item : String = parent.getItemAtPosition(position).toString()
+        binding.autoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
+            val item: String = parent.getItemAtPosition(position).toString()
             toastMessage(item)
             type = item
         }
-        //Get id's from view
-        val editAmount = myView.findViewById<EditText>(R.id.amountEdt)
-        val editNote = myView.findViewById<EditText>(R.id.noteEdt)
-
-        val btnCancel = myView.findViewById<Button>(R.id.btnCancelData)
-        val btnSave = myView.findViewById<Button>(R.id.btnSave)
 
         dialog.show()
 
-        btnSave.setOnClickListener {
-            val amountStr = editAmount.text.toString().trim()
-            val noteStr = editNote.text.toString().trim()
-            if (TextUtils.isEmpty(type)){
-                autoCompleteTextView.setError("Required field...")
+        binding.btnSave.setOnClickListener {
+            val amountStr = binding.amountEdt.text.toString().trim()
+            val noteStr = binding.noteEdt.text.toString().trim()
+            if (TextUtils.isEmpty(type)) {
+                binding.autoCompleteTextView.error = "Required field..."
                 return@setOnClickListener
             }
-            if (TextUtils.isEmpty(amountStr)){
-                editAmount.error = "Required field..."
+            if (TextUtils.isEmpty(amountStr)) {
+                binding.amountEdt.error = "Required field..."
                 return@setOnClickListener
-            } else if (!TextUtils.isDigitsOnly(amountStr)){
-                editAmount.error = "Only numeric numbers"
+            } else if (!TextUtils.isDigitsOnly(amountStr)) {
+                binding.noteEdt.error = "Only numeric numbers"
                 return@setOnClickListener
             }
-            val ourAmount : Double = amountStr.toDouble()
+            val ourAmount: Double = amountStr.toDouble()
 
-            if (TextUtils.isEmpty(noteStr)){
-                editNote.error = "Required field..."
+            if (TextUtils.isEmpty(noteStr)) {
+                binding.noteEdt.error = "Required field..."
                 return@setOnClickListener
             }
-            val id : String = expenseDatabase.push().key!!
+            val id: String = expenseDatabase.push().key!!
             val mDate: String = LocalDate.now().format(formatter)
             val data = Data(ourAmount, type, noteStr, id, mDate)
 
@@ -355,10 +396,12 @@ class HomeFragment : Fragment() {
 
             dialog.dismiss()
         }
-        btnCancel.setOnClickListener {
+
+        binding.btnCancelData.setOnClickListener {
             dialog.dismiss()
         }
     }
+
 
     private fun toastMessage(message:String){
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()

@@ -3,62 +3,70 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center">
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
+    android:padding="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
         <Button
             android:id="@+id/deleteButton"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:backgroundTint="@color/background"
             android:foregroundTint="@color/totalExpenses"
-            android:layout_marginEnd="345dp"
-            android:foreground="@drawable/baseline_delete_24"/>
+            android:foreground="@drawable/baseline_delete_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
         <Button
             android:id="@+id/closeButton"
-            android:layout_height="25dp"
             android:layout_width="25dp"
+            android:layout_height="25dp"
             android:backgroundTint="@color/background"
             android:foregroundTint="@color/dark_blue_icons"
-            android:foreground="@drawable/baseline_close_24"/>
-    </LinearLayout>
-
+            android:foreground="@drawable/baseline_close_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="130dp"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
         android:orientation="horizontal"
         android:layout_gravity="center"
         tools:ignore="DisableBaselineAlignment,HardcodedText,UselessParent">
         <RelativeLayout
             android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="16dp"
+            android:layout_weight="1">
             <androidx.cardview.widget.CardView
                 android:layout_width="75dp"
                 android:layout_height="75dp"
                 android:layout_marginStart="5dp"
-                app:cardCornerRadius="30dp">
+                android:elevation="12dp"
+                app:cardCornerRadius="100dp">
 
                 <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="65dp"
-                    android:layout_gravity="center"
                     android:id="@+id/icon"
+                    android:layout_width="65dp"
+                    android:layout_height="75dp"
+                    android:layout_gravity="center"
                     android:contentDescription="Type of expense/income icon"
-                    android:src="@drawable/food"/>
+                    android:src="@drawable/food" />
             </androidx.cardview.widget.CardView>
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="220dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="20dp"
+            android:layout_weight="20">
 
             <TextView
                 android:id="@+id/category"
@@ -70,7 +78,6 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <!-- Editable note field -->
             <EditText
                 android:id="@+id/noteEditText"
                 android:layout_width="match_parent"
@@ -84,15 +91,16 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="100dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="20dp"
+            android:layout_weight="1">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginStart="15dp">
 
                 <EditText
                     android:id="@+id/quantityEditText"
@@ -120,10 +128,10 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         tools:ignore="HardcodedText">
         <Button
-            android:id="@+id/trDetEdit"
+            android:id="@+id/trConfirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="confirm"/>
