@@ -1,7 +1,9 @@
 package com.example.expensemanager
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.ColorDrawable
@@ -16,7 +18,9 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import com.example.expensemanager.databinding.FragmentProfileBinding
@@ -43,9 +47,22 @@ class ProfileFragment : Fragment() {
     private lateinit var myView: View
     // Profile Pic
     private lateinit var profilePic: ImageView
-
+    // Binding
     private lateinit var binding: FragmentProfileBinding
+    // Permission Launcher
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
+        val readStorageGranted = permissions[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
 
+        if (cameraGranted || readStorageGranted) {
+            // Permitir acceso a la cámara o galería dependiendo de los permisos concedidos
+            openImagePicker(cameraGranted, readStorageGranted)
+        } else {
+            toastMessage("Permisos denegados. No se puede acceder a la cámara ni a la galería")
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -57,7 +74,7 @@ class ProfileFragment : Fragment() {
         //Firebase
         auth = FirebaseAuth.getInstance()
         databaseReference = FirebaseDatabase.getInstance().getReference("users")
-        storageReference = FirebaseStorage.getInstance().getReference().child("Users").child(
+        storageReference = FirebaseStorage.getInstance().reference.child("Users").child(
             FirebaseAuth.getInstance().uid.toString())
         // Default value
         uri = Uri.parse("android.resource://${activity?.packageName}/drawable/pfp")
@@ -101,10 +118,66 @@ class ProfileFragment : Fragment() {
         }
 
         profilePic.setOnClickListener {
-            changeProfilePic()
+            if (checkPermissions()) {
+                // Abrir el selector si los permisos están concedidos
+                openImagePicker(true, true)
+            } else {
+                // Solicitar permisos si no están concedidos
+                requestPermissions()
+            }
         }
     }
-    private fun  getProfilePic(imageView: ImageView){
+    private fun checkPermissions(): Boolean {
+        val cameraPermission = ContextCompat.checkSelfPermission(
+            requireContext(), Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+
+        val readStoragePermission = ContextCompat.checkSelfPermission(
+            requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+
+        return cameraPermission && readStoragePermission
+    }
+
+    private fun requestPermissions() {
+        requestPermissionLauncher.launch(
+            arrayOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+        )
+    }
+    private fun openImagePicker(cameraGranted: Boolean, readStorageGranted: Boolean) {
+        if (cameraGranted && readStorageGranted) {
+            // Permitir tanto cámara como galería
+            ImagePicker.with(this)
+                .cameraOnly() // Permite el uso de la cámara
+                .galleryOnly() // También puede acceder a la galería
+                .crop() // Opcional: permitir recorte
+                .compress(1024) // Reducir tamaño a 1MB
+                .maxResultSize(1080, 1080) // Limitar resolución máxima
+                .start()
+        } else if (cameraGranted) {
+            // Solo cámara permitida
+            ImagePicker.with(this)
+                .cameraOnly()
+                .crop()
+                .compress(1024) // Reducir tamaño a 1MB
+                .maxResultSize(1080, 1080) // Limitar resolución máxima
+                .start()
+        } else if (readStorageGranted) {
+            // Solo galería permitida
+            ImagePicker.with(this)
+                .galleryOnly()
+                .crop()
+                .compress(1024) // Reducir tamaño a 1MB
+                .maxResultSize(1080, 1080) // Limitar resolución máxima
+                .start()
+        } else {
+            toastMessage("No se puede acceder a la cámara ni a la galería")
+        }
+    }
+    private fun getProfilePic(imageView: ImageView){
         // First we create a temp file
         val localFile : File = File.createTempFile("pfp", "jpg")
         // Then we get the File from the storage reference
@@ -163,16 +236,16 @@ class ProfileFragment : Fragment() {
                                     uploadProfilePic(progressDialog)
                                 } else {
                                     progressDialog.dismiss()
-                                    Toast.makeText(activity, "Failed to update your profile. Invalid username.", Toast.LENGTH_SHORT).show()
+                                    toastMessage("Failed to update your profile. Invalid username")
                                 }
                             }
                         }.addOnFailureListener {
                             progressDialog.dismiss()
-                            Toast.makeText(activity, "Failed to update your profile. Invalid email.", Toast.LENGTH_SHORT).show()
+                            toastMessage("Failed to update your profile. Invalid email")
                         }
-                }.addOnFailureListener { exception ->
+                }.addOnFailureListener {
                     progressDialog.dismiss()
-                    Toast.makeText(activity, "Reauthentication failed. Check credentials.", Toast.LENGTH_SHORT).show()
+                    toastMessage("Reauthentication failed. Check credentials")
                 }
         } else {
             user.updateProfile(profileUpdates).addOnCompleteListener { task ->
@@ -180,7 +253,7 @@ class ProfileFragment : Fragment() {
                     uploadProfilePic(progressDialog)
                 } else {
                     progressDialog.dismiss()
-                    Toast.makeText(activity, "Failed to update your profile. Invalid username.", Toast.LENGTH_SHORT).show()
+                    toastMessage("Failed to update your profile. Invalid username")
                 }
             }
         }
@@ -193,26 +266,16 @@ class ProfileFragment : Fragment() {
         }
         storageReference.putFile(uri).addOnSuccessListener {
             progressDialog.dismiss()
-            Toast.makeText(activity, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+            toastMessage("Profile updated successfully")
             binding.editModeLayout.visibility = View.GONE
             binding.viewModeLayout.visibility = View.VISIBLE
             getUserData()
 
         }.addOnFailureListener{
             progressDialog.dismiss()
-            Toast.makeText(activity, "Failed to upload the image", Toast.LENGTH_SHORT).show()
+            toastMessage("Failed to upload the image")
         }
     }
-
-    private fun changeProfilePic (){
-        ImagePicker.with(this)
-        ImagePicker.with(this)
-            .cropSquare()	//Crop square image, its same as crop(1f, 1f)
-            .compress(1024)			//Final image size will be less than 1 MB(Optional)
-            .maxResultSize(1080, 1080)	//Final image resolution will be less than 1080 x 1080(Optional)
-            .start()
-    }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super. onActivityResult(requestCode, resultCode, data)
@@ -223,15 +286,18 @@ class ProfileFragment : Fragment() {
                     uri = it
                     profilePic.setImageURI(uri)
                 } ?: run {
-                    Toast.makeText(activity, "No image selected", Toast.LENGTH_SHORT).show()
+                    toastMessage("No image selected")
                 }
             }
             ImagePicker.RESULT_ERROR -> {
-                Toast.makeText(activity, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+                toastMessage(ImagePicker.getError(data))
             }
             else -> {
-                Toast.makeText(activity, "Task Cancelled", Toast.LENGTH_SHORT).show()
+                toastMessage("Task Cancelled")
             }
         }
+    }
+    private fun toastMessage(message:String){
+        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 }
