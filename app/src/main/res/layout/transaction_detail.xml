@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/transaction_detail_background"
     android:padding="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -55,6 +56,7 @@
                     android:layout_width="65dp"
                     android:layout_height="75dp"
                     android:layout_gravity="center"
+                    app:tint="@color/black"
                     android:contentDescription="Type of expense/income icon"
                     android:src="@drawable/food" />
             </androidx.cardview.widget.CardView>
@@ -73,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text="Food"
-                android:textColor="@color/common_google_signin_btn_text_light_default"
+                android:textColor="@color/hint_text"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -117,6 +119,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/date"
                     android:layout_marginTop="1dp"
+                    android:textColor="@color/hint_text"
                     android:textSize="14sp"
                     android:text="Today"/>
             </LinearLayout>
@@ -133,6 +136,8 @@
             android:id="@+id/trConfirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/dialog_background"
+            android:textColor="#FFFFFF"
             android:text="confirm"/>
     </LinearLayout>
 </LinearLayout>

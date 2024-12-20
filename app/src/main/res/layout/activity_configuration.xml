@@ -20,7 +20,7 @@
             android:id="@+id/myToolbarCfg"
             app:title="Settings"
             app:titleTextColor="@color/black"
-            android:background="#FFFFFF"
+            android:background="@color/background"
             android:theme="@style/ToolbarTheme"/>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -49,7 +49,7 @@
                  android:layout_height="250dp"
                  android:layout_gravity="center"
                 android:contentDescription="Logo"
-                app:srcCompat="@drawable/wisewallet"/>
+                app:srcCompat="@drawable/logo"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

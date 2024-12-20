@@ -41,12 +41,16 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="Show income data"
-            android:layout_marginEnd="20dp"/>
+            android:layout_marginEnd="20dp"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/dark_blue_logo"/>
         <Button
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="Show expense data"
-            android:layout_marginStart="20dp"/>
+            android:layout_marginStart="20dp"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/dark_blue_logo"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

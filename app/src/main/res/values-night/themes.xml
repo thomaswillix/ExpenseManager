@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.ExpenseManager" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/white</item>
-        <item name="android:statusBarColor">@color/dark_blue_logo</item>
+        <item name="android:statusBarColor">#03045E</item>
     </style>
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
         <!-- Customize color of navigation drawer icon and back arrow -->

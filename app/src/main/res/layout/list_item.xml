@@ -30,6 +30,7 @@
                     android:layout_gravity="center"
                     android:id="@+id/icon"
                     android:contentDescription="Type of expense/income icon"
+                    app:tint="@color/black"
                     android:src="@drawable/food"/>
             </androidx.cardview.widget.CardView>
         </RelativeLayout>

@@ -22,7 +22,7 @@
             android:layout_width="103dp"
             android:layout_height="103dp"
             android:layout_marginBottom="40dp"
-            app:srcCompat="@drawable/wisewallet" />
+            app:srcCompat="@drawable/logo" />
 
         <EditText
             android:id="@+id/loginEmail"
@@ -36,7 +36,7 @@
             android:drawablePadding="8dp"
             android:inputType="textEmailAddress"
             android:textColor="@color/black"
-            android:textColorHint="#717171">
+            android:textColorHint="@color/hint_text">
         </EditText>
 
         <EditText
@@ -50,7 +50,7 @@
             android:inputType="textPassword"
             android:hint="Password"
             android:textColor="@color/black"
-            android:textColorHint="#717171"
+            android:textColorHint="@color/hint_text"
             android:id="@+id/loginPassword">
         </EditText>
 
@@ -60,7 +60,7 @@
             android:layout_marginTop="30dp"
             android:layout_height="70dp"
             app:cornerRadius="30dp"
-            android:backgroundTint="#023E8A"
+            android:backgroundTint="@color/dark_blue_icons"
             android:textColor="@color/white"
             android:text="Login"
             android:textSize="18sp">
