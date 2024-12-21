@@ -3,47 +3,57 @@ package com.example.expensemanager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.SwitchCompat
+import com.example.expensemanager.databinding.ActivityConfigurationBinding
 import com.google.firebase.auth.FirebaseAuth
 
 class ConfigurationActivity : AppCompatActivity() {
-    private var nightMode : Boolean = false
-    private lateinit var  editor : SharedPreferences.Editor
-    private lateinit var  sharedPreferences : SharedPreferences
+
+    private var nightMode: Boolean = false
+    private lateinit var editor: SharedPreferences.Editor
+    private lateinit var sharedPreferences: SharedPreferences
+
+    // View Binding
+    private lateinit var binding: ActivityConfigurationBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_configuration)
 
-        val toolbar : androidx.appcompat.widget.Toolbar = findViewById(R.id.myToolbarCfg)
-        setSupportActionBar(toolbar)
-        supportActionBar!!.show()
-        supportActionBar!!.setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        // Initialize view binding
+        binding = ActivityConfigurationBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val switch = findViewById<SwitchCompat>(R.id.switch1)
+        // Set up the toolbar
+        setSupportActionBar(binding.myToolbarCfg)
+        supportActionBar?.apply {
+            show()
+            setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24)
+            setDisplayHomeAsUpEnabled(true)
+        }
 
+        // Load theme preference
         sharedPreferences = getSharedPreferences("Mode", Context.MODE_PRIVATE)
         editor = sharedPreferences.edit()
-        nightMode = sharedPreferences.getBoolean("night",false)
+        nightMode = sharedPreferences.getBoolean("night", false)
 
-        /*if (nightMode){
-            switch.isChecked = true
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        }
-        switch.setOnClickListener { myThemes() }*/
-        val logout : Button = findViewById(R.id.logoutButton)
-        logout.setOnClickListener{
-            showDialog()
-        }
+        // Set initial state of the switch
+        binding.switch1.isChecked = nightMode
+        /*AppCompatDelegate.setDefaultNightMode(
+            if (nightMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        )*/
 
+        // Handle switch toggle
+        /*binding.switch1.setOnCheckedChangeListener { _, isChecked ->
+            nightMode = isChecked
+            applyTheme()
+        }*/
+
+        // Handle logout button click
+        binding.logoutButton.setOnClickListener { showDialog() }
     }
 
     private fun showDialog() {
@@ -51,16 +61,17 @@ class ConfigurationActivity : AppCompatActivity() {
         val view = layoutInflater.inflate(R.layout.dialog_logout, null)
         builder.setView(view)
         val dialog = builder.create()
-        view.findViewById<Button>(R.id.btnReturn).setOnClickListener {
-            dialog.dismiss()
-        }
-        view.findViewById<Button>(R.id.btnLogout).setOnClickListener {
-            dialog.dismiss()
-            logoutUser()
-        }
-        if (dialog.window != null){
-            dialog.window!!.setBackgroundDrawable(ColorDrawable(0))
-        }
+
+        view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnReturn)
+            .setOnClickListener { dialog.dismiss() }
+
+        view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnLogout)
+            .setOnClickListener {
+                dialog.dismiss()
+                logoutUser()
+            }
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
     }
 
@@ -75,18 +86,14 @@ class ConfigurationActivity : AppCompatActivity() {
         finish()
     }
 
-
-
-    private fun myThemes() {
-        if (!nightMode){
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            editor.putBoolean("night", false)
-            editor.apply()
-
-        }else{
+    private fun applyTheme() {
+        // Apply theme based on the updated nightMode value
+        if (nightMode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            editor.putBoolean("night",true)
-            editor.apply()
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
+        editor.putBoolean("night", nightMode)
+        editor.apply()
     }
 }
