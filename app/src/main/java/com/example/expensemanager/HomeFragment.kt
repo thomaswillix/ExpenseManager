@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.BaseAdapter
+import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -243,9 +244,13 @@ class HomeFragment : Fragment() {
         }
         if(combinedValues.isEmpty()){
             binding.emptyImage.visibility = View.VISIBLE
+            binding.emptyText.visibility = View.VISIBLE
+            binding.emptyText2.visibility = View.VISIBLE
             binding.listCombined.visibility = View.GONE
         } else {
             binding.emptyImage.visibility = View.GONE
+            binding.emptyText.visibility = View.GONE
+            binding.emptyText2.visibility = View.GONE
             binding.listCombined.visibility = View.VISIBLE
             // Ordenar la lista combinada por fecha
             combinedValues.sortByDescending { data ->
@@ -284,8 +289,12 @@ class HomeFragment : Fragment() {
             ftAnimation()
         }
         binding.fabExpenseBtn.setOnClickListener {
-            expenseDataInsert()
-            ftAnimation()
+            if(!hasMoney()) {
+                toastMessage("You can't make that operation now as to don't have money")
+            } else{
+                expenseDataInsert()
+                ftAnimation()
+            }
         }
     }
 
@@ -384,6 +393,10 @@ class HomeFragment : Fragment() {
             }
             val ourAmount: Double = amountStr.toDouble()
 
+            if (!checkBalance(binding.amountEdt)){
+                return@setOnClickListener
+            }
+
             if (TextUtils.isEmpty(noteStr)) {
                 binding.noteEdt.error = "Required field..."
                 return@setOnClickListener
@@ -401,6 +414,22 @@ class HomeFragment : Fragment() {
         binding.btnCancelData.setOnClickListener {
             dialog.dismiss()
         }
+    }
+
+    private fun hasMoney(): Boolean {
+        if(binding.totalBalance.text.toString().replace("€", "").toDouble() == 0.0){
+            return false
+        }
+        return true
+    }
+
+    private fun checkBalance(expense: EditText) : Boolean{
+         if(binding.totalBalance.text.toString().replace("€", "").toDouble()
+            < expense.toString().toDouble()){
+            expense.error = "Quantity not applicable, you don't have enough money"
+            return false
+        }
+        return true
     }
 
     private fun toastMessage(message:String){
