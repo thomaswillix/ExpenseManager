@@ -242,8 +242,11 @@ class HomeFragment : Fragment() {
             }
         }
         if(combinedValues.isEmpty()){
-            // TODO: SI ESTÁ VACÍO MOSTRAR UNA IMAGEN
+            binding.emptyImage.visibility = View.VISIBLE
+            binding.listCombined.visibility = View.GONE
         } else {
+            binding.emptyImage.visibility = View.GONE
+            binding.listCombined.visibility = View.VISIBLE
             // Ordenar la lista combinada por fecha
             combinedValues.sortByDescending { data ->
                 LocalDate.parse(data.date, formatter) }
