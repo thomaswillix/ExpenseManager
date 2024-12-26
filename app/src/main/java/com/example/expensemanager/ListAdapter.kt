@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import com.example.expensemanager.databinding.ListItemBinding
 import java.text.DateFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -39,11 +40,11 @@ class ListAdapter(
             binding.quantity.text = item.amount.toString()
             binding.note.text = item.note
 
-            val formatter = DateTimeFormatter.ofPattern("d MMM yyyy", Locale("en"))
-            val parsedDate = LocalDate.parse(item.date, formatter)
-            val today = LocalDate.now()
+            val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM yyyy HH:mm:ss", Locale("en"))
+            val parsedDate = LocalDateTime.parse(item.date, formatter)
+            val today = LocalDateTime.now()
 
-            binding.date.text = if (parsedDate.isEqual(today)) "Today" else item.date
+            binding.date.text = if (parsedDate.toLocalDate().isEqual(today.toLocalDate())) "Today" else item.date
 
             when (item.type) {
                 "Food" -> {

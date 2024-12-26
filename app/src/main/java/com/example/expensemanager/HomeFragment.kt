@@ -2,6 +2,7 @@ package com.example.expensemanager
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -12,6 +13,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.BaseAdapter
 import android.widget.EditText
 import android.widget.Toast
@@ -28,8 +30,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.Locale
 
 
@@ -50,7 +53,7 @@ class HomeFragment : Fragment() {
     private val expenseValues = mutableListOf<Data>()
     private val combinedValues = mutableListOf<Data>()
     // Formateador de fecha
-    val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM yyyy", Locale("en"))
+    private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM yyyy HH:mm:ss", Locale("en"))
 
     //Binding
     private lateinit var binding: FragmentHomeBinding
@@ -77,53 +80,103 @@ class HomeFragment : Fragment() {
         val myView : View = binding.root
         auth = FirebaseAuth.getInstance()
         val user : FirebaseUser = auth.currentUser!!
-        val uid:String = user.uid
-        incomeDatabase =FirebaseDatabase.getInstance().reference.child("IncomeData").child(uid)
-        expenseDatabase =FirebaseDatabase.getInstance().reference.child("ExpenseData").child(uid)
+        val uid : String = user.uid
+        incomeDatabase = FirebaseDatabase.getInstance().reference.child("IncomeData").child(uid)
+        expenseDatabase = FirebaseDatabase.getInstance().reference.child("ExpenseData").child(uid)
 
         val incomeListener = object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 incomeValues.clear()
                 binding.totalIncome.text = "0.00"
+
+                // Obtener la fecha actual
+                val calendar = Calendar.getInstance()
+                val currentMonth = calendar.get(Calendar.MONTH) // 0-based: enero es 0
+                val currentYear = calendar.get(Calendar.YEAR)
+
                 for (ds in dataSnapshot.children) {
                     val data = ds.getValue(Data::class.java)
                     if (data != null) {
-                        incomeValues.add(data)
-                        val value : Double = binding.totalIncome.text.toString().toDouble() + data.amount
-                        binding.totalIncome.text = value.toString()
+                        // Convertir la fecha de la transacción a LocalDateTime usando el formato adecuado
+                        val transactionDate = LocalDateTime.parse(data.date, formatter)
+
+                        // Extraemos el mes y el año de la transacción
+                        val transactionMonth = transactionDate.monthValue - 1  // Enero es 1, pero Calendar usa 0
+                        val transactionYear = transactionDate.year
+
+                        // Comprobar si la transacción es de este mes y año
+                        if (transactionMonth == currentMonth && transactionYear == currentYear) {
+                            incomeValues.add(data)
+                            val value : Double = binding.totalIncome.text.toString().toDouble() + data.amount
+                            binding.totalIncome.text = value.toString()
+                        }
                     }
                 }
-                val text : String
-                text = "+" + binding.totalIncome.text
+
+                // Asegúrate de que el valor de totalIncome tenga un signo "+"
+                val text : String = "+" + binding.totalIncome.text
                 binding.totalIncome.text = text
-                // Actualizar lista combinada
-                updateCombinedList(formatter)
+
+                // Ajustar tamaño del texto
+                val textSize = when (binding.totalIncome.text.length) {
+                    in 1..10 -> 18f
+                    in 11..16 -> 14f
+                    else -> 12f
+                }
+                binding.totalIncome.textSize = textSize
+
+                // Actualizar la lista combinada
+                updateCombinedList()
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("loadIncome:onCancelled", databaseError.toException())
             }
         }
-
         val expenseListener = object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 expenseValues.clear()
                 binding.totalExpenses.text = "0.00"
+
+                val calendar = Calendar.getInstance()
+                val currentMonth = calendar.get(Calendar.MONTH) // 0-based: enero es 0
+                val currentYear = calendar.get(Calendar.YEAR)
+
                 for (ds in dataSnapshot.children) {
                     val data = ds.getValue(Data::class.java)
                     if (data != null) {
-                        expenseValues.add(data)
-                        val value : Double = binding.totalExpenses.text.toString().toDouble() + data.amount
-                        binding.totalExpenses.text = value.toString()
+                        // Convertir la fecha de la transacción a LocalDateTime usando el formato adecuado
+                        val transactionDate = LocalDateTime.parse(data.date, formatter)
+
+                        // Extraemos el mes y el año de la transacción
+                        val transactionMonth = transactionDate.monthValue - 1  // Enero es 1, pero Calendar usa 0
+                        val transactionYear = transactionDate.year
+
+                        // Comprobar si la transacción es de este mes y año
+                        if (transactionMonth == currentMonth && transactionYear == currentYear) {
+                            expenseValues.add(data)
+                            val value : Double = binding.totalExpenses.text.toString().toDouble() + data.amount
+                            binding.totalExpenses.text = value.toString()
+                        }
                     }
                 }
-                val text : String
-                text = "-" + binding.totalExpenses.text
+
+                // Asegurarse de que el valor de totalExpenses tenga un signo "-"
+                val text: String = "-" + binding.totalExpenses.text
                 binding.totalExpenses.text = text
-                // Actualizar lista combinada
-                updateCombinedList(formatter)
+
+                // Ajustar tamaño del texto según la longitud
+                val textSize = when (binding.totalExpenses.text.length) {
+                    in 1..10 -> 18f
+                    in 11..16 -> 14f
+                    else -> 12f
+                }
+                binding.totalExpenses.textSize = textSize
+
+                // Actualizar la lista combinada
+                updateCombinedList()
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -145,7 +198,6 @@ class HomeFragment : Fragment() {
         fadeClose = AnimationUtils.loadAnimation(activity, R.anim.fade_close)
 
         binding.fabMainBtn.setOnClickListener {
-
             addData()
 
             if (isOpen){
@@ -211,6 +263,7 @@ class HomeFragment : Fragment() {
 
         binding.trConfirm.setOnClickListener {
             selectedItem?.let { item ->
+                validateEditedFields(binding.noteEditText, binding.quantityEditText)
                 item.note = binding.noteEditText.text.toString()
                 item.amount = binding.quantityEditText.text.toString().toDoubleOrNull() ?: 0.0
             }
@@ -221,47 +274,73 @@ class HomeFragment : Fragment() {
         myDialog.show()
     }
 
+    private fun updateBalance() {
+        val income = binding.totalIncome.text.toString().toDoubleOrNull() ?: 0.0
+        val expenses = binding.totalExpenses.text.toString().toDoubleOrNull() ?: 0.0
+        val number = income + expenses
+
+        val formattedNumber = String.format("%.2f", number)
+        val balance = formattedNumber.toDouble()
+
+        binding.totalBalance.text = formatBalanceText(balance)
+
+        // Ajustar dinámicamente el tamaño del texto
+        val textSize = when (binding.totalBalance.text.length) {
+            in 1..10 -> 40f // Hasta 6 caracteres -> 40sp
+            in 11..15 -> 32f // 7-9 caracteres -> 32sp
+            else -> 24f    // 10 o más caracteres -> 24sp
+        }
+        binding.totalBalance.textSize = textSize
+        context?.let { safeContext ->
+            binding.totalBalance.setTextColor(getBalanceColor(safeContext, balance))
+        }
+    }
+
+    private fun formatBalanceText(balance: Double): String {
+        return if (balance > 0) "+$balance €" else "$balance €"
+    }
+
+    private fun getBalanceColor(context: Context, balance: Double): Int {
+        return if (balance > 0) {
+            ContextCompat.getColor(context, R.color.income)
+        } else {
+            ContextCompat.getColor(context, R.color.totalExpenses)
+        }
+    }
+
+    private fun updateUIForEmptyState(isEmpty: Boolean) {
+        binding.emptyImage.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        binding.emptyText.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        binding.emptyText2.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        binding.listCombined.visibility = if (isEmpty) View.GONE else View.VISIBLE
+    }
 
     // Función para actualizar la lista combinada y ordenarla
-    @SuppressLint("SetTextI18n")
-    private fun updateCombinedList(formatter: DateTimeFormatter) {
+    private fun updateList() {
+        // Ordenar la lista combinada por fecha
+        combinedValues.sortByDescending { data ->
+            LocalDateTime.parse(data.date, formatter)
+        }
+
+        // Verificar si el contexto está disponible y actualizar el adaptador
+        context?.let { safeContext ->
+            val listAdapter = ListAdapter(safeContext, R.layout.list_item, combinedValues)
+            binding.listCombined.adapter = listAdapter
+            listAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun updateCombinedList() {
         combinedValues.clear()
         combinedValues.addAll(incomeValues)
         combinedValues.addAll(expenseValues)
-        val income  = binding.totalIncome.text.toString().toDouble()
-        val expenses  = binding.totalExpenses.text.toString().toDouble()
-        val balance = income + expenses
-        if (balance > 0){
-            binding.totalBalance.text = "+$balance €"
-            context?.let { safeContext ->
-                binding.totalBalance.setTextColor(ContextCompat.getColor(safeContext, R.color.income))
-            }
-        } else{
-            binding.totalBalance.text = "$balance €"
-            context?.let { safeContext ->
-                binding.totalBalance.setTextColor(ContextCompat.getColor(safeContext, R.color.totalExpenses))
-            }
-        }
-        if(combinedValues.isEmpty()){
-            binding.emptyImage.visibility = View.VISIBLE
-            binding.emptyText.visibility = View.VISIBLE
-            binding.emptyText2.visibility = View.VISIBLE
-            binding.listCombined.visibility = View.GONE
+        updateBalance()
+
+        if (combinedValues.isEmpty()) {
+            updateUIForEmptyState(true)
         } else {
-            binding.emptyImage.visibility = View.GONE
-            binding.emptyText.visibility = View.GONE
-            binding.emptyText2.visibility = View.GONE
-            binding.listCombined.visibility = View.VISIBLE
-            // Ordenar la lista combinada por fecha
-            combinedValues.sortByDescending { data ->
-                LocalDate.parse(data.date, formatter) }
-            // Verificar si el contexto está disponible
-            context?.let { safeContext ->
-                // Si el fragmento está adjunto, crear y asignar el adaptador
-                val listAdapter = ListAdapter(safeContext, R.layout.list_item, combinedValues)
-                binding.listCombined.adapter = listAdapter
-                listAdapter.notifyDataSetChanged()
-            }
+            updateUIForEmptyState(false)
+            updateList()
         }
     }
 
@@ -310,40 +389,37 @@ class HomeFragment : Fragment() {
 
         val arrayAdapter = ArrayAdapter<String>(binding.root.context, R.layout.dropdown_item, list)
 
-        var type = ""
+        var typeStr = ""
         binding.autoCompleteTextView.setAdapter(arrayAdapter)
-        binding.autoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
+        binding.autoCompleteTextView.setOnItemClickListener { parent, _, position, _ ->
             val item: String = parent.getItemAtPosition(position).toString()
             toastMessage(item)
-            type = item
+            typeStr = item
         }
 
         dialog.show()
 
         binding.btnSave.setOnClickListener {
-            val amountStr = binding.amountEdt.text.toString().trim()
-            val noteStr = binding.noteEdt.text.toString().trim()
-            if (TextUtils.isEmpty(type)) {
-                binding.autoCompleteTextView.error = "Required field..."
+            if (!validateFields(
+                    binding.noteEdt,
+                    binding.autoCompleteTextView,
+                    binding.amountEdt,
+                    typeStr
+                )) {
                 return@setOnClickListener
             }
-            if (TextUtils.isEmpty(amountStr)) {
-                binding.amountEdt.error = "Required field..."
+
+            val formattedNumber = getFormattedAmount(binding.amountEdt.text.toString())
+            if (formattedNumber == null) {
+                toastMessage("Please enter a valid number")
                 return@setOnClickListener
             }
-            val ourAmount: Double = amountStr.toDouble()
 
-            if (TextUtils.isEmpty(noteStr)) {
-                binding.noteEdt.error = "Required field..."
-                return@setOnClickListener
-            }
-            val id: String = incomeDatabase.push().key!!
-            val mDate: String = LocalDate.now().format(formatter)
-            val data = Data(ourAmount, type, noteStr, id, mDate)
-
-            incomeDatabase.child(id).setValue(data)
-            toastMessage("Data added")
-
+            addIncome(
+                binding.noteEdt.text.toString(),
+                formattedNumber,
+                typeStr
+            )
             dialog.dismiss()
         }
 
@@ -352,6 +428,42 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun validateFields(
+        note: EditText,
+        typeEdt: AutoCompleteTextView,
+        amount: EditText,
+        typeStr: String,
+    ) : Boolean{
+        val amountStr = amount.text.toString().trim()
+        val noteStr = note.text.toString().trim()
+
+        if (TextUtils.isEmpty(typeStr)) {
+            typeEdt.error = "Required field..."
+            return false
+        }
+        if (TextUtils.isEmpty(amountStr)) {
+            amount.error = "Required field..."
+            return false
+        }
+
+        if (TextUtils.isEmpty(noteStr)) {
+            note.error = "Required field..."
+            return false
+        }
+        return true
+    }
+
+    private fun validateEditedFields(note: EditText, typeEdt: EditText) {
+
+    }
+    private fun addIncome(note: String, amount : Double, type : String) {
+        val id: String = incomeDatabase.push().key!!
+        val date: String = LocalDateTime.now().format(formatter)
+        val data = Data(amount, type, note, id, date)
+
+        incomeDatabase.child(id).setValue(data)
+        toastMessage("Data added")
+    }
 
     private fun expenseDataInsert() {
         val myDialog = AlertDialog.Builder(activity)
@@ -378,36 +490,26 @@ class HomeFragment : Fragment() {
         dialog.show()
 
         binding.btnSave.setOnClickListener {
-            val amountStr = binding.amountEdt.text.toString().trim()
-            val noteStr = binding.noteEdt.text.toString().trim()
-            if (TextUtils.isEmpty(type)) {
-                binding.autoCompleteTextView.error = "Required field..."
-                return@setOnClickListener
-            }
-            if (TextUtils.isEmpty(amountStr)) {
-                binding.amountEdt.error = "Required field..."
-                return@setOnClickListener
-            } else if (!TextUtils.isDigitsOnly(amountStr)) {
-                binding.noteEdt.error = "Only numeric numbers"
-                return@setOnClickListener
-            }
-            val ourAmount: Double = amountStr.toDouble()
-
-            if (!checkBalance(binding.amountEdt)){
+            if (!validateFields(
+                    binding.noteEdt,
+                    binding.autoCompleteTextView,
+                    binding.amountEdt,
+                    type
+                )) {
                 return@setOnClickListener
             }
 
-            if (TextUtils.isEmpty(noteStr)) {
-                binding.noteEdt.error = "Required field..."
+            val formattedNumber = getFormattedAmount(binding.amountEdt.text.toString())
+            if (formattedNumber == null) {
+                toastMessage("Please enter a valid number")
                 return@setOnClickListener
             }
-            val id: String = expenseDatabase.push().key!!
-            val mDate: String = LocalDate.now().format(formatter)
-            val data = Data(ourAmount, type, noteStr, id, mDate)
 
-            expenseDatabase.child(id).setValue(data)
-            toastMessage("Data added")
-
+            addExpense(
+                binding.noteEdt.text.toString(),
+                formattedNumber,
+                type
+            )
             dialog.dismiss()
         }
 
@@ -415,18 +517,22 @@ class HomeFragment : Fragment() {
             dialog.dismiss()
         }
     }
+    private fun getFormattedAmount(amountString: String): Double? {
+        val number = amountString.toDoubleOrNull() ?: return null
+        return String.format("%.2f", number).toDouble()
+    }
+
+    private fun addExpense(note: String, amount: Double, type: String) {
+        val id: String = expenseDatabase.push().key!!
+        val date: String = LocalDateTime.now().format(formatter)
+        val data = Data(amount, type, note, id, date)
+
+        expenseDatabase.child(id).setValue(data)
+        toastMessage("Data added")
+    }
 
     private fun hasMoney(): Boolean {
         if(binding.totalBalance.text.toString().replace("€", "").toDouble() == 0.0){
-            return false
-        }
-        return true
-    }
-
-    private fun checkBalance(expense: EditText) : Boolean{
-         if(binding.totalBalance.text.toString().replace("€", "").toDouble()
-            < expense.toString().toDouble()){
-            expense.error = "Quantity not applicable, you don't have enough money"
             return false
         }
         return true
