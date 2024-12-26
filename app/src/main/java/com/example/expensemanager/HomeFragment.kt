@@ -325,7 +325,8 @@ class HomeFragment : Fragment() {
         val number = income + expenses
 
         val formattedNumber = String.format("%.2f", number)
-        val balance = formattedNumber.toDouble()
+        val normalizedAmountString = formattedNumber.replace(",", ".")  // Reemplazar la coma por punto
+        val balance = normalizedAmountString.toDouble()
 
         binding.totalBalance.text = formatBalanceText(balance)
 
