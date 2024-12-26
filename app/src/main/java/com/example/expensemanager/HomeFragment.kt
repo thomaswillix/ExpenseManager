@@ -54,6 +54,9 @@ class HomeFragment : Fragment() {
     private val combinedValues = mutableListOf<Data>()
     // Formateador de fecha
     private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM yyyy HH:mm:ss", Locale("en"))
+    //List
+    private val listOfIncomes = mutableListOf<String>()
+    private val listOfExpenses = mutableListOf<String>()
 
     //Binding
     private lateinit var binding: FragmentHomeBinding
@@ -83,6 +86,10 @@ class HomeFragment : Fragment() {
         val uid : String = user.uid
         incomeDatabase = FirebaseDatabase.getInstance().reference.child("IncomeData").child(uid)
         expenseDatabase = FirebaseDatabase.getInstance().reference.child("ExpenseData").child(uid)
+        listOfIncomes.addAll(listOf("Payckeck", "Intellectual Propperty", "Stocks", "Business",
+            "Savings, bonds or lending", "others (income)"))
+        listOfExpenses.addAll(listOf("House", "Food", "Entertainment", "Personal expenses", "Health care",
+            "Transportation", "Debt / Student Loan", "others (expense)"))
 
         val incomeListener = object : ValueEventListener {
             @SuppressLint("SetTextI18n")
@@ -230,6 +237,8 @@ class HomeFragment : Fragment() {
         selectedItem?.let { item ->
             binding.noteEditText.setText(item.note)
             binding.quantityEditText.setText(item.amount.toString())
+            binding.date.text = item.date
+            binding.category.text = item.type
         }
 
         binding.deleteButton.setOnClickListener {
@@ -239,11 +248,11 @@ class HomeFragment : Fragment() {
                 .create()
 
             confirmBinding.btnYes.setOnClickListener {
-                (parent.adapter as? BaseAdapter)?.let { adapter ->
-                    if (adapter is ListAdapter) {
-                        val data = adapter.getData()
-                        data.removeAt(position)
-                        adapter.notifyDataSetChanged()
+                selectedItem?.let { item ->
+                    if (listOfIncomes.contains(item.type)){
+                        incomeDatabase.child(item.id).removeValue()
+                    } else{
+                        expenseDatabase.child(item.id).removeValue()
                     }
                 }
                 confirmDialog.dismiss()
@@ -263,15 +272,51 @@ class HomeFragment : Fragment() {
 
         binding.trConfirm.setOnClickListener {
             selectedItem?.let { item ->
-                validateEditedFields(binding.noteEditText, binding.quantityEditText)
-                item.note = binding.noteEditText.text.toString()
-                item.amount = binding.quantityEditText.text.toString().toDoubleOrNull() ?: 0.0
+                if (validateEditedFields(binding.noteEditText, binding.quantityEditText)){
+                    item.note = binding.noteEditText.text.toString()
+                    val amount = binding.quantityEditText.text.toString().toDoubleOrNull() ?: 0.0
+                    if (listOfIncomes.contains(item.type)){
+                        editIncome(item.id, item.type, binding.noteEditText.text.toString(), amount, item.date)
+                    } else{
+                        editExpense(item.id, item.type, binding.noteEditText.text.toString(), amount, item.date)
+                    }
+                    (parent.adapter as? BaseAdapter)?.notifyDataSetChanged()
+                } else return@setOnClickListener
             }
-            (parent.adapter as? BaseAdapter)?.notifyDataSetChanged()
             myDialog.dismiss()
         }
 
         myDialog.show()
+    }
+
+    private fun validateEditedFields(note: EditText, amount: EditText) : Boolean {
+        val amountStr = amount.text.toString().trim()
+        val noteStr = note.text.toString().trim()
+
+        if (TextUtils.isEmpty(amountStr)) {
+            amount.error = "Required field..."
+            return false
+        }
+
+        if (TextUtils.isEmpty(noteStr)) {
+            note.error = "Required field..."
+            return false
+        }
+        return true
+    }
+
+    private fun editIncome(id : String,  type: String, note: String, amount : Double, date: String) {
+        val data = Data(amount, type, note, id, date)
+
+        incomeDatabase.child(id).setValue(data)
+        toastMessage("Data edited")
+    }
+
+    private fun editExpense(id: String, type: String, note: String, amount: Double, date :String) {
+        val data = Data(amount, type, note, id, date)
+
+        expenseDatabase.child(id).setValue(data)
+        toastMessage("Data edited")
     }
 
     private fun updateBalance() {
@@ -384,10 +429,7 @@ class HomeFragment : Fragment() {
         val dialog: AlertDialog = myDialog.create()
         dialog.setCancelable(false)
 
-        val list = mutableListOf<String>()
-        list.addAll(listOf("Payckeck", "Intellectual Propperty", "Stocks", "Business", "Savings, bonds or lending", "others"))
-
-        val arrayAdapter = ArrayAdapter<String>(binding.root.context, R.layout.dropdown_item, list)
+        val arrayAdapter = ArrayAdapter<String>(binding.root.context, R.layout.dropdown_item, listOfIncomes)
 
         var typeStr = ""
         binding.autoCompleteTextView.setAdapter(arrayAdapter)
@@ -453,9 +495,6 @@ class HomeFragment : Fragment() {
         return true
     }
 
-    private fun validateEditedFields(note: EditText, typeEdt: EditText) {
-
-    }
     private fun addIncome(note: String, amount : Double, type : String) {
         val id: String = incomeDatabase.push().key!!
         val date: String = LocalDateTime.now().format(formatter)
@@ -473,11 +512,7 @@ class HomeFragment : Fragment() {
         val dialog: AlertDialog = myDialog.create()
         dialog.setCancelable(false)
 
-        val list = mutableListOf<String>()
-        list.addAll(listOf("House", "Food", "Entertainment", "Personal expenses", "Health care",
-            "Transportation", "Debt / Student Loan", "others"))
-
-        val arrayAdapter = ArrayAdapter(binding.root.context, R.layout.dropdown_item, list)
+        val arrayAdapter = ArrayAdapter(binding.root.context, R.layout.dropdown_item, listOfExpenses)
         binding.autoCompleteTextView.setAdapter(arrayAdapter)
 
         var type = ""
