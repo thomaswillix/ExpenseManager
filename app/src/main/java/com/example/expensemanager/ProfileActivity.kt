@@ -34,7 +34,7 @@ class ProfileActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         user = FirebaseAuth.getInstance().currentUser!!
         // Configura el AuthStateListener
-        authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+        authStateListener = FirebaseAuth.AuthStateListener {
             updateToolbarTitle(user)
         }
         // Registrar el listener en onStart()

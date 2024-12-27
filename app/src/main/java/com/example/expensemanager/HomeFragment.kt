@@ -209,7 +209,7 @@ class HomeFragment : Fragment() {
             }
         }
         //Detail view of a transaction
-        binding.listCombined.setOnItemClickListener { parent, view, position, id ->
+        binding.listCombined.setOnItemClickListener { parent, _, position, _ ->
             transactioDetailView(parent, position)
         }
         //Animation
@@ -627,7 +627,7 @@ class HomeFragment : Fragment() {
         binding.autoCompleteTextView.setAdapter(arrayAdapter)
 
         var type = ""
-        binding.autoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
+        binding.autoCompleteTextView.setOnItemClickListener { parent, _, position, _ ->
             val item: String = parent.getItemAtPosition(position).toString()
             toastMessage(item)
             type = item

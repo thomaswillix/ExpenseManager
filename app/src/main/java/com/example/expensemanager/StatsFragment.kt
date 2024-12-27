@@ -1,5 +1,6 @@
 package com.example.expensemanager
 
+import android.app.AlertDialog
 import android.os.Bundle
 // Para AnyChart y las vistas de gráfico
 import com.anychart.AnyChart
@@ -21,7 +22,10 @@ import androidx.fragment.app.Fragment
 import com.anychart.charts.Cartesian
 import com.anychart.charts.Radar
 import com.anychart.enums.Align
+import com.example.expensemanager.databinding.ExpenseStatsBinding
 import com.example.expensemanager.databinding.FragmentStatsBinding
+import com.example.expensemanager.databinding.IncomeStatsBinding
+import com.example.expensemanager.databinding.ViewAllTransactionsBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
@@ -52,8 +56,12 @@ class StatsFragment : Fragment() {
         expenseDatabase =FirebaseDatabase.getInstance().getReference().child("ExpenseData").child(uid)
 
         createLineChart()
-        //createRadarChartIncomes()
-        //createRadarChartExpenses()
+        binding.showIncomeData.setOnClickListener {
+            createRadarChartIncomes()
+        }
+        binding.showExpenseData.setOnClickListener {
+            createRadarChartExpenses()
+        }
         return myView
     }
 
@@ -143,12 +151,17 @@ class StatsFragment : Fragment() {
     }
 
     private fun createRadarChartIncomes(){
-        //val anyChartView: AnyChartView = binding.anyChartView2
-        //anyChartView.setProgressBar(binding.progressBar2)
+        val binding = IncomeStatsBinding.inflate(layoutInflater)
+        val myDialog = AlertDialog.Builder(activity)
+            .setView(binding.root)
+            .create()
+        myDialog.setCancelable(true)
+        val anyChartView: AnyChartView = binding.anyChartView
+        anyChartView.setProgressBar(binding.progressBar)
 
         val radar: Radar = AnyChart.radar()
 
-        radar.title("Stats de income-expenses por categoria")
+        radar.title("Stats de incomes por categoria")
 
         radar.yScale().minimum(0.0)
         radar.yScale().minimumGap(0.0)
@@ -196,17 +209,23 @@ class StatsFragment : Fragment() {
 
         radar.tooltip().format("Value: {%Value}")
 
-        //anyChartView.setChart(radar)
+        anyChartView.setChart(radar)
+        myDialog.show()
     }
 
     private fun createRadarChartExpenses(){
-        //val anyChartView: AnyChartView = binding.anyChartView3
+        val binding = ExpenseStatsBinding.inflate(layoutInflater)
+        val myDialog = AlertDialog.Builder(activity)
+            .setView(binding.root)
+            .create()
+        myDialog.setCancelable(true)
+        val anyChartView: AnyChartView = binding.anyChartView
+        anyChartView.setProgressBar(binding.progressBar)
 
         val radar: Radar = AnyChart.radar()
 
-        radar.title("WoW base stats comparison radar chart: Shaman vs Warrior vs Priest")
+        radar.title("Stats de expenses por categoria")
 
-        //anyChartView.setProgressBar(binding.progressBar3)
         radar.yScale().minimum(0.0)
         radar.yScale().minimumGap(0.0)
         radar.yScale().ticks().interval(50.0)
@@ -253,7 +272,8 @@ class StatsFragment : Fragment() {
 
         radar.tooltip().format("Value: {%Value}")
 
-        //anyChartView.setChart(radar)
+        anyChartView.setChart(radar)
+        myDialog.show()
     }
 
     private class CustomDataEntry2(x: String?, value: Number?, value2: Number?, value3: Number?) :
