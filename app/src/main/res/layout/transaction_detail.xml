@@ -5,8 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/transaction_detail_background"
-    android:padding="10dp">
+    android:background="@color/transaction_detail_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -35,87 +34,75 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center"
+        android:layout_marginTop="5dp"
         tools:ignore="DisableBaselineAlignment,HardcodedText,UselessParent">
-        <RelativeLayout
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_weight="1">
+
             <androidx.cardview.widget.CardView
-                android:layout_width="75dp"
-                android:layout_height="75dp"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
                 android:layout_marginStart="5dp"
-                android:elevation="12dp"
+                android:elevation="20dp"
                 app:cardCornerRadius="100dp">
 
                 <ImageView
                     android:id="@+id/icon"
-                    android:layout_width="65dp"
-                    android:layout_height="75dp"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
                     android:layout_gravity="center"
-                    app:tint="@color/black"
                     android:contentDescription="Type of expense/income icon"
-                    android:src="@drawable/food" />
+                    android:src="@drawable/food"
+                    app:tint="@color/black" />
             </androidx.cardview.widget.CardView>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
-            android:layout_weight="20">
-
-            <TextView
-                android:id="@+id/category"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="Food"
-                android:textColor="@color/hint_text"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:orientation="vertical"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="Food"
+                    android:textColor="@color/hint_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/noteEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="45dp"
                 android:inputType="textMultiLine"
                 android:text="Notes"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="italic" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_weight="1">
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginStart="15dp">
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="10dp">
 
                 <EditText
                     android:id="@+id/quantityEditText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
                     android:text="-45.00€"
                     android:textColor="@color/black"
-                    android:layout_marginTop="5dp"
                     android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:inputType="numberDecimal" />
+                    android:textStyle="bold" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/date"
                     android:layout_marginTop="1dp"
@@ -123,14 +110,12 @@
                     android:textSize="14sp"
                     android:text="Today"/>
             </LinearLayout>
-        </RelativeLayout>
     </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center"
-        android:layout_marginTop="10dp"
         tools:ignore="HardcodedText">
         <Button
             android:id="@+id/trConfirm"

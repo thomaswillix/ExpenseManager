@@ -91,16 +91,15 @@ class HomeFragment : Fragment() {
         listOfExpenses.addAll(listOf("House", "Food", "Entertainment", "Personal expenses", "Health care",
             "Transportation", "Debt / Student Loan", "others (expense)"))
 
+        val calendar = Calendar.getInstance()
+        val currentMonth = calendar.get(Calendar.MONTH) // 0-based: enero es 0
+        val currentYear = calendar.get(Calendar.YEAR)
+
         val incomeListener = object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 incomeValues.clear()
                 binding.totalIncome.text = "0.00"
-
-                // Obtener la fecha actual
-                val calendar = Calendar.getInstance()
-                val currentMonth = calendar.get(Calendar.MONTH) // 0-based: enero es 0
-                val currentYear = calendar.get(Calendar.YEAR)
 
                 for (ds in dataSnapshot.children) {
                     val data = ds.getValue(Data::class.java)
@@ -146,10 +145,6 @@ class HomeFragment : Fragment() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 expenseValues.clear()
                 binding.totalExpenses.text = "0.00"
-
-                val calendar = Calendar.getInstance()
-                val currentMonth = calendar.get(Calendar.MONTH) // 0-based: enero es 0
-                val currentYear = calendar.get(Calendar.YEAR)
 
                 for (ds in dataSnapshot.children) {
                     val data = ds.getValue(Data::class.java)
@@ -239,8 +234,77 @@ class HomeFragment : Fragment() {
             binding.quantityEditText.setText(item.amount.toString())
             binding.date.text = item.date
             binding.category.text = item.type
-        }
+            if (listOfIncomes.contains(item.type)) {
+                binding.quantityEditText.setTextColor(ContextCompat.getColor(requireContext(), R.color.income))
+                when (item.type) {
+                    "Payckeck" -> {
+                        //icon by https://www.flaticon.com/authors/juicy-fish
+                        binding.icon.setImageResource(R.drawable.paycheck)
+                    }
 
+                    "Intellectual Propperty" -> {
+                        //icon by freepik https://www.flaticon.com/free-icons/intellectual-property
+                        binding.icon.setImageResource(R.drawable.intellectual_property)
+                    }
+
+                    "Stocks" -> {
+                        //icon by https://www.flaticon.com/authors/adriansyah
+                        binding.icon.setImageResource(R.drawable.stocks)
+                    }
+
+                    "Business" -> {
+                        //icon by https://www.flaticon.com/authors/pixel-perfect
+                        binding.icon.setImageResource(R.drawable.business)
+                    }
+
+                    "Savings, bonds or lending" -> {
+                        //icon by https://www.flaticon.com/authors/karyative
+                        binding.icon.setImageResource(R.drawable.savings)
+                    }
+
+                    "others (income)" -> {
+                        //icon by freepik
+                        binding.icon.setImageResource(R.drawable.others_income)
+                    }
+                }
+            } else {
+                binding.quantityEditText.setTextColor(ContextCompat.getColor(requireContext(), R.color.totalExpenses))
+                when (item.type) {
+                    "Food" -> {
+                        //icon by freepik
+                        binding.icon.setImageResource(R.drawable.food)
+                    }
+                    "House" -> {
+                        // icon by imaginationlol
+                        binding.icon.setImageResource(R.drawable.house)
+                    }
+                    "Entertainment" -> {
+                        // icon by https://www.flaticon.com/authors/wanicon
+                        binding.icon.setImageResource(R.drawable.entertainment)
+                    }
+                    "Personal expenses" -> {
+                        //icon by freepik
+                        binding.icon.setImageResource(R.drawable.personal_expenses)
+                    }
+                    "Health care" -> {
+                        //icon by freepik
+                        binding.icon.setImageResource(R.drawable.healthcare)
+                    }
+                    "Transportation" -> {
+                        //icon by freepik
+                        binding.icon.setImageResource(R.drawable.transport)
+                    }
+                    "Debt / Student Loan"->{
+                        //icon by https://www.flaticon.com/authors/afian-rochmah-afif
+                        binding.icon.setImageResource(R.drawable.debt)
+                    }
+                    "others (expense)" -> {
+                        //icon by https://www.flaticon.com/authors/surang
+                        binding.icon.setImageResource(R.drawable.others_expense)
+                    }
+                }
+            }
+        }
         binding.deleteButton.setOnClickListener {
             val confirmBinding = DialogConfirmDeleteBinding.inflate(layoutInflater)
             val confirmDialog = AlertDialog.Builder(activity)
@@ -275,6 +339,7 @@ class HomeFragment : Fragment() {
                 if (validateEditedFields(binding.noteEditText, binding.quantityEditText)){
                     item.note = binding.noteEditText.text.toString()
                     val amount = binding.quantityEditText.text.toString().toDoubleOrNull() ?: 0.0
+
                     if (listOfIncomes.contains(item.type)){
                         editIncome(item.id, item.type, binding.noteEditText.text.toString(), amount, item.date)
                     } else{

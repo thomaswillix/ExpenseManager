@@ -48,29 +48,72 @@ class ListAdapter(
 
             when (item.type) {
                 "Food" -> {
+                    //icon by freepik
                     binding.icon.setImageResource(R.drawable.food)
                     binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.totalExpenses))
                 }
                 "House" -> {
+                    // icon by imaginationlol
                     binding.icon.setImageResource(R.drawable.house)
                     binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.totalExpenses))
                 }
                 "Entertainment" -> {
+                    // icon by https://www.flaticon.com/authors/wanicon
                     binding.icon.setImageResource(R.drawable.entertainment)
                     binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.totalExpenses))
                 }
                 "Personal expenses" -> {
+                    //icon by freepik
+                    binding.icon.setImageResource(R.drawable.personal_expenses)
                     binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.totalExpenses))
                 }
                 "Health care" -> {
+                    //icon by freepik
                     binding.icon.setImageResource(R.drawable.healthcare)
                     binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.totalExpenses))
                 }
                 "Transportation" -> {
+                    //icon by freepik
                     binding.icon.setImageResource(R.drawable.transport)
                     binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.totalExpenses))
                 }
-                "Debt / Student Loan", "Payckeck", "Intellectual Propperty", "Stocks", "Business", "Savings, bonds or lending", "others" -> {
+                "Debt / Student Loan"->{
+                    //icon by https://www.flaticon.com/authors/afian-rochmah-afif
+                    binding.icon.setImageResource(R.drawable.debt)
+                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.totalExpenses))
+                }
+                "others (expense)" -> {
+                    //icon by https://www.flaticon.com/authors/surang
+                    binding.icon.setImageResource(R.drawable.others_expense)
+                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.totalExpenses))
+                }
+                "Payckeck"->{
+                    //icon by https://www.flaticon.com/authors/juicy-fish
+                    binding.icon.setImageResource(R.drawable.paycheck)
+                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.income))
+                }
+                "Intellectual Propperty"->{
+                    //icon by freepik https://www.flaticon.com/free-icons/intellectual-property
+                    binding.icon.setImageResource(R.drawable.intellectual_property)
+                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.income))
+                }
+                "Stocks"->{
+                    //icon by https://www.flaticon.com/authors/adriansyah
+                    binding.icon.setImageResource(R.drawable.stocks)
+                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.income))
+                }
+                "Business"->{
+                    //icon by https://www.flaticon.com/authors/pixel-perfect
+                    binding.icon.setImageResource(R.drawable.business)
+                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.income))
+                }
+                "Savings, bonds or lending"->{
+                    //icon by https://www.flaticon.com/authors/karyative
+                    binding.icon.setImageResource(R.drawable.savings)
+                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.income))
+                } "others (income)" -> {
+                    //icon by freepik
+                    binding.icon.setImageResource(R.drawable.others_income)
                     binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.income))
                 }
             }
