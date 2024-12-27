@@ -23,6 +23,7 @@ import com.example.expensemanager.databinding.CustomLayoutForInsertdataBinding
 import com.example.expensemanager.databinding.DialogConfirmDeleteBinding
 import com.example.expensemanager.databinding.FragmentHomeBinding
 import com.example.expensemanager.databinding.TransactionDetailBinding
+import com.example.expensemanager.databinding.ViewAllTransactionsBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -52,11 +53,14 @@ class HomeFragment : Fragment() {
     private val incomeValues = mutableListOf<Data>()
     private val expenseValues = mutableListOf<Data>()
     private val combinedValues = mutableListOf<Data>()
-    // Formateador de fecha
-    private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM yyyy HH:mm:ss", Locale("en"))
-    //List
     private val listOfIncomes = mutableListOf<String>()
     private val listOfExpenses = mutableListOf<String>()
+    private val allCombinedValues = mutableListOf<Data>()
+    private val allIncomeValues = mutableListOf<Data>()
+    private val allExpenseValues = mutableListOf<Data>()
+
+    // Formateador de fecha
+    private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM yyyy HH:mm:ss", Locale("en"))
 
     //Binding
     private lateinit var binding: FragmentHomeBinding
@@ -111,6 +115,8 @@ class HomeFragment : Fragment() {
                         val transactionMonth = transactionDate.monthValue - 1  // Enero es 1, pero Calendar usa 0
                         val transactionYear = transactionDate.year
 
+                        allIncomeValues.add(data)
+
                         // Comprobar si la transacción es de este mes y año
                         if (transactionMonth == currentMonth && transactionYear == currentYear) {
                             incomeValues.add(data)
@@ -156,6 +162,8 @@ class HomeFragment : Fragment() {
                         val transactionMonth = transactionDate.monthValue - 1  // Enero es 1, pero Calendar usa 0
                         val transactionYear = transactionDate.year
 
+                        allExpenseValues.add(data)
+
                         // Comprobar si la transacción es de este mes y año
                         if (transactionMonth == currentMonth && transactionYear == currentYear) {
                             expenseValues.add(data)
@@ -191,6 +199,13 @@ class HomeFragment : Fragment() {
             incomeDatabase.addValueEventListener(incomeListener)
             expenseDatabase.addValueEventListener(expenseListener)
         }
+        binding.viewAllTransactions.setOnClickListener{
+            if (allCombinedValues.isEmpty()) {
+                toastMessage("There are no transactions yet, add one pressing '+'!")
+            } else {
+                viewAllTransactions()
+            }
+        }
         //Detail view of a transaction
         binding.listCombined.setOnItemClickListener { parent, view, position, id ->
             transactioDetailView(parent, position)
@@ -218,6 +233,31 @@ class HomeFragment : Fragment() {
             }
         }
         return  myView
+    }
+
+    private fun viewAllTransactions() {
+        val binding = ViewAllTransactionsBinding.inflate(layoutInflater)
+        val myDialog = AlertDialog.Builder(activity)
+            .setView(binding.root)
+            .create()
+        myDialog.setCancelable(false)
+
+        // Ordenar la lista combinada por fecha
+        allCombinedValues.sortByDescending { data ->
+            LocalDateTime.parse(data.date, formatter)
+        }
+
+        // Verificar si el contexto está disponible y actualizar el adaptador
+        context?.let { safeContext ->
+            val listAdapter = ListAdapter(safeContext, R.layout.list_item, allCombinedValues)
+            binding.listCombined.adapter = listAdapter
+            listAdapter.notifyDataSetChanged()
+        }
+        myDialog.show()
+
+        binding.closeButton.setOnClickListener {
+            myDialog.dismiss()
+        }
     }
 
     private fun transactioDetailView(parent: AdapterView<*>, position: Int) {
@@ -445,6 +485,8 @@ class HomeFragment : Fragment() {
         combinedValues.clear()
         combinedValues.addAll(incomeValues)
         combinedValues.addAll(expenseValues)
+        allCombinedValues.addAll(allIncomeValues)
+        allCombinedValues.addAll(allExpenseValues)
         updateBalance()
 
         if (combinedValues.isEmpty()) {
