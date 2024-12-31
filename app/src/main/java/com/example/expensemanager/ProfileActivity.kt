@@ -39,7 +39,7 @@ class ProfileActivity : AppCompatActivity() {
         }
         // Registrar el listener en onStart()
         auth.addAuthStateListener(authStateListener)
-        storageReference = FirebaseStorage.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().uid.toString())
+        storageReference = FirebaseStorage.getInstance().reference.child("Users").child(FirebaseAuth.getInstance().uid.toString())
 
         setSupportActionBar(binding.myToolbarPr)
         supportActionBar!!.show()

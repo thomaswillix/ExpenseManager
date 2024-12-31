@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 
 open class NightModeThemes : AppCompatActivity() {
-    lateinit var sharedPreferences :SharedPreferences
-    var nightMode: Boolean = false
+    private lateinit var sharedPreferences :SharedPreferences
+    private var nightMode: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
 
