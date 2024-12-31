@@ -29,6 +29,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -45,6 +46,8 @@ class StatsFragment : Fragment() {
     private val listOfIncomes = mutableListOf<String>()
     private val listOfExpenses = mutableListOf<String>()
     private val values = mutableMapOf<String, Double>()
+    private var dataEntriesIncome = arrayListOf<DataEntry>()
+    private var dataEntriesExpense = arrayListOf<DataEntry>()
 
     // Formateador de fecha
     private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM yyyy HH:mm:ss", Locale("en"))
@@ -137,7 +140,6 @@ class StatsFragment : Fragment() {
             incomeDatabase.addValueEventListener(incomeListener)
             expenseDatabase.addValueEventListener(expenseListener)
         }
-        getValues(values)
 
         createLineChart()
         binding.showIncomeData.setOnClickListener {
@@ -161,87 +163,59 @@ class StatsFragment : Fragment() {
         combinedValues.clear()
         combinedValues.addAll(incomeValues)
         combinedValues.addAll(expenseValues)
-
         updateList()
+        getValues()
     }
 
-    private fun createLineChart(){
-        val anyChartView : AnyChartView = binding.anyChartView
+    private fun createLineChart() {
+        val anyChartView: AnyChartView = binding.anyChartView
         anyChartView.setProgressBar(binding.progressBar)
 
         val cartesian: Cartesian = AnyChart.line()
 
         cartesian.animation(true)
-
         cartesian.padding(10, 20, 5, 20)
 
         cartesian.crosshair().enabled(true)
-        cartesian.crosshair()
-            .yLabel(true)
-            // TODO ystroke
-            .yStroke()
-
+        cartesian.crosshair().yLabel(true).yStroke()
 
         cartesian.tooltip().positionMode(TooltipPositionMode.POINT)
 
-        cartesian.title("Line chart on all incomes and expenses.")
-
-        cartesian.yAxis(0).title("Currency per day")
+        cartesian.title("Line chart of incomes and expenses over time.")
+        cartesian.yAxis(0).title("Currency")
+        cartesian.xAxis(0).title("Date")
         cartesian.xAxis(0).labels().padding(5, 5, 5, 5)
+        cartesian.xAxis(0).labels().format("{%value|dateTimeFormat:'dd MMM yyyy HH:mm:ss'}")
+        val seriesData: MutableList<DataEntry> = mutableListOf()
 
-        val seriesData: MutableList<CustomDataEntry> = mutableListOf()
+        for (data in combinedValues) {
+            val income = if (data.type in listOfIncomes) data.amount else 0.0
+            val expense = if (data.type in listOfExpenses) data.amount else 0.0
+            seriesData.add(CustomDataEntry(data.date, income, expense))
+        }
+        /*val seriesData: MutableList<DataEntry> = mutableListOf(
+            CustomDataEntry("2023-10-01", 100.0, 50.0),
+            CustomDataEntry("2023-10-02", 150.0, 75.0),
+            CustomDataEntry("2023-10-03", 200.0, 100.0)
+        )*/
+        val set: Set = Set.instantiate()
+        set.data(seriesData)
 
-        seriesData.add(CustomDataEntry("2002", 3.6, 2.3, 2.8))
-        seriesData.add(CustomDataEntry("2003", 7.1, 4.0, 4.1))
-        seriesData.add(CustomDataEntry("2004", 8.5, 6.2, 5.1))
-        seriesData.add(CustomDataEntry("2005", 9.2, 11.8, 6.5))
-        seriesData.add(CustomDataEntry("2006", 10.1, 13.0, 12.5))
-        seriesData.add(CustomDataEntry("2008", 11.6, 13.9, 18.0))
-        seriesData.add(CustomDataEntry("2009", 16.4, 18.0, 21.0))
-        seriesData.add(CustomDataEntry("20012", 18.0, 23.3, 20.3))
-        seriesData.add(CustomDataEntry("2013", 13.2, 24.7, 19.2))
+        // Mapear series al gráfico
+        val incomeMapping: Mapping = set.mapAs("{ x: 'x', value: 'value1' }")
+        val expenseMapping: Mapping = set.mapAs("{ x: 'x', value: 'value2' }")
 
-        val set : Set = Set.instantiate()
-        set.data(seriesData as List<DataEntry>?)
-        val series1Mapping: Mapping = set.mapAs("{ x: 'x', value: 'value' }")
-        val series2Mapping : Mapping = set.mapAs("{ x: 'x', value: 'value2' }")
-        val series3Mapping : Mapping = set.mapAs("{ x: 'x', value: 'value3' }")
+        val incomeSeries: Line = cartesian.line(incomeMapping)
+        incomeSeries.name("Income")
+        incomeSeries.hovered().markers().enabled(true)
+        incomeSeries.hovered().markers().type(MarkerType.CIRCLE).size(4)
+        incomeSeries.tooltip().position("right").anchor("left | center").offsetX(5).offsetY(5)
 
-        val series1: Line = cartesian.line(series1Mapping)
-        series1.name("Money")
-        series1.hovered().markers().enabled(true)
-        series1.hovered().markers()
-            .type(MarkerType.CIRCLE)
-            .size(4)
-        series1.tooltip()
-            .position("right")
-            .anchor("left | center")
-            .offsetX(5)
-            .offsetY(5)
-
-        val series2 : Line = cartesian.line(series2Mapping)
-        series2.name("Income")
-        series2.hovered().markers().enabled(true)
-        series2.hovered().markers()
-            .type(MarkerType.CIRCLE)
-            .size(4)
-        series2.tooltip()
-            .position("right")
-            .anchor("left | center")
-            .offsetX(5)
-            .offsetY(5)
-
-        val series3 : Line  = cartesian.line(series3Mapping)
-        series3.name("Expense")
-        series3.hovered().markers().enabled(true)
-        series3.hovered().markers()
-            .type(MarkerType.CIRCLE)
-            .size(4)
-        series3.tooltip()
-            .position("right")
-            .anchor("left | center")
-            .offsetX(5)
-            .offsetY(5)
+        val expenseSeries: Line = cartesian.line(expenseMapping)
+        expenseSeries.name("Expense")
+        expenseSeries.hovered().markers().enabled(true)
+        expenseSeries.hovered().markers().type(MarkerType.CIRCLE).size(4)
+        expenseSeries.tooltip().position("right").anchor("left | center").offsetX(5).offsetY(5)
 
         cartesian.legend().enabled(true)
         cartesian.legend().fontSize(13)
@@ -260,28 +234,27 @@ class StatsFragment : Fragment() {
         anyChartView.setProgressBar(binding.progressBar)
 
         val pie: Pie = AnyChart.pie()
-
-        val dataEntries = arrayListOf<DataEntry>()
-        dataEntries.add(ValueDataEntry("Test", 9.0))
-        for (type in listOfIncomes) {
-            val value = values[type] ?: 0.0
-            dataEntries.add(ValueDataEntry(type, value))
-        }
-        pie.data(dataEntries)
-        pie.title("Gastos por categoría")
-        pie.legend().itemsLayout(com.anychart.enums.LegendLayout.VERTICAL)
-        pie.legend().position("bottom")
-        pie.legend().align("center")
-
+        pie.data(dataEntriesIncome)
+        pie.title("Ingresos por categoría")
         anyChartView.setChart(pie)
 
         myDialog.show()
     }
 
-    private fun getValues(values: MutableMap<String,Double>) {
+    private fun getValues() {
         for (data in combinedValues){
             val value = data.amount
             values[data.type] = values.getOrDefault(data.type, 0.0) + value
+        }
+        dataEntriesIncome.clear()
+        dataEntriesExpense.clear()
+        for (type in listOfIncomes) {
+            val value = values[type] ?: 0.0
+            dataEntriesIncome.add(ValueDataEntry(type, value))
+        }
+        for (type in listOfExpenses) {
+            val value = values[type] ?: 0.0
+            dataEntriesExpense.add(ValueDataEntry(type, value))
         }
     }
 
@@ -295,23 +268,26 @@ class StatsFragment : Fragment() {
         anyChartView.setProgressBar(binding.progressBar)
 
         val pie: Pie = AnyChart.pie()
-
-        val dataEntries = arrayListOf<DataEntry>()
-        for (type in listOfExpenses){
-            dataEntries.add(ValueDataEntry(type, values[type]))
-        }
-        pie.data(dataEntries)
+        pie.data(dataEntriesExpense)
         pie.title("Gastos por categoría")
         anyChartView.setChart(pie)
 
         myDialog.show()
     }
-
-
     data class CustomDataEntry(
-        val year: String,
-        val value1: Double,
-        val value2: Double,
-        val value3: Double
-    ) : DataEntry()
+        val date: String,
+        val income: Double,
+        val expense: Double
+    ) : DataEntry() {
+        init {
+            // Parse the date string into a Date object
+            val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMM yyyy HH:mm:ss", Locale("en"))
+            val parsedDate = LocalDateTime.parse(date, formatter)
+
+
+            setValue("x", parsedDate.dayOfMonth)       // Valor para el eje X (la fecha en milisegundos)
+            setValue("value1", income)     // Valor para la primera serie (ingresos)
+            setValue("value2", expense)    // Valor para la segunda serie (egresos)
+        }
+    }
 }
