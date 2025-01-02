@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,7 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.userProfileChangeRequest
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -45,6 +47,9 @@ class ProfileFragment : Fragment() {
     private lateinit var storageReference: StorageReference
     private lateinit var uri: Uri
     private lateinit var myView: View
+    private lateinit var authStateListener: FirebaseAuth.AuthStateListener
+    private var isEditMode = false
+    private lateinit var progressDialog : AlertDialog
     // Profile Pic
     private lateinit var profilePic: ImageView
     // Binding
@@ -80,20 +85,39 @@ class ProfileFragment : Fragment() {
         uri = Uri.parse("android.resource://${activity?.packageName}/drawable/pfp")
 
         // Show view mode by default
-        binding.viewModeLayout.visibility = View.VISIBLE
-        binding.editModeLayout.visibility = View.GONE
+        updateViewMode()
         getUserData()
 
         binding.editProfileBtn.setOnClickListener {
-            binding.viewModeLayout.visibility = View.GONE
-            binding.editModeLayout.visibility = View.VISIBLE
+            isEditMode = true
+            updateViewMode()
         }
         binding.cancelViewBtn.setOnClickListener {
+            isEditMode = false
             getUserData()
+            updateViewMode()
+        }
+        authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            val user = firebaseAuth.currentUser
+            if (user != null && user.isEmailVerified) {
+                updateViewMode() // Cambiar el modo de edición a vista
+                Log.d("FirebaseAuth", "User email updated: ${user.email}")
+            }
+        }
+        return  myView
+    }
+    private fun updateViewMode() {
+        // Cambiar el modo del fragment
+        if (isEditMode){
+            binding.viewModeLayout.visibility = View.GONE
+            binding.editModeLayout.visibility = View.VISIBLE
+        }else{
             binding.viewModeLayout.visibility = View.VISIBLE
             binding.editModeLayout.visibility = View.GONE
         }
-        return  myView
+        // Actualizar datos de la interfaz con el nuevo correo
+        val user = FirebaseAuth.getInstance().currentUser
+        binding.emailProfileViewMode.text = user?.email
     }
 
     private fun getUserData() {
@@ -114,7 +138,7 @@ class ProfileFragment : Fragment() {
         binding.emailProfile.setText(email, TextView.BufferType.EDITABLE)
 
         binding.confirmInfoBtn.setOnClickListener {
-            changeDetails(binding.nameProfile.text.toString(), email)
+            changeDetails(binding.nameProfile.text.toString(), binding.emailProfile.text.toString())
         }
 
         profilePic.setOnClickListener {
@@ -189,77 +213,95 @@ class ProfileFragment : Fragment() {
             }
         }catch (_: StorageException){}
     }
-    private fun changeDetails(name: String, newEmail: String){
+    private fun changeDetails(name: String, newEmail: String) {
         val profileUpdates = userProfileChangeRequest {
             displayName = name
         }
-        val progressDialog = AlertDialog.Builder(requireContext())
-            .setView(ProgressBar(activity))
+
+        progressDialog = AlertDialog.Builder(requireContext())
+            .setView(ProgressBar(requireContext()))
             .setCancelable(false)
-            .setTitle("Updating Profile data")
+            .setTitle("Updating Profile Data")
             .setIcon(R.drawable.edit)
             .create()
 
         progressDialog.show()
 
-        var userPassword = ""
-        if (!user.email.equals(newEmail)) {
-            // Pedir al usuario que ingrese su contraseña actual
-            val builder = AlertDialog.Builder(requireContext())
-            val view = requireActivity().layoutInflater.inflate(R.layout.dialog_email_change_request, null)
-            val password = view.findViewById<EditText>(R.id.editBox)
-            builder.setView(view)
-            val dialog = builder.create()
+        // Verificar si se necesita cambiar el correo
+        if (user.email != newEmail) {
+            promptPassword { userPassword ->
+                val credentials = EmailAuthProvider.getCredential(user.email!!, userPassword)
 
-            view.findViewById<Button>(R.id.btnCfrm).setOnClickListener {
-                userPassword = password.text.toString()  // Obtener la contraseña aquí
-                dialog.dismiss()  // Cerrar el diálogo
-            }
-            view.findViewById<Button>(R.id.btnCancel).setOnClickListener {
-                dialog.dismiss()
-            }
-
-            if (dialog.window != null) {
-                    dialog.window!!.setBackgroundDrawable(ColorDrawable(0))  // Opción para personalizar la ventana del diálogo
-            }
-            dialog.show()
-
-            val credentials = EmailAuthProvider.getCredential(user.email.toString(), userPassword)
-
-            user.reauthenticate(credentials)
-                .addOnSuccessListener {
-                    // Reautenticación exitosa, proceder con la actualización del email
-                    user.verifyBeforeUpdateEmail(newEmail)
-                        .addOnSuccessListener {
-                            user.updateProfile(profileUpdates).addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    uploadProfilePic(progressDialog)
-                                } else {
-                                    progressDialog.dismiss()
-                                    toastMessage("Failed to update your profile. Invalid username")
-                                }
+                // Reautenticación del usuario
+                user.reauthenticate(credentials)
+                    .addOnSuccessListener {
+                        Log.d("FirebaseAuth", "Reauthentication successful")
+                        // Solicitar verificación antes de actualizar el correo
+                        user.verifyBeforeUpdateEmail(newEmail)
+                            .addOnSuccessListener {
+                                progressDialog.dismiss()
+                                toastMessage("A verification email has been sent to $newEmail. Please verify to complete the process.")
                             }
-                        }.addOnFailureListener {
-                            progressDialog.dismiss()
-                            toastMessage("Failed to update your profile. Invalid email")
-                        }
-                }.addOnFailureListener {
-                    progressDialog.dismiss()
-                    toastMessage("Reauthentication failed. Check credentials")
-                }
+                            .addOnFailureListener { exception ->
+                                progressDialog.dismiss()
+                                toastMessage("Failed to send verification email: ${exception.localizedMessage}")
+                                Log.e("FirebaseAuth", "Verification email failed: ${exception.localizedMessage}")
+                            }
+                    }
+                    .addOnFailureListener { exception ->
+                        progressDialog.dismiss()
+                        toastMessage("Reauthentication failed: ${exception.localizedMessage}")
+                        Log.e("FirebaseAuth", "Reauthentication error: ${exception.localizedMessage}")
+                    }
+            }
         } else {
-            user.updateProfile(profileUpdates).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    uploadProfilePic(progressDialog)
-                } else {
-                    progressDialog.dismiss()
-                    toastMessage("Failed to update your profile. Invalid username")
-                }
+            // Solo actualizar el perfil si no se cambia el correo
+            updateProfile(profileUpdates)
+        }
+    }
+
+    // Actualizar el perfil del usuario (nombre, foto, etc.)
+    private fun updateProfile(profileUpdates: UserProfileChangeRequest) {
+        user.updateProfile(profileUpdates).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                uploadProfilePic() // Llamada a uploadProfilePic
+            } else {
+                progressDialog.dismiss()
+                toastMessage("Failed to update profile: ${task.exception?.localizedMessage}")
+                Log.e("FirebaseAuth", "Profile update failed: ${task.exception?.localizedMessage}")
             }
         }
     }
 
-    private fun uploadProfilePic(progressDialog: AlertDialog){
+    //Solicitar la contraseña actual al usuario mediante un diálogo.
+    private fun promptPassword(onPasswordEntered: (String) -> Unit) {
+        val builder = AlertDialog.Builder(requireContext())
+        val view = requireActivity().layoutInflater.inflate(R.layout.dialog_email_change_request, null)
+        val passwordInput = view.findViewById<EditText>(R.id.editBox)
+        builder.setView(view)
+        builder.setCancelable(false)
+        val dialog = builder.create()
+
+        view.findViewById<Button>(R.id.btnCfrm).setOnClickListener {
+            val password = passwordInput.text.toString()
+            if (password.isNotEmpty()) {
+                dialog.dismiss()
+                onPasswordEntered(password)
+            } else {
+                toastMessage("Password cannot be empty")
+            }
+        }
+
+        view.findViewById<Button>(R.id.btnCancel).setOnClickListener {
+            dialog.dismiss()
+            progressDialog.dismiss()
+        }
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(0))
+        dialog.show()
+    }
+
+    private fun uploadProfilePic(){
         if (!::uri.isInitialized) {
             uri = Uri.parse("android.resource://${activity?.packageName}/drawable/pfp")
             profilePic.setImageURI(uri)
