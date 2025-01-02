@@ -19,6 +19,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.expensemanager.databinding.CustomLayoutForExpenseDataBinding
 import com.example.expensemanager.databinding.CustomLayoutForInsertdataBinding
 import com.example.expensemanager.databinding.DialogConfirmDeleteBinding
 import com.example.expensemanager.databinding.FragmentHomeBinding
@@ -210,7 +211,7 @@ class HomeFragment : Fragment() {
         }
         //Detail view of a transaction
         binding.listCombined.setOnItemClickListener { parent, _, position, _ ->
-            transactioDetailView(parent, position)
+            transactionDetailView(parent, position)
         }
         //Animation
         fadeOpen = AnimationUtils.loadAnimation(activity, R.anim.fade_open)
@@ -262,7 +263,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun transactioDetailView(parent: AdapterView<*>, position: Int) {
+    private fun transactionDetailView(parent: AdapterView<*>, position: Int) {
         val binding = TransactionDetailBinding.inflate(layoutInflater)
         val myDialog = AlertDialog.Builder(activity)
             .setView(binding.root)
@@ -617,8 +618,7 @@ class HomeFragment : Fragment() {
 
     private fun expenseDataInsert() {
         val myDialog = AlertDialog.Builder(activity)
-        //TODO: Change layout and create a new one for expenses
-        val binding = CustomLayoutForInsertdataBinding.inflate(layoutInflater) // Usar View Binding aquí
+        val binding = CustomLayoutForExpenseDataBinding.inflate(layoutInflater) // Usar View Binding aquí
         myDialog.setView(binding.root)
         val dialog: AlertDialog = myDialog.create()
         dialog.setCancelable(false)

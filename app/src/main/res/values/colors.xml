@@ -2,7 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="background">#FFFFFD</color>
+    <color name="background">#FFFFFD</color>#282828
+    <color name="background_income">#e0ffff</color>
+    <color name="background_expense">#f2f2f2</color>
+    <color name="background_textbox">#FFFFFD</color>
     <color name="background_profile">#ECECEC</color>
     <color name="card_color">#191919</color>
     <color name="view_all">#757272</color>
@@ -14,5 +17,6 @@
     <color name="btn_perfil">#0077B6</color>
     <color name="income"> #4fab9a </color>
     <color name="totalExpenses"> #a5270f </color>
+    <color name="textform">#333</color>
 
 </resources>

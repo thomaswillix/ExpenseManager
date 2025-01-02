@@ -119,14 +119,6 @@
                     android:text="Contiene al menos una letra minúscula"
                     android:textSize="15sp"
                     android:drawableEnd="@drawable/baseline_cancel_24"/>
-
-                <TextView
-                    android:id="@+id/validationSpecialChar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Contiene al menos un carácter especial"
-                    android:textSize="15sp"
-                    android:drawableEnd="@drawable/baseline_cancel_24"/>
                 <TextView
                     android:id="@+id/validationNumericChar"
                     android:layout_width="match_parent"
@@ -134,6 +126,14 @@
                     android:text="Contiene al menos un carácter numérico"
                     android:textSize="15sp"
                     android:drawableEnd="@drawable/baseline_cancel_24"/>
+                <TextView
+                    android:id="@+id/validationSpecialChar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Contiene al menos un carácter especial:\n ^ $ * . [ ] { } ( ) ? ! @ # % &amp; / &#92; , &gt; &lt; &apos; : ; | _ ~ &#96;"
+                    android:textSize="15sp"
+                    android:drawableEnd="@drawable/baseline_cancel_24"/>
+
             </LinearLayout>
             <Button
                 android:id="@+id/signupBtn"

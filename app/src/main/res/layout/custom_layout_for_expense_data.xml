@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/background">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background_expense">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,15 +17,40 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
-            android:layout_marginBottom="30dp"
-            android:orientation="horizontal">
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="New Expense"
+                    android:textSize="22sp"
+                    android:textColor="@color/textform"/>
+                <ImageView
+                    android:id="@+id/incomesIcon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="15dp"
+                    android:contentDescription="Income icon"
+                    app:tint="@color/totalExpenses"
+                    app:srcCompat="@drawable/money_loss">
+                </ImageView>
 
+            </LinearLayout>
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/background_textbox"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:hint="Select Item">
+                android:hint="Category">
 
                 <AutoCompleteTextView
                     android:id="@+id/autoCompleteTextView"
@@ -49,7 +75,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="AMOUNT:" />
+                    android:text="AMOUNT:"
+                    android:textColor="@color/textform"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -86,7 +113,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="NOTE:" />
+                    android:text="NOTE:"
+                    android:textColor="@color/textform"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -101,6 +129,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Drinks with friends"
                     android:inputType="text"
+                    android:textColor="@color/black"
                     android:textAlignment="center"
                     tools:ignore="Autofill" />
             </RelativeLayout>
@@ -124,7 +153,7 @@
                     android:id="@+id/btnCancelData"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/totalExpenses"
+                    android:backgroundTint="#f44336"
                     android:text="Cancel"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="@color/white" />
@@ -140,7 +169,7 @@
                     android:id="@+id/btnSave"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/income"
+                    android:backgroundTint="#4CAF50"
                     android:text="Save"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="@color/white" />

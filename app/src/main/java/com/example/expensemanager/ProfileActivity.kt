@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.example.expensemanager.databinding.ActivityProfileBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -46,13 +48,41 @@ class ProfileActivity : AppCompatActivity() {
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        binding.settingsBtn.setOnClickListener {
-            startActivity(Intent(applicationContext, ConfigurationActivity::class.java))
-        }
+        binding.logoutButton.setOnClickListener {showDialog()}
         binding.editBtn.setOnClickListener {
             startActivity(Intent(applicationContext, PersonalDataActivity::class.java))
         }
     }
+
+    private fun showDialog() {
+        val builder = AlertDialog.Builder(this)
+        val view = layoutInflater.inflate(R.layout.dialog_logout, null)
+        builder.setView(view)
+        val dialog = builder.create()
+
+        view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnReturn)
+            .setOnClickListener { dialog.dismiss() }
+
+        view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnLogout)
+            .setOnClickListener {
+                dialog.dismiss()
+                logoutUser()
+            }
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+    }
+    private fun logoutUser() {
+        FirebaseAuth.getInstance().signOut()
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
+
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+
+        finish()
+    }
+
     override fun onStart() {
         super.onStart()
         auth.addAuthStateListener(authStateListener)
