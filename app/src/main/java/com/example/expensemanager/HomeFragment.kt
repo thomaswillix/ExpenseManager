@@ -598,6 +598,9 @@ class HomeFragment : Fragment() {
         if (TextUtils.isEmpty(amountStr)) {
             amount.error = "Required field..."
             return false
+        } else if (amountStr.toDouble() > binding.totalBalance.toString().toDouble()){
+            amount.error = "Amount cannot be superior to your current balance"
+            return false
         }
 
         if (TextUtils.isEmpty(noteStr)) {
