@@ -37,7 +37,7 @@
                     android:layout_height="35dp"
                     android:layout_marginStart="15dp"
                     android:contentDescription="Income icon"
-                    app:tint="@color/totalExpenses"
+                    app:tint="@color/expense"
                     app:srcCompat="@drawable/money_loss">
                 </ImageView>
 

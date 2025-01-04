@@ -16,7 +16,7 @@
     <color name="dark_blue_icons">#023E8A</color>
     <color name="btn_perfil">#0077B6</color>
     <color name="income"> #4fab9a </color>
-    <color name="totalExpenses"> #a5270f </color>
+    <color name="expense"> #a5270f </color>
     <color name="textform">#333</color>
 
 </resources>

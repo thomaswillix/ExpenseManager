@@ -3,6 +3,7 @@ package com.example.expensemanager
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -311,7 +312,7 @@ class HomeFragment : Fragment() {
                     }
                 }
             } else {
-                binding.quantityEditText.setTextColor(ContextCompat.getColor(requireContext(), R.color.totalExpenses))
+                binding.quantityEditText.setTextColor(ContextCompat.getColor(requireContext(), R.color.expense))
                 when (item.type) {
                     "Food" -> {
                         //icon by freepik
@@ -455,10 +456,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun getBalanceColor(context: Context, balance: Double): Int {
-        return if (balance > 0) {
-            ContextCompat.getColor(context, R.color.income)
-        } else {
-            ContextCompat.getColor(context, R.color.totalExpenses)
+        return when {
+            balance == 0.0 -> Color.WHITE // Usar directamente el color blanco
+            balance > 0 -> ContextCompat.getColor(context, R.color.income)
+            else -> ContextCompat.getColor(context, R.color.expense)
         }
     }
 
@@ -598,7 +599,7 @@ class HomeFragment : Fragment() {
         if (TextUtils.isEmpty(amountStr)) {
             amount.error = "Required field..."
             return false
-        } else if (amountStr.toDouble() > binding.totalBalance.toString().toDouble()){
+        } else if (listOfExpenses.contains(typeStr) && amountStr.toDouble() > binding.totalBalance.text.toString().replace("€", "").toDouble()){
             amount.error = "Amount cannot be superior to your current balance"
             return false
         }

@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.expensemanager.databinding.FragmentStatsBinding
 import com.github.mikephil.charting.data.BarEntry
@@ -102,14 +101,56 @@ class StatsFragment : Fragment() {
     }
 
     private fun updateCharts() {
+        // Mostrar/ocultar vistas en función de los datos
+        if (incomeValues.isEmpty() && expenseValues.isEmpty()) {
+            // Mostrar mensaje para transacciones vacías
+            binding.notransactions.visibility = View.VISIBLE
+            binding.texttransactions.visibility = View.VISIBLE
+            binding.barChart.visibility = View.INVISIBLE
+            binding.progressBar.visibility = View.GONE
+            binding.noincomes.visibility = View.VISIBLE
+            binding.textincome.visibility = View.VISIBLE
+            binding.linechartIncomes.visibility = View.INVISIBLE
+            binding.progressBar2.visibility = View.GONE
+            binding.noexpenses.visibility = View.VISIBLE
+            binding.textexpense.visibility = View.VISIBLE
+            binding.linechartExpenses.visibility = View.INVISIBLE
+            binding.progressBar3.visibility = View.GONE
+            return // No hay datos, salir del método
+        } else {
+            // Ocultar mensaje general para transacciones vacías
+            binding.notransactions.visibility = View.GONE
+            binding.texttransactions.visibility = View.GONE
+        }
+
+        // Mostrar u ocultar vistas específicas para ingresos y gastos
+        if (expenseValues.isEmpty()) {
+            binding.noexpenses.visibility = View.VISIBLE
+            binding.textexpense.visibility = View.VISIBLE
+            binding.linechartExpenses.visibility = View.INVISIBLE
+            binding.progressBar3.visibility = View.GONE
+        } else {
+            binding.noexpenses.visibility = View.GONE
+            binding.textexpense.visibility = View.GONE
+        }
+
+        if (incomeValues.isEmpty()) {
+            binding.noincomes.visibility = View.VISIBLE
+            binding.textincome.visibility = View.VISIBLE
+            binding.linechartIncomes.visibility = View.INVISIBLE
+            binding.progressBar2.visibility = View.GONE
+        } else {
+            binding.noincomes.visibility = View.GONE
+            binding.textincome.visibility = View.GONE
+        }
+
+        // Preparar datos para los gráficos
         val incomeEntries = mutableListOf<BarEntry>()
         val expenseEntries = mutableListOf<BarEntry>()
         val incomeLineEntries = mutableListOf<Entry>()
         val expenseLineEntries = mutableListOf<Entry>()
 
         var index = 0
-
-        // Preparar datos para los gráficos
         for (income in incomeValues) {
             incomeEntries.add(BarEntry(index.toFloat(), income.amount.toFloat()))
             incomeLineEntries.add(Entry(index.toFloat(), income.amount.toFloat()))
@@ -127,7 +168,13 @@ class StatsFragment : Fragment() {
         val barDataSetIncome = BarDataSet(incomeEntries, "Incomes")
         val barDataSetExpense = BarDataSet(expenseEntries, "Expenses")
         val barData = BarData(barDataSetIncome, barDataSetExpense)
+        if (isAdded) {
+            val incomeColor = resources.getColor(R.color.income, null)
+            val expenseColor = resources.getColor(R.color.expense, null)
 
+            barDataSetIncome.color = incomeColor
+            barDataSetExpense.color = expenseColor
+        }
         binding.barChart.data = barData
         binding.barChart.invalidate() // Refrescar el BarChart
 
@@ -136,7 +183,7 @@ class StatsFragment : Fragment() {
         val lineDataSetExpense = LineDataSet(expenseLineEntries, "Expenses Over Time")
         if (isAdded) {
             val incomeColor = resources.getColor(R.color.income, null)
-            val expenseColor = resources.getColor(R.color.totalExpenses, null)
+            val expenseColor = resources.getColor(R.color.expense, null)
 
             lineDataSetIncome.color = incomeColor
             lineDataSetIncome.setCircleColor(incomeColor)
@@ -162,10 +209,4 @@ class StatsFragment : Fragment() {
         binding.progressBar2.visibility = View.GONE
         binding.progressBar3.visibility = View.GONE
     }
-
-    data class Data(
-        val amount: Double = 0.0,
-        val type: String = "",
-        val date: String = ""
-    )
 }

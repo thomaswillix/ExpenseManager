@@ -94,7 +94,7 @@
                         android:layout_marginTop="4dp"
                         android:contentDescription="Expense icon"
                         app:srcCompat="@drawable/money_loss"
-                        app:tint="@color/totalExpenses"/>
+                        app:tint="@color/expense"/>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -117,7 +117,7 @@
                             android:layout_gravity="end"
                             android:layout_marginEnd="35dp"
                             android:text="0"
-                            android:textColor="@color/totalExpenses"
+                            android:textColor="@color/expense"
                             android:textSize="16sp" />
 
                     </LinearLayout>
@@ -231,7 +231,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:contentDescription="Floating action buton to add an expense"
-                        android:backgroundTint="@color/totalExpenses"
+                        android:backgroundTint="@color/expense"
                         app:fabSize="auto"
                         android:elevation="6dp"
                         android:visibility="invisible"

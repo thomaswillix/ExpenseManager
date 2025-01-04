@@ -16,7 +16,7 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:backgroundTint="@color/background"
-            android:foregroundTint="@color/totalExpenses"
+            android:foregroundTint="@color/expense"
             android:foreground="@drawable/baseline_delete_24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

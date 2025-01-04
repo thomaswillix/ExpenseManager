@@ -8,8 +8,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import com.example.expensemanager.databinding.ListItemBinding
-import java.text.DateFormat
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -50,42 +48,42 @@ class ListAdapter(
                 "Food" -> {
                     //icon by freepik
                     binding.icon.setImageResource(R.drawable.food)
-                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.totalExpenses))
+                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.expense))
                 }
                 "House" -> {
                     // icon by imaginationlol
                     binding.icon.setImageResource(R.drawable.house)
-                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.totalExpenses))
+                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.expense))
                 }
                 "Entertainment" -> {
                     // icon by https://www.flaticon.com/authors/wanicon
                     binding.icon.setImageResource(R.drawable.entertainment)
-                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.totalExpenses))
+                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.expense))
                 }
                 "Personal expenses" -> {
                     //icon by freepik
                     binding.icon.setImageResource(R.drawable.personal_expenses)
-                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.totalExpenses))
+                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.expense))
                 }
                 "Health care" -> {
                     //icon by freepik
                     binding.icon.setImageResource(R.drawable.healthcare)
-                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.totalExpenses))
+                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.expense))
                 }
                 "Transportation" -> {
                     //icon by freepik
                     binding.icon.setImageResource(R.drawable.transport)
-                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.totalExpenses))
+                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.expense))
                 }
                 "Debt / Student Loan"->{
                     //icon by https://www.flaticon.com/authors/afian-rochmah-afif
                     binding.icon.setImageResource(R.drawable.debt)
-                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.totalExpenses))
+                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.expense))
                 }
                 "others (expense)" -> {
                     //icon by https://www.flaticon.com/authors/surang
                     binding.icon.setImageResource(R.drawable.others_expense)
-                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.totalExpenses))
+                    binding.quantity.setTextColor(ContextCompat.getColor(context, R.color.expense))
                 }
                 "Payckeck"->{
                     //icon by https://www.flaticon.com/authors/juicy-fish
